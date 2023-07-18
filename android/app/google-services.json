@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "803996505937",
+    "firebase_url": "https://temporal-kiln-368606-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "temporal-kiln-368606",
+    "storage_bucket": "temporal-kiln-368606.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803996505937:android:861d8c42e50b64ee76a570",
+        "android_client_info": {
+          "package_name": "com.example.my5"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "803996505937-6e391c95j2ng9bd127n70db4gpj77ab5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbuc09i297hWdYHN4VWZC2yfarJnsfTbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "803996505937-6e391c95j2ng9bd127n70db4gpj77ab5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803996505937:android:4894548ab801d40c76a570",
+        "android_client_info": {
+          "package_name": "com.light.type21"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "803996505937-6e391c95j2ng9bd127n70db4gpj77ab5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbuc09i297hWdYHN4VWZC2yfarJnsfTbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "803996505937-6e391c95j2ng9bd127n70db4gpj77ab5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
