@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:type21/screens/select_screen.dart';
 
-import '../models/field_info.dart';
+import 'field_info.dart';
 
 class FieldList extends StatelessWidget {
   const FieldList({Key? key, required this.fields}) : super(key: key);

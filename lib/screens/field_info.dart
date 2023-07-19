@@ -12,29 +12,23 @@ class FieldInfo extends StatelessWidget {
     required this.polygonArea,
     required this.polygons,
     this.selectedDate,
-
   }) : super(key: key);
-
   final Field field;
   final String? fieldName;
   final String? riceType;
   final double polygonArea;
   final List<LatLng> polygons;
   final DateTime? selectedDate;
-
-
   String convertAreaToRaiNganWah(double polygonArea) {
     final double rai = (polygonArea / 1600).floorToDouble();
     final double ngan = ((polygonArea - (rai * 1600)) / 400).floorToDouble();
     final double squareWah = (polygonArea / 4) - (rai * 400) - (ngan * 100);
     final formattedArea = NumberFormat('#,##0.00').format(polygonArea);
-
     String result = 'พื้นที่เพาะปลูก \n';
     result += '$formattedArea ตารางเมตร\n';
     result += '${rai.toInt()} ไร่ ';
     result += '${ngan.toInt()} งาน ';
     result += '${squareWah.toStringAsFixed(2)} ตารางวา';
-
     return result;
   }
   @override
@@ -75,7 +69,6 @@ class FieldInfo extends StatelessWidget {
                   Text(
                     'วันที่เลือก: ${field.selectedDate != null ? DateFormat('dd-MM-yyyy').format(field.selectedDate!) : "Not selected"}',
                     style: GoogleFonts.openSans(fontSize: 18),
-
                   ),
                 ],
               ),
