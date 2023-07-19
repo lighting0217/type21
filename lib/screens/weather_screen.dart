@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 
 import '../controller/global_controller.dart';
 import '../library/weather/widget/comfort.dart';
@@ -17,7 +18,12 @@ class WeatherScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('My Weather')),
+      appBar: AppBar(
+        title: Text(
+          'My Weather',
+          style: GoogleFonts.openSans(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Obx(
         () {
           if (globalController.checkStatus().isTrue) {

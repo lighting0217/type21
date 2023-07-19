@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'field_list.dart';
@@ -27,8 +28,15 @@ class SelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Welcome to Application"),
+        title: Text(
+          "Welcome to Application",
+          style: GoogleFonts.openSans(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.blue, // Change app bar color
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -48,14 +56,14 @@ class SelectScreen extends StatelessWidget {
                   Text(
                     'Welcome, ${auth.currentUser?.email ?? ''}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: GoogleFonts.openSans(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 40),
                   ElevatedButton(
-                    child: const Text("Sign out"),
+                    child: const Text("Sign Out"),
                     onPressed: () {
                       showDialog(
                         context: builderContext,
@@ -100,29 +108,17 @@ class SelectScreen extends StatelessWidget {
                 child: FlutterLogo(size: 80.0),
               ),
             ),
-            // ListTile(
-            //   title: const Text('To Profile Screen'),
-            //   onTap: (){
-            //     navigateToScreen(
-            //       context,
-            //     const Hero(
-            //       tag: 'profile_screen',
-            //       child: ProfileScreen(profile:Profile,),
-            //     ),
-            //     );
-            //   },
-            // ),
             ListTile(
               title: const Text('To Map Screen'),
               onTap: () {
                 navigateToScreen(
-                  context, MapScreenType2(
-                      polygons: locationList,
-                      polygonArea: 0,
-                      lengths: const [],
-                      onPolygonAreaChanged: (double value) {},
-                    ),
-
+                  context,
+                  MapScreenType2(
+                    polygons: locationList,
+                    polygonArea: 0,
+                    lengths: const [],
+                    onPolygonAreaChanged: (double value) {},
+                  ),
                 );
               },
             ),
@@ -130,13 +126,13 @@ class SelectScreen extends StatelessWidget {
               title: const Text('To Map Screen Test'),
               onTap: () {
                 navigateToScreen(
-                  context,MapScreenType2Test(
-                      polygons: locationList,
-                      polygonArea: 0,
-                      lengths: const [],
-                      onPolygonAreaChanged: (double value) {},
-                    ),
-
+                  context,
+                  MapScreenType2Test(
+                    polygons: locationList,
+                    polygonArea: 0,
+                    lengths: const [],
+                    onPolygonAreaChanged: (double value) {},
+                  ),
                 );
               },
             ),
@@ -146,7 +142,6 @@ class SelectScreen extends StatelessWidget {
                 navigateToScreen(context, WeatherScreen());
               },
             ),
-
             ListTile(
               title: const Text('To Field List Screen'),
               onTap: () {

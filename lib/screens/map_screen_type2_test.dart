@@ -7,9 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:type21/screens/add_screen_type2.dart';
 import 'package:type21/screens/add_screen_type2Test.dart';
-
-import 'field_info.dart';
-
+import 'package:type21/screens/field_info.dart';
 
 class MapScreenType2Test extends StatefulWidget {
   const MapScreenType2Test({
@@ -44,7 +42,7 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
   bool _showCancelButton = false;
   bool _showClearButton = false;
   bool _showGotoAddScreen = false;
-  bool _showGotoAddScreen2= false;
+  bool _showGotoAddScreen2 = false;
   bool _showRedoButton = false;
   double _totalDistance = 0; // Declare and initialize _totalDistance
 
@@ -161,7 +159,7 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
         _showClearButton = true;
         _showRedoButton = true;
         _showGotoAddScreen = true;
-        _showGotoAddScreen2=true;
+        _showGotoAddScreen2 = true;
       }
     });
   }
@@ -192,6 +190,7 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
       ),
     );
   }
+
   void _goToAddScreen2() {
     final polygonAreaMeters = _calculatePolygonAreaMeters();
     Navigator.push(
@@ -290,7 +289,7 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
       _showClearButton = false;
       _showRedoButton = false;
       _showGotoAddScreen = false;
-      _showGotoAddScreen2=false;
+      _showGotoAddScreen2 = false;
     });
   }
 
@@ -442,12 +441,12 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
                   ),
                 ),
                 Visibility(
-                  visible: _showGotoAddScreen2,
+                    visible: _showGotoAddScreen2,
                     child: FloatingActionButton(
                       onPressed: _goToAddScreen2,
                       tooltip: 'Go to the add field screen 2',
                       child: const Icon(Icons.add_box_outlined),
-                ))
+                    ))
               ],
             ),
           ),

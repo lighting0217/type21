@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:type21/screens/select_screen.dart';
 
@@ -16,7 +17,11 @@ class FieldList extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Field List'),
+        title: const Text(
+          'Field List',
+          style: TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue, // Change app bar color
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -60,7 +65,7 @@ class FieldList extends StatelessWidget {
               return ListTile(
                 title: Text(
                   field.fieldName,
-                  style: const TextStyle(
+                  style: GoogleFonts.openSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

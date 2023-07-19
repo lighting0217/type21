@@ -31,8 +31,9 @@ dependencies:
   collection: any
   turf: ^0.0.8
   flutter_map: ^5.0.0
-  cloud_firestore: ^4.8.3
+  cloud_firestore: ^4.8.4
   google_fonts: ^5.1.0
+  fl_chart: ^0.63.0
 
 dev_dependencies:
   flutter_test:

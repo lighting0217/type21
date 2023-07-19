@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'login_screen.dart';
 import 'register_screen.dart';
@@ -10,7 +11,14 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login Or Register Screen"),
+        title: Text(
+          "Login Or Register Screen",
+          style: GoogleFonts.openSans(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue, // Change app bar color
       ),
       body: Padding(
         padding: const EdgeInsets.all(40),

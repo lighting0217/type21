@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 import 'package:type21/models/profile.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Profile profile;
 
-  const ProfileScreen({super.key, required this.profile});
+  const ProfileScreen({Key? key, required this.profile}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(
+          'Edit Profile',
+          style: GoogleFonts.openSans(), // Apply Google Fonts style to app bar title
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Edit Profile Screen'),
-            Text('Email: ${profile.email}'),
-            Text('Password: ${profile.password}'),
+            Text(
+              'Edit Profile Screen',
+              style: GoogleFonts.openSans(
+                // Apply Google Fonts style to the text
+                fontSize: 24, // You can adjust the font size as needed
+                fontWeight: FontWeight.bold, // Apply bold style to the text
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Email: ${profile.email}',
+              style: GoogleFonts.openSans(), // Apply Google Fonts style to the text
+            ),
+            Text(
+              'Password: ${profile.password}',
+              style: GoogleFonts.openSans(), // Apply Google Fonts style to the text
+            ),
           ],
         ),
       ),

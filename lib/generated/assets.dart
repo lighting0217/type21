@@ -32,5 +32,4 @@ class Assets {
   static const String weather13n = 'assets/weather/13n.png';
   static const String weather50d = 'assets/weather/50d.png';
   static const String weather50n = 'assets/weather/50n.png';
-
 }

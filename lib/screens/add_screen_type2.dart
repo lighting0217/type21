@@ -1,4 +1,3 @@
-
 // Firestore instance
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -9,9 +8,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:type21/screens/field_info.dart';
 import 'package:type21/screens/field_list.dart';
 
-
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference fields = _firestore.collection('fields');
+
 class AddScreenType2 extends StatefulWidget {
   const AddScreenType2({
     Key? key,
@@ -114,12 +113,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       print('Polygons: $polygons');
     }
     try {
-      _addNewFieldToFirestore(
-          fieldName,
-          riceType,
-          polygonArea,
-          totalDistance,
-          polygons);
+      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance, polygons);
     } catch (e) {
       if (kDebugMode) {
         print('Error saving field data: $e');
@@ -143,31 +137,31 @@ class _AddScreenType2State extends State<AddScreenType2> {
       ),
     );
   }
-  Future<void> _addNewFieldToFirestore(
-      String fieldName,
-      String riceType,
-      double polygonArea,
-      double totalDistance,
-      List<LatLng> polygons) async {
+
+  Future<void> _addNewFieldToFirestore(String fieldName, String riceType, double polygonArea,
+      double totalDistance, List<LatLng> polygons) async {
     if (kDebugMode) {
-      print('field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
+      print(
+          'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
     }
-    await _firestore.collection('fields').add(
-        {
+    await _firestore
+        .collection('fields')
+        .add({
           'fieldName': fieldName,
           'riceType': riceType,
           'polygonArea': polygonArea,
           'totalDistance': totalDistance,
           'polygons': polygons
               .map((latLng) => {
-            'latitude': latLng.latitude,
-            'longitude': latLng.longitude,
-          }).toList(),
-        }).then((value) => print("Field Added"))
-        .catchError((error) => print("Failed to add field: $error")
-
-    );
+                    'latitude': latLng.latitude,
+                    'longitude': latLng.longitude,
+                  })
+              .toList(),
+        })
+        .then((value) => print("Field Added"))
+        .catchError((error) => print("Failed to add field: $error"));
   }
+
   @override
   Widget build(BuildContext context) {
     // Calculate the center of the polygons
@@ -178,10 +172,13 @@ class _AddScreenType2State extends State<AddScreenType2> {
     final double centerLng =
         polygonLatLngs.map((latLng) => latLng.longitude).reduce((a, b) => a + b) /
             polygonLatLngs.length;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Field'),
+        title: const Text(
+          'Add Field',
+          style: TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue, // Change app bar color
       ),
       body: Padding(
         padding: const EdgeInsets.all(9.0),
@@ -205,10 +202,10 @@ class _AddScreenType2State extends State<AddScreenType2> {
               items: _riceTypeKeys.keys
                   .map(
                     (value) => DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                ),
-              )
+                      value: value,
+                      child: Text(value),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) => setState(() => selectedValue = value),
               decoration: const InputDecoration(
@@ -252,16 +249,16 @@ class _AddScreenType2State extends State<AddScreenType2> {
             const SizedBox(height: 16),
             Center(
               child: SizedBox(
-                  height: 250,
-                  width: 250,
-                  child:  GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(centerLat, centerLng),
-                        zoom: 17,
-                      ),
-                      markers: Set<Marker>.from(_createMarkers()),
-                      polygons: _createPolygons(),
-                    ),
+                height: 250,
+                width: 250,
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(centerLat, centerLng),
+                    zoom: 17,
+                  ),
+                  markers: Set<Marker>.from(_createMarkers()),
+                  polygons: _createPolygons(),
+                ),
               ),
             ),
             const SizedBox(height: 16),

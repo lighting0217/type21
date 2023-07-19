@@ -1,4 +1,3 @@
-
 // Firestore instance
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -10,9 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:type21/screens/field_info.dart';
 import 'package:type21/screens/field_list.dart';
 
-
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference fields = _firestore.collection('fields');
+
 class AddScreenType2Test extends StatefulWidget {
   const AddScreenType2Test({
     Key? key,
@@ -27,6 +26,7 @@ class AddScreenType2Test extends StatefulWidget {
   final double polygonArea;
   final List<LatLng> polygons;
   final double totalDistance;
+
   @override
   State<AddScreenType2Test> createState() => _AddScreenType2State();
 }
@@ -40,6 +40,7 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     'ข้าวหอมมะลิ': 'KDML105',
     'ข้าวกข.6': 'RD6',
   };
+
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -131,13 +132,12 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     }
     try {
       _addNewFieldToFirestore(
-          fieldName,
-          riceType,
-          polygonArea,
-          totalDistance,
+        fieldName,
+        riceType,
+        polygonArea,
+        totalDistance,
         polygons,
         _selectedDate!, // Pass the selected date to _addNewFieldToFirestore
-
       );
     } catch (e) {
       if (kDebugMode) {
@@ -162,32 +162,32 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
       ),
     );
   }
-  Future<void> _addNewFieldToFirestore(
-      String fieldName,
-      String riceType,
-      double polygonArea,
-      double totalDistance,
-      List<LatLng> polygons, DateTime selectedDate) async {
-    if (kDebugMode) {
-      print('field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
-    }
-    await _firestore.collection('fields').add(
-        {
-        'fieldName': fieldName,
-        'riceType': riceType,
-        'polygonArea': polygonArea,
-        'totalDistance': totalDistance,
-        'polygons': polygons
-            .map((latLng) => {
-          'latitude': latLng.latitude,
-          'longitude': latLng.longitude,
-        }).toList(),
-          'selectedDate': _selectedDate != null ? Timestamp.fromDate(_selectedDate!) : null,
-      }).then((value) => print("Field Added"))
-        .catchError((error) => print("Failed to add field: $error")
 
-    );
+  Future<void> _addNewFieldToFirestore(String fieldName, String riceType, double polygonArea,
+      double totalDistance, List<LatLng> polygons, DateTime selectedDate) async {
+    if (kDebugMode) {
+      print(
+          'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
+    }
+    await _firestore
+        .collection('fields')
+        .add({
+          'fieldName': fieldName,
+          'riceType': riceType,
+          'polygonArea': polygonArea,
+          'totalDistance': totalDistance,
+          'polygons': polygons
+              .map((latLng) => {
+                    'latitude': latLng.latitude,
+                    'longitude': latLng.longitude,
+                  })
+              .toList(),
+          'selectedDate': _selectedDate != null ? Timestamp.fromDate(_selectedDate!) : null,
+        })
+        .then((value) => print("Field Added"))
+        .catchError((error) => print("Failed to add field: $error"));
   }
+
   @override
   Widget build(BuildContext context) {
     // Calculate the center of the polygons
@@ -198,9 +198,14 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     final double centerLng =
         polygonLatLngs.map((latLng) => latLng.longitude).reduce((a, b) => a + b) /
             polygonLatLngs.length;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Field'),
+        title: const Text(
+          'Add Field',
+          style: TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue, // Change app bar color
       ),
       body: Padding(
         padding: const EdgeInsets.all(9.0),
@@ -224,10 +229,11 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               items: _riceTypeKeys.keys
                   .map(
                     (value) => DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                ),
-              ).toList(),
+                      value: value,
+                      child: Text(value),
+                    ),
+                  )
+                  .toList(),
               onChanged: (value) => setState(() => selectedValue = value),
               decoration: const InputDecoration(
                 labelText: 'Rice Type',
@@ -240,8 +246,10 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
                 labelText: 'Select Date',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              onTap: _selectDate, // Use _selectDate function to pick a date
-              readOnly: true, // Prevents manual editing
+              onTap: _selectDate,
+              // Use _selectDate function to pick a date
+              readOnly: true,
+              // Prevents manual editing
               validator: RequiredValidator(errorText: 'Please select a date'),
             ),
             const SizedBox(height: 16),
@@ -266,7 +274,8 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
             Text(
               '${widget.totalDistance.toStringAsFixed(2)} meters',
               style: const TextStyle(fontSize: 16),
-            ),/*
+            ),
+            /*
             const SizedBox(height: 16),
             const Text(
               'Polygon Center:',
@@ -283,7 +292,7 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               child: SizedBox(
                 height: 250,
                 width: 250,
-                  child: GoogleMap(
+                child: GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: LatLng(centerLat, centerLng),
                     zoom: 17,
