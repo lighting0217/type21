@@ -11,6 +11,7 @@ class FieldList extends StatelessWidget {
 
   final List<Field> fields;
 
+
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -35,7 +36,8 @@ class FieldList extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: firestore.collection('fields').snapshots(),
+        stream: firestore.collection('fields')
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
