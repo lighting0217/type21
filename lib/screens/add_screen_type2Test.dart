@@ -1,5 +1,8 @@
 // Firestore instance
+// ignore_for_file: file_names, avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -105,7 +108,6 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     return markerList;
   }
 
-  // Submit the form data to Firestore
   void _submitForm() async {
     if (_fieldNameController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -115,30 +117,17 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
       );
       return;
     }
-
     final fieldName = _fieldNameController.text;
     final riceType = _riceTypeKeys[selectedValue ?? ''] ?? '';
     final polygonArea = widget.polygonArea;
     final totalDistance = widget.totalDistance;
     final polygons = widget.polygons;
 
-    // Print the field data to the debug console
-    if (kDebugMode) {
-      print('Field Name: $fieldName');
-      print('Rice Type: $riceType');
-      print('Polygon Area: $polygonArea');
-      print('Total Distance: $totalDistance');
-      print('Polygons: $polygons');
-    }
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
     try {
-      _addNewFieldToFirestore(
-        fieldName,
-        riceType,
-        polygonArea,
-        totalDistance,
-        polygons,
-        _selectedDate!, // Pass the selected date to _addNewFieldToFirestore
-      );
+      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance,
+          polygons, _selectedDate ?? DateTime.now());
     } catch (e) {
       if (kDebugMode) {
         print('Error saving field data: $e');
@@ -152,6 +141,9 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
       polygonArea: polygonArea,
       totalDistance: totalDistance,
       polygons: polygons,
+      selectedDate: _selectedDate,
+      // Pass the selected date
+      createdBy: currentUserUid,
     );
 
     Navigator.pop(context);
@@ -163,8 +155,21 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     );
   }
 
-  Future<void> _addNewFieldToFirestore(String fieldName, String riceType, double polygonArea,
-      double totalDistance, List<LatLng> polygons, DateTime selectedDate) async {
+  Future<void> _addNewFieldToFirestore(
+      String fieldName,
+      String riceType,
+      double polygonArea,
+      double totalDistance,
+      List<LatLng> polygons,
+      DateTime selectedDate) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // User not authenticated, handle this case accordingly.
+      return;
+    }
+
+    final createdBy = user.uid; // Get the UID of the authenticated user.
+
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
@@ -182,7 +187,9 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
                     'longitude': latLng.longitude,
                   })
               .toList(),
-          'selectedDate': _selectedDate != null ? Timestamp.fromDate(_selectedDate!) : null,
+          'selectedDate':
+              selectedDate != null ? Timestamp.fromDate(selectedDate) : null,
+          'createdBy': createdBy, // Set the createdBy field with the UID.
         })
         .then((value) => print("Field Added"))
         .catchError((error) => print("Failed to add field: $error"));
@@ -192,18 +199,21 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
   Widget build(BuildContext context) {
     // Calculate the center of the polygons
     final List<LatLng> polygonLatLngs = widget.polygons;
-    final double centerLat =
-        polygonLatLngs.map((latLng) => latLng.latitude).reduce((a, b) => a + b) /
-            polygonLatLngs.length;
-    final double centerLng =
-        polygonLatLngs.map((latLng) => latLng.longitude).reduce((a, b) => a + b) /
-            polygonLatLngs.length;
+    final double centerLat = polygonLatLngs
+            .map((latLng) => latLng.latitude)
+            .reduce((a, b) => a + b) /
+        polygonLatLngs.length;
+    final double centerLng = polygonLatLngs
+            .map((latLng) => latLng.longitude)
+            .reduce((a, b) => a + b) /
+        polygonLatLngs.length;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Add Field',
-          style: TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+          style:
+              TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue, // Change app bar color
       ),
@@ -221,7 +231,8 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               decoration: const InputDecoration(
                 labelText: 'Field Name',
               ),
-              validator: RequiredValidator(errorText: 'Please enter a field name'),
+              validator:
+                  RequiredValidator(errorText: 'Please enter a field name'),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(

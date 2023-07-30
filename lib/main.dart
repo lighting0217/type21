@@ -1,6 +1,8 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
@@ -13,6 +15,19 @@ void main() async {
   );
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // Print the authentication status and user's UID
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user != null) {
+      if (kDebugMode) {
+        print('User is authenticated. UID: ${user.uid}');
+      }
+    } else {
+      if (kDebugMode) {
+        print('User is not authenticated.');
+      }
+    }
+  });
+
   runApp(MyApp());
 }
 

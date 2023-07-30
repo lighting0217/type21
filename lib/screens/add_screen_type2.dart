@@ -1,5 +1,6 @@
-// Firestore instance
+// ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -86,8 +87,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     return markerList;
   }
-
-  // Submit the form data to Firestore
   void _submitForm() async {
     if (_fieldNameController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -104,16 +103,11 @@ class _AddScreenType2State extends State<AddScreenType2> {
     final totalDistance = widget.totalDistance;
     final polygons = widget.polygons;
 
-    // Print the field data to the debug console
-    if (kDebugMode) {
-      print('Field Name: $fieldName');
-      print('Rice Type: $riceType');
-      print('Polygon Area: $polygonArea');
-      print('Total Distance: $totalDistance');
-      print('Polygons: $polygons');
-    }
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
     try {
-      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance, polygons);
+      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance,
+          polygons, currentUserUid);
     } catch (e) {
       if (kDebugMode) {
         print('Error saving field data: $e');
@@ -127,6 +121,8 @@ class _AddScreenType2State extends State<AddScreenType2> {
       polygonArea: polygonArea,
       totalDistance: totalDistance,
       polygons: polygons,
+      selectedDate: null,
+      createdBy: currentUserUid, // Set createdBy field in Field object
     );
 
     Navigator.pop(context);
@@ -138,8 +134,14 @@ class _AddScreenType2State extends State<AddScreenType2> {
     );
   }
 
-  Future<void> _addNewFieldToFirestore(String fieldName, String riceType, double polygonArea,
-      double totalDistance, List<LatLng> polygons) async {
+  Future<void> _addNewFieldToFirestore(
+    String fieldName,
+    String riceType,
+    double polygonArea,
+    double totalDistance,
+    List<LatLng> polygons,
+    String createdBy, // Add createdBy parameter
+  ) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
@@ -157,6 +159,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
                     'longitude': latLng.longitude,
                   })
               .toList(),
+          'createdBy': createdBy, // Set createdBy value
         })
         .then((value) => print("Field Added"))
         .catchError((error) => print("Failed to add field: $error"));
@@ -166,17 +169,20 @@ class _AddScreenType2State extends State<AddScreenType2> {
   Widget build(BuildContext context) {
     // Calculate the center of the polygons
     final List<LatLng> polygonLatLngs = widget.polygons;
-    final double centerLat =
-        polygonLatLngs.map((latLng) => latLng.latitude).reduce((a, b) => a + b) /
-            polygonLatLngs.length;
-    final double centerLng =
-        polygonLatLngs.map((latLng) => latLng.longitude).reduce((a, b) => a + b) /
-            polygonLatLngs.length;
+    final double centerLat = polygonLatLngs
+            .map((latLng) => latLng.latitude)
+            .reduce((a, b) => a + b) /
+        polygonLatLngs.length;
+    final double centerLng = polygonLatLngs
+            .map((latLng) => latLng.longitude)
+            .reduce((a, b) => a + b) /
+        polygonLatLngs.length;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Add Field',
-          style: TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+          style:
+              TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue, // Change app bar color
       ),
@@ -194,7 +200,8 @@ class _AddScreenType2State extends State<AddScreenType2> {
               decoration: const InputDecoration(
                 labelText: 'Field Name',
               ),
-              validator: RequiredValidator(errorText: 'Please enter a field name'),
+              validator:
+                  RequiredValidator(errorText: 'Please enter a field name'),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'field_list.dart';
 import 'home_screen.dart';
 import 'map_screen_type2.dart';
 import 'map_screen_type2_test.dart';
+import 'test_fetch.dart';
 import 'weather_screen.dart';
 
 final auth = FirebaseAuth.instance;
@@ -70,19 +73,23 @@ class SelectScreen extends StatelessWidget {
                         builder: (BuildContext dialogContext) {
                           return AlertDialog(
                             title: const Text('Sign Out'),
-                            content: const Text('Are you sure you want to sign out?'),
+                            content: const Text(
+                                'Are you sure you want to sign out?'),
                             actions: [
                               TextButton(
                                 child: const Text('Cancel'),
                                 onPressed: () {
-                                  Navigator.pop(dialogContext); // Close the dialog
+                                  Navigator.pop(
+                                      dialogContext); // Close the dialog
                                 },
                               ),
                               TextButton(
                                 child: const Text('Sign Out'),
                                 onPressed: () async {
-                                  Navigator.pop(dialogContext); // Close the dialog
-                                  await _handleSignOut(context); // Call the asynchronous function
+                                  Navigator.pop(
+                                      dialogContext); // Close the dialog
+                                  await _handleSignOut(
+                                      context); // Call the asynchronous function
                                 },
                               ),
                             ],
@@ -151,7 +158,12 @@ class SelectScreen extends StatelessWidget {
                 );
               },
             ),
-
+            ListTile(
+              title: const Text('To TestFetch Screen'),
+              onTap: () {
+                navigateToScreen(context, const TestFetch());
+              },
+            ),
           ],
         ),
       ),
