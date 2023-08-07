@@ -6,7 +6,9 @@ class HourlyWeatherData {
   HourlyWeatherData({required this.hourly});
 
   factory HourlyWeatherData.fromJson(Map<String, dynamic> json) =>
-      HourlyWeatherData(hourly: List<Hourly>.from(json['hourly'].map((e) => Hourly.fromJson(e))));
+      HourlyWeatherData(
+          hourly:
+              List<Hourly>.from(json['hourly'].map((e) => Hourly.fromJson(e))));
 }
 
 class Hourly {

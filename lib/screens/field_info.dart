@@ -7,37 +7,47 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 class Field {
+  String fieldName;
+  double polygonArea;
+  List<LatLng> polygons;
+  String riceType;
+  double totalDistance;
+  DateTime? selectedDate;
+  String createdBy;
+
   Field({
     required this.fieldName,
-    required this.polygonArea,
-    required this.polygons,
     required this.riceType,
-    required this.selectedDate,
+    required this.polygonArea,
     required this.totalDistance,
+    required this.polygons,
+    required this.selectedDate,
     required this.createdBy,
   });
-
-  final String fieldName;
-  final double polygonArea;
-  final List<LatLng> polygons;
-  final String riceType;
-  final DateTime? selectedDate;
-  final double totalDistance;
-  final String createdBy;
 }
 
+class TemperatureData {
+  final DateTime date;
+  final double minTemp;
+  final double maxTemp;
+
+  TemperatureData({
+    required this.date,
+    required this.minTemp,
+    required this.maxTemp,
+  });
+}
 class FieldInfo extends StatefulWidget {
   const FieldInfo({
     Key? key,
     required this.field,
     required String fieldName,
     required String riceType,
-    required List<LatLng> polygons,
     required double polygonArea,
+    required List<LatLng> polygons,
+    required DateTime? selectedDate,
   }) : super(key: key);
-
   final Field field;
-
   @override
   State<FieldInfo> createState() => _FieldInfoState();
 }
@@ -86,7 +96,6 @@ class _FieldInfoState extends State<FieldInfo> {
 
   String formatDateThai(DateTime? date) {
     if (date == null) return 'Not selected';
-
     initializeDateFormatting('th_TH'); // Initialize Thai date format
     final formatter = DateFormat.yMMMMEEEEd('th_TH');
     return formatter.format(date);
@@ -96,28 +105,33 @@ class _FieldInfoState extends State<FieldInfo> {
   void initState() {
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'ข้อมูลแปลงเพาะปลูก',
-          style: GoogleFonts.openSans(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+    if (widget.field.polygons.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Text('ไม่พบข้อมูลแปลง'),
         ),
-        backgroundColor: Colors.blue, // Change app bar color
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'ข้อมูลแปลงเพาะปลูก',
+            style: GoogleFonts.openSans(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Colors.blue, // Change app bar color
+        ),
+        body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'ชื่อแปลง: ${widget.field.fieldName}',
+                'ชื่อแปลง: ${widget.field.fieldName ?? "N/A"}',
                 style: GoogleFonts.openSans(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -144,7 +158,7 @@ class _FieldInfoState extends State<FieldInfo> {
               const SizedBox(height: 16),
               Center(
                 child: SizedBox(
-                  height: 400,
+                  height: 350,
                   width: 350,
                   child: Stack(
                     children: [
@@ -172,35 +186,88 @@ class _FieldInfoState extends State<FieldInfo> {
                           },
                         ),
                       ),
-                      Column(
-                        children: [
-                          Positioned(
-                            bottom: 20,
-                            left: 20,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                if (mapController != null) {
-                                  final center =
-                                      getPolygonCenter(widget.field.polygons);
-                                  final cameraUpdate =
-                                      CameraUpdate.newLatLng(center);
-                                  mapController!.animateCamera(cameraUpdate);
-                                }
-                              },
-                              tooltip: 'กลับไปยังศูนย์กลางแปลง',
-                              child: const Icon(Icons.center_focus_strong),
-                            ),
-                          ),
-                        ],
+                      Positioned(
+                        bottom: 20,
+                        left: 20,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            if (mapController != null) {
+                              final center =
+                                  getPolygonCenter(widget.field.polygons);
+                              final cameraUpdate =
+                                  CameraUpdate.newLatLng(center);
+                              mapController!.animateCamera(cameraUpdate);
+                            }
+                          },
+                          tooltip: 'กลับไปยังศูนย์กลางแปลง',
+                          child: const Icon(Icons.center_focus_strong),
+                        ),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
-              )
+              ),
+              ..._buildTemperatureList(), // Display temperature data
             ],
           ),
         ),
+      );
+    }
+  }
+
+  List<Widget> _buildTemperatureList() {
+    return [
+      const SizedBox(height: 16),
+      const Text(
+        'Temperature Data:',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-    );
+      const SizedBox(height: 8),
+      StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('fields')
+            .doc(widget.field.fieldName)
+            .collection('temperatures')
+            .doc('daily')
+            .collection('dates')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            final temperatureDocs = snapshot.data!.docs;
+
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: temperatureDocs.length,
+              itemBuilder: (context, index) {
+                final temperatureData = temperatureDocs[index].data();
+
+                final date = temperatureData['date'].toDate();
+                final minTemp = temperatureData['minTemp'] as double;
+                final maxTemp = temperatureData['maxTemp'] as double;
+
+                return ListTile(
+                  title: Text(
+                    'Date: ${formatDateThai(date)}',
+                    style: GoogleFonts.openSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Min: ${minTemp.toStringAsFixed(2)} °C, Max: ${maxTemp.toStringAsFixed(2)} °C',
+                    style: GoogleFonts.openSans(fontSize: 16),
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Text('Temperature data not available.');
+          }
+        },
+      ),
+    ];
   }
 }

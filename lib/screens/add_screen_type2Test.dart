@@ -1,19 +1,15 @@
-// Firestore instance
-// ignore_for_file: file_names, avoid_print
-
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'
+    show DocumentReference, FirebaseFirestore;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:type21/screens/field_info.dart';
 import 'package:type21/screens/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-CollectionReference fields = _firestore.collection('fields');
 
 class AddScreenType2Test extends StatefulWidget {
   const AddScreenType2Test({
@@ -31,34 +27,17 @@ class AddScreenType2Test extends StatefulWidget {
   final double totalDistance;
 
   @override
-  State<AddScreenType2Test> createState() => _AddScreenType2State();
+  State<AddScreenType2Test> createState() => _AddScreenType2TestState();
 }
 
-class _AddScreenType2State extends State<AddScreenType2Test> {
+class _AddScreenType2TestState extends State<AddScreenType2Test> {
   String? selectedValue;
-  final TextEditingController _dateController = TextEditingController();
-  DateTime? _selectedDate;
+
   final TextEditingController _fieldNameController = TextEditingController();
   final Map<String, String> _riceTypeKeys = {
     'ข้าวหอมมะลิ': 'KDML105',
     'ข้าวกข.6': 'RD6',
   };
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _dateController.text = DateFormat('dd-MM-yyyy').format(_selectedDate!);
-      });
-    }
-  }
 
   String convertAreaToRaiNganWah(double area) {
     final double rai = (area / 1600).floorToDouble();
@@ -117,6 +96,7 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
       );
       return;
     }
+
     final fieldName = _fieldNameController.text;
     final riceType = _riceTypeKeys[selectedValue ?? ''] ?? '';
     final polygonArea = widget.polygonArea;
@@ -125,24 +105,24 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
 
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-    try {
-      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance,
-          polygons, _selectedDate ?? DateTime.now());
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error saving field data: $e');
-      }
-      return;
-    }
+    // Call the _addNewFieldToFirestore function here
+    await _addNewFieldToFirestore(
+      fieldName,
+      riceType,
+      polygonArea,
+      totalDistance,
+      polygons,
+      currentUserUid,
+    );
 
-    final field = Field(
+    // Create a Field instance with the added field data
+    final newField = Field(
       fieldName: fieldName,
       riceType: riceType,
       polygonArea: polygonArea,
       totalDistance: totalDistance,
       polygons: polygons,
-      selectedDate: _selectedDate,
-      // Pass the selected date
+      selectedDate: null,
       createdBy: currentUserUid,
     );
 
@@ -150,49 +130,35 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FieldList(fields: [field]),
+        builder: (context) =>
+            FieldList(fields: [newField]), // Pass the new field
       ),
     );
   }
 
-  Future<void> _addNewFieldToFirestore(
-      String fieldName,
+  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
       String riceType,
       double polygonArea,
       double totalDistance,
       List<LatLng> polygons,
-      DateTime selectedDate) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // User not authenticated, handle this case accordingly.
-      return;
-    }
-
-    final createdBy = user.uid; // Get the UID of the authenticated user.
-
+      String createdBy,) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
     }
-    await _firestore
-        .collection('fields')
-        .add({
-          'fieldName': fieldName,
-          'riceType': riceType,
-          'polygonArea': polygonArea,
-          'totalDistance': totalDistance,
-          'polygons': polygons
-              .map((latLng) => {
-                    'latitude': latLng.latitude,
-                    'longitude': latLng.longitude,
-                  })
-              .toList(),
-          'selectedDate':
-              selectedDate != null ? Timestamp.fromDate(selectedDate) : null,
-          'createdBy': createdBy, // Set the createdBy field with the UID.
-        })
-        .then((value) => print("Field Added"))
-        .catchError((error) => print("Failed to add field: $error"));
+    return await _firestore.collection('fields').add({
+      'fieldName': fieldName,
+      'riceType': riceType,
+      'polygonArea': polygonArea,
+      'totalDistance': totalDistance,
+      'polygons': polygons
+          .map((latLng) => {
+                'latitude': latLng.latitude,
+                'longitude': latLng.longitude,
+              })
+          .toList(),
+      'createdBy': createdBy, // Set createdBy value
+    });
   }
 
   @override
@@ -207,7 +173,6 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
             .map((latLng) => latLng.longitude)
             .reduce((a, b) => a + b) /
         polygonLatLngs.length;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -251,19 +216,6 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               ),
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _dateController,
-              decoration: const InputDecoration(
-                labelText: 'Select Date',
-                suffixIcon: Icon(Icons.calendar_month),
-              ),
-              onTap: _selectDate,
-              // Use _selectDate function to pick a date
-              readOnly: true,
-              // Prevents manual editing
-              validator: RequiredValidator(errorText: 'Please select a date'),
-            ),
-            const SizedBox(height: 16),
             const Text(
               'Polygon Information',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -286,7 +238,6 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               '${widget.totalDistance.toStringAsFixed(2)} meters',
               style: const TextStyle(fontSize: 16),
             ),
-            /*
             const SizedBox(height: 16),
             const Text(
               'Polygon Center:',
@@ -296,7 +247,7 @@ class _AddScreenType2State extends State<AddScreenType2Test> {
               'Latitude: ${centerLat.toStringAsFixed(6)}, Longitude: ${centerLng.toStringAsFixed(6)}',
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16),*/
+            const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 16),
             Center(

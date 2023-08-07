@@ -49,7 +49,8 @@ class WeatherDataFetcher {
 class GoogleServices {
   Future<Position> getCurrentLocation() async {
     // Get the current device location using Geolocator package
-    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     return position;
   }
 }

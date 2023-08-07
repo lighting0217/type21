@@ -6,7 +6,8 @@ class DailyWeatherData {
   DailyWeatherData({required this.daily});
 
   factory DailyWeatherData.fromJson(Map<String, dynamic> json) =>
-      DailyWeatherData(daily: List<Daily>.from(json['daily'].map((e) => Daily.fromJson(e))));
+      DailyWeatherData(
+          daily: List<Daily>.from(json['daily'].map((e) => Daily.fromJson(e))));
 }
 
 class Daily {
@@ -30,7 +31,9 @@ class Daily {
       dt: json['dt'] as int?,
       sunrise: json['sunrise'] as int?,
       sunset: json['sunset'] as int?,
-      temp: json['temp'] == null ? null : Temp.fromJson(json['temp'] as Map<String, dynamic>),
+      temp: json['temp'] == null
+          ? null
+          : Temp.fromJson(json['temp'] as Map<String, dynamic>),
       weather: (json['weather'] as List<dynamic>?)
           ?.map((e) => Weather.fromJson(e as Map<String, dynamic>))
           .toList());

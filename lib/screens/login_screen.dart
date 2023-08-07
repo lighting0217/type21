@@ -81,7 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: GoogleFonts.openSans(fontSize: 20),
                       ),
                       TextFormField(
-                        validator: RequiredValidator(errorText: "Please Enter Password"),
+                        validator: RequiredValidator(
+                            errorText: "Please Enter Password"),
                         obscureText: true,
                         onSaved: (String? password) {
                           profile.password = password!;
@@ -123,7 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               }
                               if (kDebugMode) {
-                                print("email = ${profile.email} password=${profile.password}");
+                                print(
+                                    "email = ${profile.email} password=${profile.password}");
                               }
                             }
                           },

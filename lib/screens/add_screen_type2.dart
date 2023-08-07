@@ -10,7 +10,6 @@ import 'package:type21/screens/field_info.dart';
 import 'package:type21/screens/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-CollectionReference fields = _firestore.collection('fields');
 
 class AddScreenType2 extends StatefulWidget {
   const AddScreenType2({
@@ -87,6 +86,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     return markerList;
   }
+
   void _submitForm() async {
     if (_fieldNameController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -105,64 +105,60 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-    try {
-      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance,
-          polygons, currentUserUid);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error saving field data: $e');
-      }
-      return;
-    }
+    // Call the _addNewFieldToFirestore function here
+    await _addNewFieldToFirestore(
+      fieldName,
+      riceType,
+      polygonArea,
+      totalDistance,
+      polygons,
+      currentUserUid,
+    );
 
-    final field = Field(
+    // Create a Field instance with the added field data
+    final newField = Field(
       fieldName: fieldName,
       riceType: riceType,
       polygonArea: polygonArea,
       totalDistance: totalDistance,
       polygons: polygons,
       selectedDate: null,
-      createdBy: currentUserUid, // Set createdBy field in Field object
+      createdBy: currentUserUid,
     );
 
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FieldList(fields: [field]),
+        builder: (context) =>
+            FieldList(fields: [newField]), // Pass the new field
       ),
     );
   }
 
-  Future<void> _addNewFieldToFirestore(
-    String fieldName,
-    String riceType,
-    double polygonArea,
-    double totalDistance,
-    List<LatLng> polygons,
-    String createdBy, // Add createdBy parameter
-  ) async {
+  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
+      String riceType,
+      double polygonArea,
+      double totalDistance,
+      List<LatLng> polygons,
+      String createdBy,) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
     }
-    await _firestore
-        .collection('fields')
-        .add({
-          'fieldName': fieldName,
-          'riceType': riceType,
-          'polygonArea': polygonArea,
-          'totalDistance': totalDistance,
-          'polygons': polygons
-              .map((latLng) => {
-                    'latitude': latLng.latitude,
-                    'longitude': latLng.longitude,
-                  })
-              .toList(),
-          'createdBy': createdBy, // Set createdBy value
-        })
-        .then((value) => print("Field Added"))
-        .catchError((error) => print("Failed to add field: $error"));
+    return await _firestore.collection('fields').add({
+      'fieldName': fieldName,
+      'riceType': riceType,
+      'polygonArea': polygonArea,
+      'totalDistance': totalDistance,
+      'polygons': polygons
+          .map((latLng) => {
+                'latitude': latLng.latitude,
+                'longitude': latLng.longitude,
+              })
+          .toList(),
+      'createdBy': createdBy, // Set createdBy value
+    });
   }
 
   @override

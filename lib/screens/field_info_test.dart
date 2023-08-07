@@ -24,10 +24,10 @@ class FieldInfoTest extends StatefulWidget {
   final DateTime? selectedDate;
 
   @override
-  State<FieldInfoTest> createState() => _FieldInfoTestTestState();
+  State<FieldInfoTest> createState() => _FieldInfoTestTestTestState();
 }
 
-class _FieldInfoTestTestState extends State<FieldInfoTest> {
+class _FieldInfoTestTestTestState extends State<FieldInfoTest> {
   GoogleMapController? mapController; // Declare the GoogleMapController
 
   // Helper function to fetch temperature data from Firestore
@@ -58,6 +58,7 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
       return {}; // Return an empty map if temperature data not found
     }
   }
+
   double getMinTemp(Map<DateTime, Map<String, double>> temperatureData) {
     double minTemp = double.infinity;
 
@@ -222,7 +223,8 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
                           onPressed: () {
                             if (mapController != null) {
                               final center = getPolygonCenter(widget.polygons);
-                              final cameraUpdate = CameraUpdate.newLatLng(center);
+                              final cameraUpdate =
+                                  CameraUpdate.newLatLng(center);
                               mapController!.animateCamera(cameraUpdate);
                             }
                           },
@@ -242,6 +244,7 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
       );
     }
   }
+
   List<Widget> _buildTemperatureList() {
     return [
       const SizedBox(height: 16),
@@ -316,46 +319,74 @@ class Field {
   final double totalDistance;
   final DateTime? selectedDate;
 }
-
 /*
-* import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-class FieldInfo extends StatefulWidget {
-  const FieldInfo({
-    Key? key,
-    required this.field,
+class Field {
+  String? id;
+  String fieldName;
+  double polygonArea;
+  List<LatLng> polygons;
+  String riceType;
+  DateTime? selectedDate;
+  double totalDistance;
+  String createdBy;
+
+  Field({
+    required this.id,
     required this.fieldName,
-    required this.riceType,
     required this.polygonArea,
     required this.polygons,
-    this.selectedDate,
+    required this.riceType,
+    required this.selectedDate,
+    required this.totalDistance,
+    required this.createdBy,
+  });
+}
+
+class TemperatureData {
+  final String date;
+  final double minTemp;
+  final double maxTemp;
+
+  TemperatureData({
+    required this.date,
+    required this.minTemp,
+    required this.maxTemp,
+  });
+}
+
+class FieldInfoTest extends StatefulWidget {
+  const FieldInfoTest({
+    Key? key,
+    required this.field,
+    required String fieldName,
+    required String riceType,
+    required List<LatLng> polygons,
+    required double polygonArea,
   }) : super(key: key);
 
   final Field field;
-  final String? fieldName;
-  final String? riceType;
-  final double polygonArea;
-  final List<LatLng> polygons;
-  final DateTime? selectedDate;
 
   @override
-  State<FieldInfo> createState() => _FieldInfoState();
+  State<FieldInfoTest> createState() => _FieldInfoTestState();
 }
 
-class _FieldInfoState extends State<FieldInfo> {
-  GoogleMapController? mapController; // Declare the GoogleMapController
-  LatLng getPolygonCenter(List<LatLng> points) {
-    double latSum = 0.0;
-    double lngSum = 0.0;
+class _FieldInfoTestState extends State<FieldInfoTest> {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    for (final point in points) {
-      latSum += point.latitude;
-      lngSum += point.longitude;
-    }
+  GoogleMapController? mapController;
+
+  LatLng getPolygonCenter(List<LatLng> points) {
+    double latSum = points.fold(0.0, (sum, point) => sum + point.latitude);
+    double lngSum = points.fold(0.0, (sum, point) => sum + point.longitude);
 
     double latCenter = latSum / points.length;
     double lngCenter = lngSum / points.length;
@@ -379,7 +410,6 @@ class _FieldInfoState extends State<FieldInfo> {
   }
 
   String getThaiRiceType(String? riceType) {
-    // Map rice types to their Thai labels
     switch (riceType) {
       case 'KDML105':
         return 'ข้าวหอมมะลิ';
@@ -392,18 +422,19 @@ class _FieldInfoState extends State<FieldInfo> {
 
   String formatDateThai(DateTime? date) {
     if (date == null) return 'Not selected';
-
     initializeDateFormatting('th_TH'); // Initialize Thai date format
     final formatter = DateFormat.yMMMMEEEEd('th_TH');
     return formatter.format(date);
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (widget.field.polygons.isEmpty) {
-      // Existing code...
-    } else if (widget.field.polygons.isNotEmpty) {
-      return Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(
             'ข้อมูลแปลงเพาะปลูก',
@@ -412,114 +443,137 @@ class _FieldInfoState extends State<FieldInfo> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          backgroundColor: Colors.blue, // Change app bar color
+          backgroundColor: Colors.blue,
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+            child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'ชื่อแปลง: ${widget.fieldName ?? "N/A"}',
-                style: GoogleFonts.openSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              'ชื่อแปลง: ${widget.field.fieldName}',
+              style: GoogleFonts.openSans(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'พันธุ์ข้าว: ${getThaiRiceType(widget.riceType)}',
-                style: GoogleFonts.openSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'พันธุ์ข้าว: ${getThaiRiceType(widget.field.riceType)}',
+              style: GoogleFonts.openSans(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8),
-              Text(
-                convertAreaToRaiNganWah(widget.polygonArea),
-                style: GoogleFonts.openSans(fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'วันที่เลือก: ${formatDateThai(widget.field.selectedDate)}',
-                style: GoogleFonts.openSans(fontSize: 18),
-              ),
-              const SizedBox(height: 16),
-              const SizedBox(height: 16),
-              Center(
-                child: SizedBox(
-                  height: 400,
-                  width: 350,
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            setState(() {
-                              mapController = controller;
-                            });
-                          },
-                          mapType: MapType.hybrid,
-                          initialCameraPosition: CameraPosition(
-                            target: getPolygonCenter(widget.polygons),
-                            zoom: 20,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              convertAreaToRaiNganWah(widget.field.polygonArea),
+              style: GoogleFonts.openSans(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'วันที่เลือก: ${formatDateThai(widget.field.selectedDate)}',
+              style: GoogleFonts.openSans(fontSize: 18),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: GoogleMap(
+                        onMapCreated: (controller) {
+                          setState(() {
+                            mapController = controller;
+                          });
+                        },
+                        mapType: MapType.hybrid,
+                        initialCameraPosition: CameraPosition(
+                          target: getPolygonCenter(widget.field.polygons),
+                          zoom: 20,
+                        ),
+                        polygons: {
+                          Polygon(
+                            polygonId: const PolygonId('field_polygon'),
+                            points: widget.field.polygons,
+                            strokeWidth: 2,
+                            strokeColor: Colors.black,
+                            fillColor: Colors.green.withOpacity(0.3),
                           ),
-                          polygons: {
-                            Polygon(
-                              polygonId: const PolygonId('field_polygon'),
-                              points: widget.polygons,
-                              strokeWidth: 2,
-                              strokeColor: Colors.black,
-                              fillColor: Colors.green.withOpacity(0.3),
-                            ),
-                          },
-                        ),
+                        },
                       ),
-                      Positioned(
-                        bottom: 20,
-                        left: 20,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            if (mapController != null) {
-                              final center = getPolygonCenter(widget.polygons);
-                              final cameraUpdate = CameraUpdate.newLatLng(center);
-                              mapController!.animateCamera(cameraUpdate);
-                            }
-                          },
-                          tooltip: 'กลับไปยังศูนย์กลางแปลง',
-                          child: const Icon(Icons.center_focus_strong),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  Positioned(
+                    left: 20,
+                    top: 20,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        if (mapController != null) {
+                          final center =
+                              getPolygonCenter(widget.field.polygons);
+                          final cameraUpdate = CameraUpdate.newLatLng(center);
+                          mapController!.animateCamera(cameraUpdate);
+                        }
+                      },
+                      tooltip: 'กลับไปยังศูนย์กลางแปลง',
+                      child: const Icon(Icons.center_focus_strong),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      );
-    }
-    return const SizedBox();
+            ),
+            const SizedBox(height: 10),
+            Column(
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: firestore
+                      .collection('fields')
+                      .doc(widget.field.id)
+                      .collection('temperatures')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong ${snapshot.error}');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text("Loading");
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final temperatureDocs = snapshot.data!.docs;
+                    final temperatureData = temperatureDocs.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      return TemperatureData(
+                        date: data['date'],
+                        minTemp: data['minTemp'],
+                        maxTemp: data['maxTemp'],
+                      );
+                    }).toList();
+
+                    return Column(
+                      children: temperatureData.map((data) {
+                        return ListTile(
+                          title: Text(
+                            'Min Temp: ${data.minTemp} \nMax Temp: ${data.maxTemp}',
+                          ),
+                          subtitle: Text('Date: ${data.date}'),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+
+              ],
+            ),
+          ]),
+        )));
   }
-}
-
-class Field {
-  Field({
-    required this.fieldName,
-    required this.riceType,
-    required this.polygonArea,
-    required this.totalDistance,
-    required this.polygons,
-    this.selectedDate,
-  });
-
-  final String fieldName;
-  final double polygonArea;
-  final List<LatLng> polygons;
-  final String riceType;
-  final double totalDistance;
-  final DateTime? selectedDate;
 }
 
 * */

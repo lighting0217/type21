@@ -55,7 +55,8 @@ class _FieldListState extends State<FieldList> {
                   fieldName: field.fieldName,
                   polygonArea: field.polygonArea,
                   riceType: field.riceType,
-                  polygons: field.polygons, // Pass the Field object
+                  polygons: field.polygons,
+                  selectedDate: field.selectedDate, // Pass the Field object
                 ),
               ),
             );

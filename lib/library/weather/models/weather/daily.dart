@@ -49,16 +49,28 @@ class Daily {
         sunset: json['sunset'] as int?,
         moonrise: json['moonrise'] as int?,
         moonset: json['moonset'] as int?,
-        moonPhase: json['moon_phase'] != null ? (json['moon_phase'] as num).toDouble() : null,
+        moonPhase: json['moon_phase'] != null
+            ? (json['moon_phase'] as num).toDouble()
+            : null,
         temp: json['temp'] == null ? null : Temp.fromJson(json['temp']),
-        feelsLike: json['feels_like'] == null ? null : FeelsLike.fromJson(json['feels_like']),
+        feelsLike: json['feels_like'] == null
+            ? null
+            : FeelsLike.fromJson(json['feels_like']),
         pressure: json['pressure'] as int?,
         humidity: json['humidity'] as int?,
-        dewPoint: json['dew_point'] != null ? (json['dew_point'] as num).toDouble() : null,
-        windSpeed: json['wind_speed'] != null ? (json['wind_speed'] as num).toDouble() : null,
+        dewPoint: json['dew_point'] != null
+            ? (json['dew_point'] as num).toDouble()
+            : null,
+        windSpeed: json['wind_speed'] != null
+            ? (json['wind_speed'] as num).toDouble()
+            : null,
         windDeg: json['wind_deg'] as int?,
-        windGust: json['wind_gust'] != null ? (json['wind_gust'] as num).toDouble() : null,
-        weather: (json['weather'] as List<dynamic>?)?.map((e) => Weather.fromJson(e)).toList(),
+        windGust: json['wind_gust'] != null
+            ? (json['wind_gust'] as num).toDouble()
+            : null,
+        weather: (json['weather'] as List<dynamic>?)
+            ?.map((e) => Weather.fromJson(e))
+            .toList(),
         clouds: json['clouds'] as int?,
         pop: json['pop'] as int?,
         uvi: json['uvi'] != null ? (json['uvi'] as num).toDouble() : null,

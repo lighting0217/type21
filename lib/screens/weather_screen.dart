@@ -48,17 +48,21 @@ class WeatherScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 HourlyDataWidget(
-                  hourlyWeatherData: globalController.getWeatherData().hourlyWeatherData(),
+                  hourlyWeatherData:
+                      globalController.getWeatherData().hourlyWeatherData(),
                 ),
                 SunInfo(
-                  currentWeatherData: globalController.getWeatherData().currentWeatherData(),
+                  currentWeatherData:
+                      globalController.getWeatherData().currentWeatherData(),
                 ),
                 DailyForecast(
-                  dailyWeatherData: globalController.getWeatherData().dailyWeatherData(),
+                  dailyWeatherData:
+                      globalController.getWeatherData().dailyWeatherData(),
                 ),
                 const Divider(),
                 ComfortLevel(
-                  currentWeatherData: globalController.getWeatherData().currentWeatherData(),
+                  currentWeatherData:
+                      globalController.getWeatherData().currentWeatherData(),
                 ),
               ],
             );

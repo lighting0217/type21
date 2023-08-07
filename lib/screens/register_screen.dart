@@ -59,7 +59,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Enter Email
-                      const Text("Enter E-mail", style: TextStyle(fontSize: 20)),
+                      const Text("Enter E-mail",
+                          style: TextStyle(fontSize: 20)),
                       TextFormField(
                         validator: MultiValidator([
                           RequiredValidator(errorText: "Please Enter Email"),
@@ -74,9 +75,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      const Text("Enter Password", style: TextStyle(fontSize: 20)),
+                      const Text("Enter Password",
+                          style: TextStyle(fontSize: 20)),
                       TextFormField(
-                        validator: RequiredValidator(errorText: "Please Enter Password"),
+                        validator: RequiredValidator(
+                            errorText: "Please Enter Password"),
                         obscureText: true,
                         onSaved: (String? password) {
                           profile.password = password!;
@@ -85,7 +88,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          child: const Text("Register", style: TextStyle(fontSize: 20)),
+                          child: const Text("Register",
+                              style: TextStyle(fontSize: 20)),
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState?.save();
@@ -119,7 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   message =
                                       "This email is already in use. Please use another email.";
                                 } else if (e.code == 'weak-password') {
-                                  message = "Password must be at least 6 characters long.";
+                                  message =
+                                      "Password must be at least 6 characters long.";
                                 } else {
                                   message = e.message!;
                                 }
@@ -129,7 +134,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 );
                               }
                               if (kDebugMode) {
-                                print("email = ${profile.email} password=${profile.password}");
+                                print(
+                                    "email = ${profile.email} password=${profile.password}");
                               }
                             }
                           },
