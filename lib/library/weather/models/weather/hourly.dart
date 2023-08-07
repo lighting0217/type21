@@ -46,7 +46,9 @@ class Hourly {
         windSpeed: json['wind_speed']?.toDouble(),
         windDeg: json['wind_deg'] as int?,
         windGust: json['wind_gust']?.toDouble(),
-        weather: (json['weather'] as List<dynamic>?)?.map((e) => Weather.fromJson(e)).toList(),
+        weather: (json['weather'] as List<dynamic>?)
+            ?.map((e) => Weather.fromJson(e))
+            .toList(),
         pop: json['pop'] as int?,
       );
 

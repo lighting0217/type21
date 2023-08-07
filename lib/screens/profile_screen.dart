@@ -13,7 +13,8 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Edit Profile',
-          style: GoogleFonts.openSans(), // Apply Google Fonts style to app bar title
+          style: GoogleFonts
+              .openSans(), // Apply Google Fonts style to app bar title
         ),
       ),
       body: Center(
@@ -31,11 +32,13 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Email: ${profile.email}',
-              style: GoogleFonts.openSans(), // Apply Google Fonts style to the text
+              style: GoogleFonts
+                  .openSans(), // Apply Google Fonts style to the text
             ),
             Text(
               'Password: ${profile.password}',
-              style: GoogleFonts.openSans(), // Apply Google Fonts style to the text
+              style: GoogleFonts
+                  .openSans(), // Apply Google Fonts style to the text
             ),
           ],
         ),

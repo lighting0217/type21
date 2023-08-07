@@ -100,10 +100,12 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
         double lon1 = p1.longitude * degreesToRadians;
         double lon2 = p2.longitude * degreesToRadians;
 
-        double crossProduct = sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon2 - lon1);
+        double crossProduct =
+            sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon2 - lon1);
         double deltaLon = lon2 - lon1;
 
-        double angle = atan2(sqrt(1 - crossProduct * crossProduct), crossProduct);
+        double angle =
+            atan2(sqrt(1 - crossProduct * crossProduct), crossProduct);
         double segmentArea = angle * earthRadius * earthRadius * deltaLon;
 
         area += segmentArea;
@@ -128,13 +130,15 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
 
   void _changeMapType() {
     setState(() {
-      _currentMapType = _currentMapType == MapType.normal ? MapType.hybrid : MapType.normal;
+      _currentMapType =
+          _currentMapType == MapType.normal ? MapType.hybrid : MapType.normal;
     });
   }
 
   void _goToCurrentLocation() {
     if (_currentPosition != null && _mapController != null) {
-      final latLng = LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+      final latLng =
+          LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
       _mapController!.animateCamera(CameraUpdate.newLatLngZoom(latLng, 20));
     }
   }
@@ -305,7 +309,8 @@ class _MapScreenType2TestState extends State<MapScreenType2Test> {
 
   void _moveToCurrentLocation() {
     if (_currentPosition != null && _mapController != null) {
-      final latLng = LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+      final latLng =
+          LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
       _mapController!.animateCamera(CameraUpdate.newLatLngZoom(latLng, 20));
     }
   }

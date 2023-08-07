@@ -7,7 +7,17 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 class Field {
+  String? id;
+  String fieldName;
+  double polygonArea;
+  List<LatLng> polygons;
+  String riceType;
+  DateTime? selectedDate;
+  double totalDistance;
+  String createdBy;
+
   Field({
+    required this.id,
     required this.fieldName,
     required this.polygonArea,
     required this.polygons,
@@ -17,13 +27,47 @@ class Field {
     required this.createdBy,
   });
 
-  final String fieldName;
-  final double polygonArea;
-  final List<LatLng> polygons;
-  final String riceType;
-  final DateTime? selectedDate;
-  final double totalDistance;
-  final String createdBy;
+  // Add this factory constructor
+  factory Field.fromSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final List<Map<String, dynamic>> polygonData =
+        List<Map<String, dynamic>>.from(data['polygons']);
+    final polygonsList = polygonData.map((point) {
+      return LatLng(point['latitude'], point['longitude']);
+    }).toList();
+
+    return Field(
+      id: doc.id,
+      fieldName: data['fieldName'],
+      polygonArea: data['polygonArea'],
+      polygons: polygonsList,
+      riceType: data['riceType'],
+      selectedDate: (data['selectedDate'] as Timestamp)?.toDate(),
+      totalDistance: data['totalDistance'],
+      createdBy: data['createdBy'],
+    );
+  }
+}
+
+class TemperatureData {
+  final String date;
+  final double minTemp;
+  final double maxTemp;
+
+  TemperatureData({
+    required this.date,
+    required this.minTemp,
+    required this.maxTemp,
+  });
+
+  factory TemperatureData.fromSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return TemperatureData(
+      date: doc.id,
+      minTemp: data['minTemp'],
+      maxTemp: data['maxTemp'],
+    );
+  }
 }
 
 class FieldInfo extends StatefulWidget {
@@ -86,7 +130,6 @@ class _FieldInfoState extends State<FieldInfo> {
 
   String formatDateThai(DateTime? date) {
     if (date == null) return 'Not selected';
-
     initializeDateFormatting('th_TH'); // Initialize Thai date format
     final formatter = DateFormat.yMMMMEEEEd('th_TH');
     return formatter.format(date);
@@ -100,107 +143,137 @@ class _FieldInfoState extends State<FieldInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'ข้อมูลแปลงเพาะปลูก',
-          style: GoogleFonts.openSans(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: Text(
+            'ข้อมูลแปลงเพาะปลูก',
+            style: GoogleFonts.openSans(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          backgroundColor: Colors.blue,
         ),
-        backgroundColor: Colors.blue, // Change app bar color
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
+        body: SingleChildScrollView(
+            child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'ชื่อแปลง: ${widget.field.fieldName}',
-                style: GoogleFonts.openSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              'ชื่อแปลง: ${widget.field.fieldName}',
+              style: GoogleFonts.openSans(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'พันธุ์ข้าว: ${getThaiRiceType(widget.field.riceType)}',
-                style: GoogleFonts.openSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'พันธุ์ข้าว: ${getThaiRiceType(widget.field.riceType)}',
+              style: GoogleFonts.openSans(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8),
-              Text(
-                convertAreaToRaiNganWah(widget.field.polygonArea),
-                style: GoogleFonts.openSans(fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'วันที่เลือก: ${formatDateThai(widget.field.selectedDate)}',
-                style: GoogleFonts.openSans(fontSize: 18),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: SizedBox(
-                  height: 400,
-                  width: 350,
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            setState(() {
-                              mapController = controller;
-                            });
-                          },
-                          mapType: MapType.hybrid,
-                          initialCameraPosition: CameraPosition(
-                            target: getPolygonCenter(widget.field.polygons),
-                            zoom: 20,
-                          ),
-                          polygons: {
-                            Polygon(
-                              polygonId: const PolygonId('field_polygon'),
-                              points: widget.field.polygons,
-                              strokeWidth: 2,
-                              strokeColor: Colors.black,
-                              fillColor: Colors.green.withOpacity(0.3),
-                            ),
-                          },
+            ),
+            const SizedBox(height: 8),
+            Text(
+              convertAreaToRaiNganWah(widget.field.polygonArea),
+              style: GoogleFonts.openSans(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'วันที่เลือก: ${formatDateThai(widget.field.selectedDate)}',
+              style: GoogleFonts.openSans(fontSize: 18),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: GoogleMap(
+                        onMapCreated: (controller) {
+                          setState(() {
+                            mapController = controller;
+                          });
+                        },
+                        mapType: MapType.hybrid,
+                        initialCameraPosition: CameraPosition(
+                          target: getPolygonCenter(widget.field.polygons),
+                          zoom: 20,
                         ),
-                      ),
-                      Column(
-                        children: [
-                          Positioned(
-                            bottom: 20,
-                            left: 20,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                if (mapController != null) {
-                                  final center =
-                                      getPolygonCenter(widget.field.polygons);
-                                  final cameraUpdate =
-                                      CameraUpdate.newLatLng(center);
-                                  mapController!.animateCamera(cameraUpdate);
-                                }
-                              },
-                              tooltip: 'กลับไปยังศูนย์กลางแปลง',
-                              child: const Icon(Icons.center_focus_strong),
-                            ),
+                        polygons: {
+                          Polygon(
+                            polygonId: const PolygonId('field_polygon'),
+                            points: widget.field.polygons,
+                            strokeWidth: 2,
+                            strokeColor: Colors.black,
+                            fillColor: Colors.green.withOpacity(0.3),
                           ),
-                        ],
+                        },
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+                  const SizedBox(height: 10),
+                  Positioned(
+                    left: 20,
+                    top: 20,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        if (mapController != null) {
+                          final center =
+                              getPolygonCenter(widget.field.polygons);
+                          final cameraUpdate = CameraUpdate.newLatLng(center);
+                          mapController!.animateCamera(cameraUpdate);
+                        }
+                      },
+                      tooltip: 'กลับไปยังศูนย์กลางแปลง',
+                      child: const Icon(Icons.center_focus_strong),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Column(
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: firestore
+                      .collection('fields')
+                      .doc(widget.field.id)
+                      .collection('temperatures')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong ${snapshot.error}');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text("Loading");
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final temperatureDocs = snapshot.data!.docs;
+                    final temperatureData = temperatureDocs
+                        .map((doc) => TemperatureData.fromSnapshot(doc))
+                        .toList();
+
+                    return Column(
+                      children: temperatureData.map((data) {
+                        return ListTile(
+                          title: Text(
+                            'Min Temp: ${data.minTemp} \nMax Temp: ${data.maxTemp}',
+                          ),
+                          subtitle: Text('Date: ${data.date}'),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+              ],
+            ),
+          ]),
+        )));
   }
 }

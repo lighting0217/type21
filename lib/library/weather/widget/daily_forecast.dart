@@ -7,7 +7,8 @@ import '../util/custom_colors.dart';
 class DailyForecast extends StatelessWidget {
   final DailyWeatherData dailyWeatherData;
 
-  const DailyForecast({Key? key, required this.dailyWeatherData}) : super(key: key);
+  const DailyForecast({Key? key, required this.dailyWeatherData})
+      : super(key: key);
 
   String getDay(int dt) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(dt * 1000);
@@ -21,7 +22,9 @@ class DailyForecast extends StatelessWidget {
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: dailyWeatherData.daily.length > 7 ? 7 : dailyWeatherData.daily.length,
+        itemCount: dailyWeatherData.daily.length > 7
+            ? 7
+            : dailyWeatherData.daily.length,
         itemBuilder: (context, index) {
           return Column(
             children: [

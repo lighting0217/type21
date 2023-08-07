@@ -8,7 +8,8 @@ import '../models/cwd.dart';
 class ComfortLevel extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;
 
-  const ComfortLevel({Key? key, required this.currentWeatherData}) : super(key: key);
+  const ComfortLevel({Key? key, required this.currentWeatherData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,8 @@ class ComfortLevel extends StatelessWidget {
           max: 100,
           initialValue: currentWeatherData.current.humidity!.toDouble(),
           appearance: CircularSliderAppearance(
-            customWidths: CustomSliderWidths(trackWidth: 12, progressBarWidth: 12),
+            customWidths:
+                CustomSliderWidths(trackWidth: 12, progressBarWidth: 12),
             infoProperties: InfoProperties(
               bottomLabelText: "Humidity",
               bottomLabelStyle: const TextStyle(fontSize: 14),
@@ -39,11 +41,13 @@ class ComfortLevel extends StatelessWidget {
             children: [
               Text(
                 'Feels Like ${currentWeatherData.current.feels_like}',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               Text(
                 'UV Index ${currentWeatherData.current.uvi}',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ],
           ),

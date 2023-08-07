@@ -33,10 +33,12 @@ class HomeScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.add),
-                    label: const Text("Create Account", style: TextStyle(fontSize: 20)),
+                    label: const Text("Create Account",
+                        style: TextStyle(fontSize: 20)),
                     onPressed: () {
                       // Navigate to the RegisterScreen
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return const RegisterScreen();
                       }));
                     },
@@ -49,7 +51,8 @@ class HomeScreen extends StatelessWidget {
                     label: const Text("Login", style: TextStyle(fontSize: 20)),
                     onPressed: () {
                       // Navigate to the LoginScreen
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return const LoginScreen();
                       }));
                     },

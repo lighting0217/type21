@@ -26,9 +26,14 @@ class Weather {
         lon: json['lon']?.toDouble(),
         timezone: json['timezone'],
         timezoneOffset: json['timezone_offset'],
-        current: json['current'] == null ? null : Current.fromJson(json['current']),
-        hourly: (json['hourly'] as List<dynamic>?)?.map((e) => Hourly.fromJson(e)).toList(),
-        daily: (json['daily'] as List<dynamic>?)?.map((e) => Daily.fromJson(e)).toList(),
+        current:
+            json['current'] == null ? null : Current.fromJson(json['current']),
+        hourly: (json['hourly'] as List<dynamic>?)
+            ?.map((e) => Hourly.fromJson(e))
+            .toList(),
+        daily: (json['daily'] as List<dynamic>?)
+            ?.map((e) => Daily.fromJson(e))
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {

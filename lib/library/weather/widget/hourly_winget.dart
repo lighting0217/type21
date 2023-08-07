@@ -67,7 +67,8 @@ class _HourlyDataWidgetState extends State<HourlyDataWidget> {
                   cardindex: cardIndex.value,
                   tmp: widget.hourlyWeatherData!.hourly[index].temp!,
                   timeStamp: widget.hourlyWeatherData!.hourly[index].dt!,
-                  icon: widget.hourlyWeatherData!.hourly[index].weather![0].icon!,
+                  icon:
+                      widget.hourlyWeatherData!.hourly[index].weather![0].icon!,
                 ),
               ),
             );
@@ -128,7 +129,8 @@ class HourlyDetails extends StatelessWidget {
           child: Text(
             getTime(timeStamp),
             style: isCardSelected
-                ? const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                ? const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white)
                 : null,
           ),
         ),
@@ -145,7 +147,8 @@ class HourlyDetails extends StatelessWidget {
           child: Text(
             '$tmp°',
             style: isCardSelected
-                ? const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                ? const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white)
                 : null,
           ),
         ),

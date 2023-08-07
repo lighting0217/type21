@@ -10,7 +10,6 @@ import 'package:type21/screens/field_info.dart';
 import 'package:type21/screens/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-CollectionReference fields = _firestore.collection('fields');
 
 class AddScreenType2 extends StatefulWidget {
   const AddScreenType2({
@@ -87,6 +86,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     return markerList;
   }
+
   void _submitForm() async {
     if (_fieldNameController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -105,9 +105,11 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
+    DocumentReference docRef; // Declare the document reference here
+
     try {
-      _addNewFieldToFirestore(fieldName, riceType, polygonArea, totalDistance,
-          polygons, currentUserUid);
+      docRef = await _addNewFieldToFirestore(fieldName, riceType, polygonArea,
+          totalDistance, polygons, currentUserUid);
     } catch (e) {
       if (kDebugMode) {
         print('Error saving field data: $e');
@@ -122,7 +124,8 @@ class _AddScreenType2State extends State<AddScreenType2> {
       totalDistance: totalDistance,
       polygons: polygons,
       selectedDate: null,
-      createdBy: currentUserUid, // Set createdBy field in Field object
+      createdBy: currentUserUid,
+      id: docRef.id, // Set the id value from the document reference
     );
 
     Navigator.pop(context);
@@ -134,35 +137,31 @@ class _AddScreenType2State extends State<AddScreenType2> {
     );
   }
 
-  Future<void> _addNewFieldToFirestore(
+  Future<DocumentReference> _addNewFieldToFirestore(
     String fieldName,
     String riceType,
     double polygonArea,
     double totalDistance,
     List<LatLng> polygons,
-    String createdBy, // Add createdBy parameter
+    String createdBy,
   ) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
     }
-    await _firestore
-        .collection('fields')
-        .add({
-          'fieldName': fieldName,
-          'riceType': riceType,
-          'polygonArea': polygonArea,
-          'totalDistance': totalDistance,
-          'polygons': polygons
-              .map((latLng) => {
-                    'latitude': latLng.latitude,
-                    'longitude': latLng.longitude,
-                  })
-              .toList(),
-          'createdBy': createdBy, // Set createdBy value
-        })
-        .then((value) => print("Field Added"))
-        .catchError((error) => print("Failed to add field: $error"));
+    return await _firestore.collection('fields').add({
+      'fieldName': fieldName,
+      'riceType': riceType,
+      'polygonArea': polygonArea,
+      'totalDistance': totalDistance,
+      'polygons': polygons
+          .map((latLng) => {
+                'latitude': latLng.latitude,
+                'longitude': latLng.longitude,
+              })
+          .toList(),
+      'createdBy': createdBy, // Set createdBy value
+    });
   }
 
   @override

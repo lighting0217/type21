@@ -58,6 +58,7 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
       return {}; // Return an empty map if temperature data not found
     }
   }
+
   double getMinTemp(Map<DateTime, Map<String, double>> temperatureData) {
     double minTemp = double.infinity;
 
@@ -222,7 +223,8 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
                           onPressed: () {
                             if (mapController != null) {
                               final center = getPolygonCenter(widget.polygons);
-                              final cameraUpdate = CameraUpdate.newLatLng(center);
+                              final cameraUpdate =
+                                  CameraUpdate.newLatLng(center);
                               mapController!.animateCamera(cameraUpdate);
                             }
                           },
@@ -242,6 +244,7 @@ class _FieldInfoTestTestState extends State<FieldInfoTest> {
       );
     }
   }
+
   List<Widget> _buildTemperatureList() {
     return [
       const SizedBox(height: 16),

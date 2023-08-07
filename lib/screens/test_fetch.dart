@@ -66,7 +66,6 @@ class _TestFetchState extends State<TestFetch> {
     return Scaffold(
       appBar: AppBar(title: const Text('Temperature Data')),
       body: StreamBuilder<QuerySnapshot>(
-        // Replace 'temperatures' with your actual subcollection name
         stream: firestore.collectionGroup('temperatures').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {

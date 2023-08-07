@@ -16,7 +16,8 @@ class HeaderSc extends StatefulWidget {
 
 class _HeaderScState extends State<HeaderSc> {
   String city = "";
-  final GlobalController globalController = Get.put(GlobalController(), permanent: true);
+  final GlobalController globalController =
+      Get.put(GlobalController(), permanent: true);
   String date = DateFormat.yMMMd().format(DateTime.now());
 
   @override
@@ -53,7 +54,8 @@ class _HeaderScState extends State<HeaderSc> {
           alignment: Alignment.topLeft,
           child: Text(
             date,
-            style: const TextStyle(height: 1.5, fontSize: 14, color: Colors.grey),
+            style:
+                const TextStyle(height: 1.5, fontSize: 14, color: Colors.grey),
           ),
         ),
       ],
