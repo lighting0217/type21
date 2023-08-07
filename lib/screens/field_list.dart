@@ -123,6 +123,7 @@ class _FieldListState extends State<FieldList> {
                   ? (data['selectedDate'] as Timestamp).toDate()
                   : null,
               createdBy: data['createdBy'] ?? '',
+              id: data['id'] ?? '',
             );
           }).toList();
 
