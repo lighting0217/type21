@@ -23,6 +23,30 @@ class _FieldListState extends State<FieldList> {
 
   late final String currentUserUid = _auth.currentUser?.uid ?? '';
 
+  String convertAreaToRaiNganWah(double polygonArea) {
+    final double rai = (polygonArea / 1600).floorToDouble();
+    final double ngan = ((polygonArea - (rai * 1600)) / 400).floorToDouble();
+    final double squareWah = (polygonArea / 4) - (rai * 400) - (ngan * 100);
+
+    String result = 'พื้นที่เพาะปลูก \n';
+    result += '${rai.toInt()} ไร่ ';
+    result += '${ngan.toInt()} งาน ';
+    result += '${squareWah.toStringAsFixed(2)} ตารางวา';
+
+    return result;
+  }
+
+  String getThaiRiceType(String? riceType) {
+    switch (riceType) {
+      case 'KDML105':
+        return 'ข้าวหอมมะลิ';
+      case 'RD6':
+        return 'ข้าวกข.6';
+      default:
+        return riceType ?? 'N/A';
+    }
+  }
+
   Widget _buildFieldList(List<Field> fieldList) {
     final userFieldList =
         fieldList.where((field) => field.createdBy == currentUserUid).toList();
@@ -37,6 +61,7 @@ class _FieldListState extends State<FieldList> {
       itemCount: userFieldList.length,
       itemBuilder: (context, index) {
         final field = userFieldList[index];
+        final doc = fieldList[index];
         return ListTile(
           title: Text(
             field.fieldName,
@@ -45,18 +70,35 @@ class _FieldListState extends State<FieldList> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text('Rice Type: ${field.riceType}'),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'พันธุ์ข้าว: ${getThaiRiceType(field.riceType)}',
+                style: GoogleFonts.openSans(
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                convertAreaToRaiNganWah(field.polygonArea),
+                style: GoogleFonts.openSans(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FieldInfo(
                   field: field,
+                  documentID: doc.id,
                   fieldName: field.fieldName,
                   polygonArea: field.polygonArea,
                   riceType: field.riceType,
                   polygons: field.polygons,
-                  selectedDate: field.selectedDate, // Pass the Field object
+                  selectedDate: field.selectedDate,
                 ),
               ),
             );
@@ -75,7 +117,7 @@ class _FieldListState extends State<FieldList> {
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue, // Change app bar color
+        backgroundColor: Colors.blue,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -108,24 +150,36 @@ class _FieldListState extends State<FieldList> {
             );
           }
 
-          final fieldList = snapshot.data!.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
-            return Field(
-              fieldName: data['fieldName'],
-              riceType: data['riceType'],
-              polygonArea: data['polygonArea'].toDouble(),
-              totalDistance: data['totalDistance'].toDouble(),
-              polygons: (data['polygons'] as List<dynamic>).map((point) {
-                return LatLng(point['latitude'].toDouble(),
-                    point['longitude'].toDouble());
-              }).toList(),
-              selectedDate: data['selectedDate'] != null
-                  ? (data['selectedDate'] as Timestamp).toDate()
-                  : null,
-              createdBy: data['createdBy'] ?? '',
-              id: data['id'] ?? '',
-            );
-          }).toList();
+          final fieldList = snapshot.data!.docs
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+
+                if (data['createdBy'] == currentUserUid) {
+                  return Field(
+                    id: doc.id,
+                    // Set the document ID here
+                    fieldName: data['fieldName'],
+                    riceType: data['riceType'],
+                    polygonArea: data['polygonArea'].toDouble(),
+                    totalDistance: data['totalDistance'].toDouble(),
+                    polygons: (data['polygons'] as List<dynamic>).map((point) {
+                      return LatLng(
+                        point['latitude'].toDouble(),
+                        point['longitude'].toDouble(),
+                      );
+                    }).toList(),
+                    selectedDate: data['selectedDate'] != null
+                        ? (data['selectedDate'] as Timestamp).toDate()
+                        : null,
+                    createdBy: data['createdBy'] ?? '',
+                    temperatureData: [],
+                  );
+                } else {
+                  return null;
+                }
+              })
+              .whereType<Field>()
+              .toList();
 
           if (_auth.currentUser != null) {
             if (kDebugMode) {

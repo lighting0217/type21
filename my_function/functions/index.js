@@ -9,59 +9,62 @@ exports.TempData = functions
     .pubsub.schedule("0 12 * * *")
     .timeZone("Asia/Bangkok")
     .onRun(async (context) => {
-      try {
-        const fieldsSnapshot = await admin
-            .firestore()
-            .collection("fields")
-            .get();
-
-        for (const fieldDoc of fieldsSnapshot.docs) {
-          const fieldData = fieldDoc.data();
-          const {latitude, longitude} = fieldData.polygons[0];
-          const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly&appid=${apiKey}&units=metric`;
-
-          const response = await axios.get(apiUrl);
-          const dailyData = response.data.daily;
-
-          for (const dailyDatum of dailyData) {
-            const dateThai = moment
-                .unix(dailyDatum.dt)
-                .utcOffset(7)
-                .format("MMMM D, YYYY");
-            const minTemp = dailyDatum.temp.min;
-            const maxTemp = dailyDatum.temp.max;
-            const temperatureDocRef = fieldDoc.ref
-                .collection("temperatures")
-                .doc(dateThai);
-            const temperatureDoc = await temperatureDocRef
+        try {
+            const fieldsSnapshot = await admin
+                .firestore()
+                .collection("fields")
                 .get();
 
-            if (temperatureDoc.exists) {
-            // Update existing temperature data
-              await temperatureDocRef.update({
-                minTemp,
-                maxTemp,
-                date: admin.firestore.FieldValue
-                    .serverTimestamp(),
-              });
-            } else {
-            // Add new temperature data
-              await temperatureDocRef.set({
-                minTemp,
-                maxTemp,
-                date: admin.firestore.FieldValue
-                    .serverTimestamp(),
-              });
+            for (const fieldDoc of fieldsSnapshot.docs) {
+                const fieldData = fieldDoc.data();
+                const {latitude, longitude} = fieldData.polygons[0];
+                const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly&appid=${apiKey}&units=metric`;
+
+                const response = await axios.get(apiUrl);
+                const dailyData = response.data.daily;
+
+                for (const dailyDatum of dailyData) {
+                    const dateThai = moment
+                        .unix(dailyDatum.dt)
+                        .utcOffset(7)
+                        .format("MMMM D, YYYY");
+                    const documentID = fieldDoc.id;
+                    const minTemp = dailyDatum.temp.min;
+                    const maxTemp = dailyDatum.temp.max;
+                    const temperatureDocRef = fieldDoc.ref
+                        .collection("temperatures")
+                        .doc(dateThai);
+                    const temperatureDoc = await temperatureDocRef
+                        .get();
+
+                    if (temperatureDoc.exists) {
+                        // Update existing temperature data
+                        await temperatureDocRef.update({
+                            documentID,
+                            minTemp,
+                            maxTemp,
+                            date: admin.firestore.FieldValue
+                                .serverTimestamp(),
+                        });
+                    } else {
+                        // Add new temperature data
+                        await temperatureDocRef.set({
+                            documentID,
+                            minTemp,
+                            maxTemp,
+                            date: admin.firestore.FieldValue
+                                .serverTimestamp(),
+                        });
+                    }
+                }
             }
-          }
+            console.log(
+                "Temperature data fetched and saved successfully.");
+            return null;
+        } catch (error) {
+            console.error(
+                "Error fetching temperature data:",
+                error);
+            return null;
         }
-        console.log(
-            "Temperature data fetched and saved successfully.");
-        return null;
-      } catch (error) {
-        console.error(
-            "Error fetching temperature data:",
-            error);
-        return null;
-      }
     });

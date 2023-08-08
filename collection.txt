@@ -26,24 +26,28 @@ collection:fields
 
     sub-collections:temperatures
         document:
+            documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
         document:
+            documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
         document:
+            documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
         ........:
+            ..........: same as main document id from main collection
             ....:timestamp
             .......:number
             .......:number
 and this is example that my firestore look like
 collection:fields
-	document:Auto-ID
+	document:HimhD5KoPrZliLpEWFqT
 	createdBy:"ZtvZ6uJMwQaDApxvF2HMipl7Hgz2"
 	fieldName:"11"
 	polygonArea:1213.8227975962197
@@ -66,54 +70,107 @@ collection:fields
 
     sub-collections:temperatures
         August 10, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:30.12
             minTemp:23.76
         August 2, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 2, 2023 at 12:00:18PM UTC+7
             maxTemp:25.08
             minTemp:23.61
         August 3, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:25.08
             minTemp:23.39
         August 4, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:26.36
             minTemp:22.82
         August 5, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:29.78
             minTemp:22.66
         August 6, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:29.38
             minTemp:22.09
         August 7, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:30.75
             minTemp:23.38
         August 8, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:30.48
             minTemp:23.52
         August 9, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
             date:August 3, 2023 at 12:00:18PM UTC+7
             maxTemp:29.72
             minTemp:23.73
     this is rule
 service cloud.firestore {
-  match /databases/{database}/documents {
-    match /fields/{fieldId} {
-      allow read: if request.auth != null;
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.createdBy;
+    match /databases/{database}/documents {
+      // Allow authenticated users to read fields and related temperature data
+      match /fields/{fieldId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && request.auth.uid == resource.data.createdBy;
+
+        // Allow reading sub-collection temperatures for authenticated users
+        match /temperatures/{temperatureDoc} {
+          allow read: if request.auth != null && resource.data.createdBy == get(/databases/$(database)/documents/fields/$(fieldId)).data.createdBy;
+        }
+      }
+      // Allow authenticated users to create new fields
+      match /fields/{fieldId} {
+        allow create: if request.auth != null;
+        allow read, write: if request.auth != null && request.auth.uid == resource.data.createdBy;
+      }
+
+      // Allow authenticated users to manage their own user data
+      match /users/{userId} {
+        allow create: if request.auth != null;
+        allow read, update, delete, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow authenticated users to read temperature data
+    match /fields/{fieldId}/temperatures/{temperatureDoc} {
+      allow read: if request.auth != null && request.auth.uid == get(/databases/$(database)/documents/fields/$(fieldId)).data.createdBy;
     }
-    match /users/{userId} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
-    }
-    match /fields/{fieldId}/temperatures/{temperatureId} {
-      allow read: if request.auth != null;
-    }
-  }
+	}
 }
+
+this is single index
+Collection ID   Field path  Collection scope    Collection group scope
+temperatures    documentID
+
+Indexes     Collection scope    Collection group scope
+Ascending   Enabled             Enabled
+Descending  Enabled             Disabled
+Arrays      Enabled             Disabled
+
+this is composite index
+
+Collection ID	Fields indexed                                                                              Query scope
+temperatures	documentID Ascending date Ascending __name__ Ascending                                      Collection group
+te%2Cperatures	documentID Ascending date Ascending minTemp Ascending maxTemp Ascending __name__ Ascending	Collection group
+what result i want is
+Query scope         Collection group
+Collection group    temperatures
+Where documentID == HimhD5KoPrZliLpEWFqT
+Query results
+Document ID	                                                date	                                documentID	            maxTemp	minTemp
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 10, 2023	August 9, 2023 at 1:40:08 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.7	22.66
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 11, 2023	August 9, 2023 at 1:40:08 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	32.5	24.06
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 12, 2023	August 9, 2023 at 1:40:09 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.55	23.45
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 13, 2023	August 9, 2023 at 1:40:09 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.66	23.69
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 14, 2023	August 9, 2023 at 1:40:10 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.32	23.82
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 15, 2023	August 9, 2023 at 1:40:10 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	33.1	24.78
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 16, 2023	August 9, 2023 at 1:40:10 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	32.35	26.07
+/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 9, 2023	August 9, 2023 at 1:40:07 PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.1	23.61

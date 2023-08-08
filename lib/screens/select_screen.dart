@@ -9,8 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'field_list.dart';
 import 'home_screen.dart';
 import 'map_screen_type2.dart';
-import 'map_screen_type2_test.dart';
-import 'test_fetch.dart';
 import 'weather_screen.dart';
 
 final auth = FirebaseAuth.instance;
@@ -130,20 +128,6 @@ class SelectScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('To Map Screen Test'),
-              onTap: () {
-                navigateToScreen(
-                  context,
-                  MapScreenType2Test(
-                    polygons: locationList,
-                    polygonArea: 0,
-                    lengths: const [],
-                    onPolygonAreaChanged: (double value) {},
-                  ),
-                );
-              },
-            ),
-            ListTile(
               title: const Text('To Weather Screen'),
               onTap: () {
                 navigateToScreen(context, WeatherScreen());
@@ -158,12 +142,12 @@ class SelectScreen extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
+            /*ListTile(
               title: const Text('To TestFetch Screen'),
               onTap: () {
-                navigateToScreen(context, const TestFetch());
+                navigateToScreen(context, const LineChartTest());
               },
-            ),
+            ),*/
           ],
         ),
       ),
