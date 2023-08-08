@@ -87,8 +87,8 @@ class _TestFetchState extends State<TestFetch> {
               final data = temperatureData[index];
               return ListTile(
                 title: Text('Date: ${data.date}'),
-                subtitle: Text(
-                    'Min Temp: ${data.minTemp}, Max Temp: ${data.maxTemp}'),
+                subtitle: Text('Min Temp: ${data.minTemp},'
+                    ' Max Temp: ${data.maxTemp}'),
               );
             },
           );

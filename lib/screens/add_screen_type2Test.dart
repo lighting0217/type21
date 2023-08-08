@@ -136,12 +136,14 @@ class _AddScreenType2TestState extends State<AddScreenType2Test> {
     );
   }
 
-  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
-      String riceType,
-      double polygonArea,
-      double totalDistance,
-      List<LatLng> polygons,
-      String createdBy,) async {
+  Future<DocumentReference> _addNewFieldToFirestore(
+    String fieldName,
+    String riceType,
+    double polygonArea,
+    double totalDistance,
+    List<LatLng> polygons,
+    String createdBy,
+  ) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');

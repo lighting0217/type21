@@ -258,8 +258,6 @@ class _FieldInfoTestTestTestState extends State<FieldInfoTest> {
             .collection('fields')
             .doc(widget.field.fieldName)
             .collection('temperatures')
-            .doc('daily')
-            .collection('dates')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

@@ -126,22 +126,24 @@ class _AddScreenType2State extends State<AddScreenType2> {
       createdBy: currentUserUid,
     );
 
+    // Navigate to the FieldList screen with the new field data
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            FieldList(fields: [newField]), // Pass the new field
+        builder: (context) => FieldList(fields: [newField]),
       ),
     );
   }
 
-  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
-      String riceType,
-      double polygonArea,
-      double totalDistance,
-      List<LatLng> polygons,
-      String createdBy,) async {
+  Future<DocumentReference> _addNewFieldToFirestore(
+    String fieldName,
+    String riceType,
+    double polygonArea,
+    double totalDistance,
+    List<LatLng> polygons,
+    String createdBy,
+  ) async {
     if (kDebugMode) {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');

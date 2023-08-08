@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -27,7 +28,7 @@ class Field {
 }
 
 class TemperatureData {
-  final DateTime date;
+  final String date;
   final double minTemp;
   final double maxTemp;
 
@@ -36,7 +37,17 @@ class TemperatureData {
     required this.minTemp,
     required this.maxTemp,
   });
+
+  factory TemperatureData.fromSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return TemperatureData(
+      date: doc.id,
+      minTemp: data['minTemp'],
+      maxTemp: data['maxTemp'],
+    );
+  }
 }
+
 class FieldInfo extends StatefulWidget {
   const FieldInfo({
     Key? key,
@@ -48,6 +59,7 @@ class FieldInfo extends StatefulWidget {
     required DateTime? selectedDate,
   }) : super(key: key);
   final Field field;
+
   @override
   State<FieldInfo> createState() => _FieldInfoState();
 }
@@ -105,6 +117,7 @@ class _FieldInfoState extends State<FieldInfo> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     if (widget.field.polygons.isEmpty) {
@@ -224,50 +237,36 @@ class _FieldInfoState extends State<FieldInfo> {
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: FirebaseFirestore.instance
-            .collection('fields')
-            .doc(widget.field.fieldName)
-            .collection('temperatures')
-            .doc('daily')
-            .collection('dates')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+      StreamBuilder<QuerySnapshot>(
+          stream: firestore.collectionGroup('temperatures').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              if (kDebugMode) {
+                print('Error: {$snapshot.error}');
+              }
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: Text('No data'));
+            }
             final temperatureDocs = snapshot.data!.docs;
-
+            final temperatureData = temperatureDocs
+                .map((doc) => TemperatureData.fromSnapshot(doc))
+                .toList();
             return ListView.builder(
-              shrinkWrap: true,
-              itemCount: temperatureDocs.length,
-              itemBuilder: (context, index) {
-                final temperatureData = temperatureDocs[index].data();
-
-                final date = temperatureData['date'].toDate();
-                final minTemp = temperatureData['minTemp'] as double;
-                final maxTemp = temperatureData['maxTemp'] as double;
-
-                return ListTile(
-                  title: Text(
-                    'Date: ${formatDateThai(date)}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Min: ${minTemp.toStringAsFixed(2)} °C, Max: ${maxTemp.toStringAsFixed(2)} °C',
-                    style: GoogleFonts.openSans(fontSize: 16),
-                  ),
-                );
-              },
-            );
-          } else {
-            return const Text('Temperature data not available.');
-          }
-        },
-      ),
+                itemCount: temperatureData.length,
+                itemBuilder: (context, index) {
+                  final data = temperatureData[index];
+                  return ListTile(
+                    title: Text('Date: ${data.date}'),
+                    subtitle: Text('Min Temp: ${data.minTemp}'
+                        'Max Temp: ${data.maxTemp}'),
+                  );
+                });
+          })
     ];
   }
 }
