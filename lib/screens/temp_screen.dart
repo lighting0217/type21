@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
-import 'field_info.dart';
+import 'package:type21/screens/temp_chart_screen.dart';
 
 import 'field_info.dart';
 
@@ -34,6 +33,18 @@ class TemperatureScreen extends StatelessWidget {
             )
           : Column(
               children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            TempChartScreen(temperatureData: temperatureData),
+                      ),
+                    );
+                  },
+                  child: const Text('แสดงกราฟ'),
+                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: temperatureData.length,
