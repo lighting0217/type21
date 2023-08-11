@@ -61,6 +61,7 @@ class FieldInfo extends StatefulWidget {
   }) : super(key: key);
   final Field field;
   final String documentID;
+
   @override
   State<FieldInfo> createState() => _FieldInfoState();
 }
@@ -111,6 +112,7 @@ class _FieldInfoState extends State<FieldInfo> {
     final formatter = DateFormat.yMMMMEEEEd('th_TH');
     return formatter.format(date);
   }
+
   Future<void> loadTemperatureData() async {
     try {
       final temperatureQuerySnapshot = await FirebaseFirestore.instance
