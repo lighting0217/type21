@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:type21/screens/new_temp_fl_screen.dart';
 
 import 'field_info.dart';
 
@@ -69,6 +70,17 @@ class TempFlChartScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    NewTempChart(temperatureData: temperatureData)),
+          );
+        },
+        child: const Text('แสดงกราฟ'),
       ),
     );
   }
