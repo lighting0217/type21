@@ -38,13 +38,14 @@ class TemperatureData {
   double maxTemp;
   double minTemp;
   String documentID;
+  String formattedDate;
 
   TemperatureData({
     required this.date,
     required this.maxTemp,
     required this.minTemp,
     required this.documentID,
-  });
+  }) : formattedDate = DateFormat('EEEE d MMMM y', 'th_TH').format(date);
 }
 
 class FieldInfo extends StatefulWidget {

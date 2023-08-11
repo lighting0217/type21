@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 
 import 'field_info.dart';
 
+import 'field_info.dart';
+
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
 
