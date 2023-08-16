@@ -9,9 +9,14 @@ import 'package:type21/screens/main/select_screen.dart';
 import 'field_info.dart';
 
 class FieldList extends StatefulWidget {
-  const FieldList({Key? key, required this.fields}) : super(key: key);
+  const FieldList({
+    Key? key,
+    required this.fields,
+    required this.monthlyTemperatureData,
+  }) : super(key: key);
 
   final List<Field> fields;
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
 
   @override
   State<FieldList> createState() => _FieldListState();
@@ -173,6 +178,7 @@ class _FieldListState extends State<FieldList> {
                         : null,
                     createdBy: data['createdBy'] ?? '',
                     temperatureData: [],
+                    monthlyTemperatureData: [],
                   );
                 } else {
                   return null;
@@ -180,7 +186,6 @@ class _FieldListState extends State<FieldList> {
               })
               .whereType<Field>()
               .toList();
-
           if (_auth.currentUser != null) {
             if (kDebugMode) {
               print("User Authenticated: true");

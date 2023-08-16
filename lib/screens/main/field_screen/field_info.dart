@@ -19,6 +19,7 @@ class Field {
   DateTime? selectedDate;
   String createdBy;
   List<TemperatureData> temperatureData;
+  List<MonthlyTemperatureData> monthlyTemperatureData;
 
   Field({
     required this.id,
@@ -30,23 +31,49 @@ class Field {
     required this.selectedDate,
     required this.createdBy,
     required this.temperatureData,
+    required this.monthlyTemperatureData,
+  });
+}
+
+class MonthlyTemperatureData {
+  final String monthYear;
+  final double gddSum;
+  final String documentID;
+  final double maxGdd;
+
+  MonthlyTemperatureData({
+    required this.monthYear,
+    required this.gddSum,
+    required this.documentID,
+    required this.maxGdd,
   });
 }
 
 class TemperatureData {
-  static const double averageTemperature = 0.0;
   DateTime date;
   double maxTemp;
   double minTemp;
   String documentID;
   String formattedDate;
+  double gdd;
 
   TemperatureData({
+    required this.gdd,
     required this.date,
     required this.maxTemp,
     required this.minTemp,
     required this.documentID,
-  }) : formattedDate = DateFormat('EEEE d MMMM y', 'th_TH').format(date);
+  }) : formattedDate = DateFormat('EEEE d MMMM y', 'th_TH').format(date) {
+    if (kDebugMode) {
+      print("TemperatureData instance created:");
+      print("gdd: $gdd");
+      print("date: $date");
+      print("maxTemp: $maxTemp");
+      print("minTemp: $minTemp");
+      print("documentID: $documentID");
+      print("formattedDate: $formattedDate");
+    }
+  }
 }
 
 class FieldInfo extends StatefulWidget {
@@ -126,16 +153,19 @@ class _FieldInfoState extends State<FieldInfo> {
       final temperatureData = temperatureQuerySnapshot.docs.map((doc) {
         final data = doc.data();
         final date = (data['date'] as Timestamp).toDate();
-        final maxTemp = data['maxTemp'] as double;
-        final minTemp = data['minTemp'] as double;
+        final maxTemp = (data['maxTemp'] as double?) ?? 0.0;
+        final minTemp = (data['minTemp'] as double?) ?? 0.0;
+        final gdd = (data['gdd'] is num) ? data['gdd'].toDouble() : 0.0;
+
         final documentID = doc.id;
         return TemperatureData(
-            date: date,
-            maxTemp: maxTemp,
-            minTemp: minTemp,
-            documentID: documentID);
+          date: date,
+          maxTemp: maxTemp,
+          minTemp: minTemp,
+          documentID: documentID,
+          gdd: gdd,
+        );
       }).toList();
-
       if (temperatureData.isNotEmpty) {
         setState(() {
           widget.field.temperatureData = temperatureData;
@@ -147,10 +177,57 @@ class _FieldInfoState extends State<FieldInfo> {
       }
     }
   }
+
+  Future<void> loadMonthlyTemperatureData() async {
+    try {
+      final fieldDocumentSnapshot = await FirebaseFirestore.instance
+          .collection('fields')
+          .doc(widget.documentID)
+          .get();
+
+      final fieldData = fieldDocumentSnapshot.data();
+      final maxGdd = fieldData?['riceMaxGdd'];
+      print("maxGdd from fieldData: $maxGdd");
+
+      final monthlyTemperatureQuerySnapshot = await FirebaseFirestore.instance
+          .collection('fields')
+          .doc(widget.documentID)
+          .collection('temperatures_monthly')
+          .orderBy('date', descending: true)
+          .get();
+
+      final monthlyTemperatureData =
+          monthlyTemperatureQuerySnapshot.docs.map((doc) {
+        final data = doc.data();
+        final monthYear = doc.id;
+        final gddSum =
+            (data['gddSum'] is num) ? data['gddSum'].toDouble() : 0.0;
+
+        return MonthlyTemperatureData(
+          monthYear: monthYear,
+          gddSum: gddSum,
+          documentID: doc.id,
+          maxGdd: maxGdd,
+        );
+      }).toList();
+
+      if (monthlyTemperatureData.isNotEmpty) {
+        setState(() {
+          widget.field.monthlyTemperatureData = monthlyTemperatureData;
+        });
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error loading monthly temperature data: $error");
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     loadTemperatureData();
+    loadMonthlyTemperatureData();
   }
 
   @override
@@ -284,8 +361,9 @@ class _FieldInfoState extends State<FieldInfo> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => TemperatureScreen(
-                                  temperatureData: widget.field
-                                      .temperatureData, // ใช้ temperatureData จาก widget.field
+                                  temperatureData: widget.field.temperatureData,
+                                  monthlyTemperatureData:
+                                      widget.field.monthlyTemperatureData,
                                 ),
                               ),
                             );

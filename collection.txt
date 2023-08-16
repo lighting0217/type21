@@ -1,4 +1,4 @@
-this is my collection
+นี้คือโครงสร้างFirebase ของฉัน
 collection:fields
 	    document:Auto-ID
 	    createdBy:string (from user id from firebase auth)
@@ -21,6 +21,7 @@ collection:fields
                     latitude
                     longitude
 	    riceType:string
+	    riceMaxGdd:number
 	    selectedDate:time stamp
 	    totalDistance:number
 
@@ -30,22 +31,36 @@ collection:fields
             date:timestamp
             maxTemp:number
             minTemp:number
+            gdd:number
         document:
             documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
+            gdd:number
         document:
             documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
+            gdd:number
         ........:
             ..........: same as main document id from main collection
             ....:timestamp
             .......:number
             .......:number
-and this is example that my firestore look like
+            ...:number
+    sub-collection:temperatures_monthly
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            gddSum:number
+        document:
+            ........: same as main document id from main collection
+            ....:timestamp
+            ......:number
+
+ส่วนนี้คือตัวอย่าง firebase ของฉัน
 collection:fields
 	document:HimhD5KoPrZliLpEWFqT
 	createdBy:"ZtvZ6uJMwQaDApxvF2HMipl7Hgz2"
@@ -65,57 +80,76 @@ collection:fields
 		latitude:17.625395254828224
 		longitude:104.2530719563365
 	riceType:"KDML105"
+	riceMaxGdd:2188.84
 	selectedDate:June 20, 2023 at 12:00:00AM UTC+7
 	totalDistance:143.21405451629587
 
     sub-collections:temperatures
-        August 10, 2023
+        August 16, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 16, 2023 at 12:00:18PM UTC+7            gdd:18.62
             maxTemp:30.12
             minTemp:23.76
-        August 2, 2023
+        August 17, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 2, 2023 at 12:00:18PM UTC+7
+            date:August 17, 2023 at 12:00:18PM UTC+7
+            gdd:19.275
             maxTemp:25.08
             minTemp:23.61
-        August 3, 2023
+        August 18, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.76
             maxTemp:25.08
             minTemp:23.39
-        August 4, 2023
+        August 19, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.96
             maxTemp:26.36
             minTemp:22.82
-        August 5, 2023
+        August 20, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.64
             maxTemp:29.78
             minTemp:22.66
-        August 6, 2023
+        August 21, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:19.08
             maxTemp:29.38
             minTemp:22.09
-        August 7, 2023
+        August 22, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:18.165
             maxTemp:30.75
             minTemp:23.38
-        August 8, 2023
+        August 23, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:15.66
             maxTemp:30.48
             minTemp:23.52
-        August 9, 2023
+        August 24, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 3, 2023 at 12:00:18PM UTC+7
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:14.86
             maxTemp:29.72
             minTemp:23.73
+        August 25, 2023
+            documentID:HimhD5KoPrZliLpEWFqT
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:14.16.560
+            maxTemp:29.72
+            minTemp:23.73
+    sub-collection:temperatures_monthly
+        August 2023
+            documentID:HimhD5KoPrZliLpEWFqT
+            date:Aug 18, 2023 at 12:00:18PM UTC+7
+            gddSum:184.95
+        September 2023
+            documentID:HimhD5KoPrZliLpEWFqT
+            date:Aug 18, 2023 at 12:00:18PM UTC+7
+            gdd:.......
 
-    this is rule
+นี้คือ Rules
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -135,11 +169,15 @@ service cloud.firestore {
     match /fields/{fieldId}/temperatures/{temperatureDoc} {
       allow read: if request.auth != null;
     }
+
+    // Allow authenticated users to read monthly temperature data
+    match /fields/{fieldId}/temperatures_monthly/{monthlyTemperatureDoc} {
+      allow read: if request.auth != null;
+    }
   }
 }
-
-
-this is single index
+นี้คือ Index
+single index
 Collection ID   Field path  Collection scope    Collection group scope
 temperatures    documentID
 
@@ -148,22 +186,7 @@ Ascending   Enabled             Enabled
 Descending  Enabled             Disabled
 Arrays      Enabled             Disabled
 
-this is composite index
-
+นี้คือ composite index
 Collection ID	Fields indexed                                                                              Query scope
 temperatures	documentID Ascending date Ascending __name__ Ascending                                      Collection group
 te%2Cperatures	documentID Ascending date Ascending minTemp Ascending maxTemp Ascending __name__ Ascending	Collection group
-what result i want is
-Query scope         Collection group
-Collection group    temperatures
-Where documentID == HimhD5KoPrZliLpEWFqT
-Query results
-Document ID	                                                date	                                documentID	            maxTemp	minTemp
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 10, 2023	August 9, 2023 at 1:40:08PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.7	22.66
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 11, 2023	August 9, 2023 at 1:40:08PM UTC+7	"HimhD5KoPrZliLpEWFqT"	32.5	24.06
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 12, 2023	August 9, 2023 at 1:40:09PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.55	23.45
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 13, 2023	August 9, 2023 at 1:40:09PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.66	23.69
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 14, 2023	August 9, 2023 at 1:40:10PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.32	23.82
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 15, 2023	August 9, 2023 at 1:40:10PM UTC+7	"HimhD5KoPrZliLpEWFqT"	33.1	24.78
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 16, 2023	August 9, 2023 at 1:40:10PM UTC+7	"HimhD5KoPrZliLpEWFqT"	32.35	26.07
-/fields/HimhD5KoPrZliLpEWFqT/temperatures/August 9, 2023	August 9, 2023 at 1:40:07PM UTC+7	"HimhD5KoPrZliLpEWFqT"	31.1	23.61

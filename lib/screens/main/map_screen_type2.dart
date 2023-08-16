@@ -188,6 +188,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
           lengths: widget.lengths,
           polygonAreaMeters: polygonAreaMeters,
           totalDistance: _totalDistance,
+          monthlyTemperatureData: const [],
         ),
       ),
     );

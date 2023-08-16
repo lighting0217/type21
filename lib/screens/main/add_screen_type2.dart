@@ -19,12 +19,14 @@ class AddScreenType2 extends StatefulWidget {
     required this.polygonArea,
     required this.lengths,
     required double polygonAreaMeters,
+    required this.monthlyTemperatureData,
   }) : super(key: key);
 
   final List<double> lengths;
   final double polygonArea;
   final List<LatLng> polygons;
   final double totalDistance;
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
 
   @override
   State<AddScreenType2> createState() => _AddScreenType2State();
@@ -52,7 +54,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
     return result;
   }
 
-  // Create polygons based on the provided coordinates
   Set<Polygon> _createPolygons() {
     final List<LatLng> polygonLatLngs = widget.polygons;
     final Set<Polygon> polygonSet = {};
@@ -69,7 +70,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
     return polygonSet;
   }
 
-  // Create markers based on the provided coordinates
   List<Marker> _createMarkers() {
     final List<LatLng> polygonLatLngs = widget.polygons;
     final List<Marker> markerList = [];
@@ -105,7 +105,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-    // Call the _addNewFieldToFirestore function here
     await _addNewFieldToFirestore(
       fieldName,
       riceType,
@@ -115,7 +114,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
       currentUserUid,
     );
 
-    // Create a Field instance with the added field data
     final newField = Field(
       fieldName: fieldName,
       riceType: riceType,
@@ -126,14 +124,16 @@ class _AddScreenType2State extends State<AddScreenType2> {
       createdBy: currentUserUid,
       temperatureData: [],
       id: '',
+      monthlyTemperatureData: [],
     );
-
-    // Navigate to the FieldList screen with the new field data
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FieldList(fields: [newField]),
+        builder: (context) => FieldList(
+          fields: [newField],
+          monthlyTemperatureData: const [],
+        ),
       ),
     );
   }
@@ -150,9 +150,18 @@ class _AddScreenType2State extends State<AddScreenType2> {
       print(
           'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
     }
+
+    double riceMaxGdd = 0;
+    if (riceType == 'KDML105') {
+      riceMaxGdd = 2188.84;
+    } else if (riceType == 'RD6') {
+      riceMaxGdd = 2000;
+    }
+
     return await _firestore.collection('fields').add({
       'fieldName': fieldName,
       'riceType': riceType,
+      'riceMaxGdd': riceMaxGdd,
       'polygonArea': polygonArea,
       'totalDistance': totalDistance,
       'polygons': polygons

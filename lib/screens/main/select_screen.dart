@@ -138,7 +138,10 @@ class SelectScreen extends StatelessWidget {
               onTap: () {
                 navigateToScreen(
                   context,
-                  const FieldList(fields: []),
+                  const FieldList(
+                    fields: [],
+                    monthlyTemperatureData: [],
+                  ),
                 );
               },
             ),

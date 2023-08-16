@@ -7,9 +7,13 @@ import 'temp_chart_screen.dart';
 
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
 
-  const TemperatureScreen({Key? key, required this.temperatureData})
-      : super(key: key);
+  const TemperatureScreen({
+    Key? key,
+    required this.temperatureData,
+    required this.monthlyTemperatureData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +43,22 @@ class TemperatureScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final temperature = temperatureData[index];
                       try {
-                        final temperature = temperatureData[index];
+                        final formattedDate =
+                            thFormatDate(temperature.documentID);
+                        final maxTemp = temperature.maxTemp.toStringAsFixed(2);
+                        final minTemp = temperature.minTemp.toStringAsFixed(2);
+                        final gdd = temperature.gdd.toStringAsFixed(2);
                         return ListTile(
                           title: Text(
-                            thFormatDate(temperature.documentID),
+                            formattedDate,
                             style: GoogleFonts.openSans(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                    ),
-                          subtitle: Text(
-                            'อุณหภูมิสูงสุด: ${temperature.maxTemp.toStringAsFixed(2)} °C\n'
-                            'อุณหภูมิต่ำสุด: ${temperature.minTemp.toStringAsFixed(2)} °C',
                           ),
+                          subtitle: Text('อุณหภูมิสูงสุด: $maxTemp °C\n'
+                              'อุณหภูมิต่ำสุด: $minTemp °C\n'
+                              'GDD: $gdd °C\n'),
                         );
                       } catch (e) {
                         return ListTile(
@@ -62,8 +69,38 @@ class TemperatureScreen extends StatelessWidget {
                     },
                   ),
                 ),
-        ],
-      ),
+                const SizedBox(height: 10),
+                const Center(child: Text('GDD รายเดือน')),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: monthlyTemperatureData.length,
+                        itemBuilder: (context, index) {
+                          final monthlyTemperature =
+                              monthlyTemperatureData[index];
+                          try {
+                            final formattedDate = thFormatDateMonth(
+                                monthlyTemperature.documentID);
+                            final gdd =
+                                monthlyTemperature.gddSum.toStringAsFixed(2);
+                            return ListTile(
+                              title: Text(
+                                formattedDate,
+                                style: GoogleFonts.openSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text('GDD รายเดือน: $gdd °C\n'),
+                            );
+                          } catch (e) {
+                            return ListTile(
+                              title: Text(
+                                  'Error parsing date: ${monthlyTemperature.documentID}'),
+                            );
+                          }
+                        }))
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -71,6 +108,7 @@ class TemperatureScreen extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => TempChartScreen(
                       temperatureData: temperatureData,
+                      monthlyTemperatureData: monthlyTemperatureData,
                     )),
           );
         },

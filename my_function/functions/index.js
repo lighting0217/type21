@@ -20,10 +20,8 @@ exports.TempData = functions
                 const fieldData = fieldDoc.data();
                 const {latitude, longitude} = fieldData.polygons[0];
                 const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly&appid=${apiKey}&units=metric`;
-
                 const response = await axios.get(apiUrl);
                 const dailyData = response.data.daily;
-
                 for (const dailyDatum of dailyData) {
                     const dateThai = moment
                         .unix(dailyDatum.dt)
@@ -40,7 +38,6 @@ exports.TempData = functions
                         .get();
 
                     if (temperatureDoc.exists) {
-                        // Update existing temperature data
                         await temperatureDocRef.update({
                             documentID,
                             minTemp,
@@ -50,7 +47,6 @@ exports.TempData = functions
                             gdd,
                         });
                     } else {
-                        // Add new temperature data
                         await temperatureDocRef.set({
                             documentID,
                             minTemp,
