@@ -5,8 +5,9 @@ const moment = require("moment-timezone");
 admin.initializeApp();
 const apiKey = "a7296ca666d968ee7312a3565a3a28fa";
 exports.TempData = functions
+    .region("asia-southeast1")
     .runWith({memory: "1GB"})
-    .pubsub.schedule("0 12 * * *")
+    .pubsub.schedule("0 7 * * *")
     .timeZone("Asia/Bangkok")
     .onRun(async (context) => {
         try {
@@ -31,6 +32,7 @@ exports.TempData = functions
                     const documentID = fieldDoc.id;
                     const minTemp = dailyDatum.temp.min;
                     const maxTemp = dailyDatum.temp.max;
+                    const gdd = (minTemp + maxTemp) / 2 - 9;
                     const temperatureDocRef = fieldDoc.ref
                         .collection("temperatures")
                         .doc(dateThai);
@@ -45,6 +47,7 @@ exports.TempData = functions
                             maxTemp,
                             date: admin.firestore.FieldValue
                                 .serverTimestamp(),
+                            gdd,
                         });
                     } else {
                         // Add new temperature data
@@ -54,6 +57,7 @@ exports.TempData = functions
                             maxTemp,
                             date: admin.firestore.FieldValue
                                 .serverTimestamp(),
+                            gdd,
                         });
                     }
                 }
