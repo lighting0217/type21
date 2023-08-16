@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:type21/screens/select_screen.dart';
+import 'package:type21/screens/main/select_screen.dart';
 
 import 'field_info.dart';
 
@@ -187,7 +187,7 @@ class _FieldListState extends State<FieldList> {
             }
             return _buildFieldList(fieldList);
           } else {
-            return Container(); // This case is already handled in the AppBar's onPressed logic
+            return Container();
           }
         },
       ),

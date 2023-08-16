@@ -5,21 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:type21/models/profile.dart';
+import 'package:type21/screens/main/select_screen.dart';
 
-import '../models/profile.dart';
-import 'home_screen.dart';
-
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   final formKey = GlobalKey<FormState>();
-  late final VoidCallback? onPressed;
   Profile profile = Profile(email: '', password: '');
 
   @override
@@ -42,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                "Create Account",
+                "Login to your Account",
                 style: GoogleFonts.openSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -59,8 +57,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Enter Email
-                      const Text("Enter E-mail",
-                          style: TextStyle(fontSize: 20)),
+                      Text(
+                        "Enter E-mail",
+                        style: GoogleFonts.openSans(fontSize: 20),
+                      ),
                       TextFormField(
                         validator: MultiValidator([
                           RequiredValidator(errorText: "Please Enter Email"),
@@ -75,8 +75,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      const Text("Enter Password",
-                          style: TextStyle(fontSize: 20)),
+                      Text(
+                        "Enter Password",
+                        style: GoogleFonts.openSans(fontSize: 20),
+                      ),
                       TextFormField(
                         validator: RequiredValidator(
                             errorText: "Please Enter Password"),
@@ -88,48 +90,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          child: const Text("Register",
-                              style: TextStyle(fontSize: 20)),
+                          child: Text(
+                            "Login",
+                            style: GoogleFonts.openSans(fontSize: 20),
+                          ),
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState?.save();
                               try {
                                 await FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
+                                    .signInWithEmailAndPassword(
                                   email: profile.email,
                                   password: profile.password,
                                 )
                                     .then((value) {
                                   formKey.currentState?.reset();
-                                  Fluttertoast.showToast(
-                                    msg: "Create Account Succeeded",
-                                    gravity: ToastGravity.TOP,
-                                  );
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return const HomeScreen();
+                                        return const SelectScreen(
+                                          locationList: [],
+                                        );
                                       },
                                     ),
                                   );
                                 });
                               } on FirebaseAuthException catch (e) {
-                                if (kDebugMode) {
-                                  print(e.code);
-                                }
-                                String message;
-                                if (e.code == 'email-already-in-use') {
-                                  message =
-                                      "This email is already in use. Please use another email.";
-                                } else if (e.code == 'weak-password') {
-                                  message =
-                                      "Password must be at least 6 characters long.";
-                                } else {
-                                  message = e.message!;
-                                }
                                 Fluttertoast.showToast(
-                                  msg: message,
+                                  msg: "${e.message}",
                                   gravity: ToastGravity.CENTER,
                                 );
                               }

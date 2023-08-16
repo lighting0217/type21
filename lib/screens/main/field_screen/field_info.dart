@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:type21/screens/temp_screen.dart';
+import 'package:type21/screens/main/field_screen/temp_screen.dart';
 
 class Field {
   final String id;
@@ -34,6 +34,7 @@ class Field {
 }
 
 class TemperatureData {
+  static const double averageTemperature = 0.0;
   DateTime date;
   double maxTemp;
   double minTemp;
@@ -146,41 +147,6 @@ class _FieldInfoState extends State<FieldInfo> {
       }
     }
   }
-
-/*
- this one is not working use above instead
- Future<void> loadTemperatureData() async {
-    try {
-      final temperatureQuerySnapshot = await firestore
-          .collectionGroup("temperatures")
-          .where("documentID", isEqualTo: widget.documentID)
-          .orderBy("date", descending: true)
-          .get();
-
-      final temperatureData = temperatureQuerySnapshot.docs.map((doc) {
-        final data = doc.data();
-        final date = (data['date'] as Timestamp).toDate();
-        final maxTemp = data['maxTemp'] as double;
-        final minTemp = data['minTemp'] as double;
-        return TemperatureData(date: date, maxTemp: maxTemp, minTemp: minTemp);
-      }).toList();
-
-      if (temperatureData.isNotEmpty) {
-        setState(() {
-          widget.field.temperatureData = temperatureData;
-        });
-        if (kDebugMode) {
-          print('${widget.field.temperatureData}'
-              '$temperatureData');
-        }
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print("Error loading temperature data: $error");
-      }
-    }
-  }*/
-
   @override
   void initState() {
     super.initState();
@@ -305,30 +271,26 @@ class _FieldInfoState extends State<FieldInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'ข้อมูลแุณภูมิ',
+                          'ข้อมูลอุณภูมิ',
                           style: GoogleFonts.openSans(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          // Align to the bottom left corner
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TemperatureScreen(
-                                    temperatureData:
-                                        widget.field.temperatureData,
-                                  ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TemperatureScreen(
+                                  temperatureData: widget.field
+                                      .temperatureData, // ใช้ temperatureData จาก widget.field
                                 ),
-                              );
-                            },
-                            child: const Text('ดูข้อมูลอุณหภูมิ'),
-                          ),
+                              ),
+                            );
+                          },
+                          child: const Text("ดูข้อมูลอุณหภูมิ"),
                         ),
                       ],
                     )

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:type21/screens/temp_chart_screen.dart';
+import 'package:type21/library/th_format_date.dart';
 
 import 'field_info.dart';
+import 'temp_chart_screen.dart';
 
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
@@ -16,9 +16,9 @@ class TemperatureScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ข้อมูลแุณภูมิ',
+          'ข้อมูลอุณหภูมิ (รูปแบบภาษาไทย)',
           style: GoogleFonts.openSans(
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -33,59 +33,21 @@ class TemperatureScreen extends StatelessWidget {
             )
           : Column(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            TempChartScreen(temperatureData: temperatureData),
-                      ),
-                    );
-                  },
-                  child: const Text('แสดงกราฟ'),
-                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: temperatureData.length,
                     itemBuilder: (context, index) {
                       final temperature = temperatureData[index];
                       try {
-                        const monthNames = [
-                          'January',
-                          'February',
-                          'March',
-                          'April',
-                          'May',
-                          'June',
-                          'July',
-                          'August',
-                          'September',
-                          'October',
-                          'November',
-                          'December',
-                        ];
                         final temperature = temperatureData[index];
-                        final documentIdDateParts =
-                            temperature.documentID.split(' ');
-                        final monthIndex =
-                            monthNames.indexOf(documentIdDateParts[0]);
-                        final day = int.parse(
-                            documentIdDateParts[1].replaceAll(',', ''));
-                        final year = int.parse(documentIdDateParts[2]);
-                        final documentIdDateTime =
-                            DateTime(year, monthIndex + 1, day);
-                        final formattedDate =
-                            DateFormat('EEEE ที่ d MMMM ปี y', 'th_TH')
-                                .format(documentIdDateTime);
                         return ListTile(
                           title: Text(
-                            formattedDate,
+                            thFormatDate(temperature.documentID),
                             style: GoogleFonts.openSans(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
+                    ),
                           subtitle: Text(
                             'อุณหภูมิสูงสุด: ${temperature.maxTemp.toStringAsFixed(2)} °C\n'
                             'อุณหภูมิต่ำสุด: ${temperature.minTemp.toStringAsFixed(2)} °C',
@@ -100,8 +62,21 @@ class TemperatureScreen extends StatelessWidget {
                     },
                   ),
                 ),
-              ],
-            ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TempChartScreen(
+                      temperatureData: temperatureData,
+                    )),
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.navigate_next),
+      ),
     );
   }
 }

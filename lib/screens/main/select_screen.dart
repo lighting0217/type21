@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
-import 'field_list.dart';
-import 'home_screen.dart';
+import 'field_screen/field_list.dart';
 import 'map_screen_type2.dart';
 import 'weather_screen.dart';
 

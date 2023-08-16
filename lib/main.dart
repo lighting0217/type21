@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
-import 'screens/home_screen.dart';
+import 'screens/reg_log_screen/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

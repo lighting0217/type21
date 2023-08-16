@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
-
-import '../controller/global_controller.dart';
-import '../library/weather/widget/comfort.dart';
-import '../library/weather/widget/current_winget.dart';
-import '../library/weather/widget/daily_forecast.dart';
-import '../library/weather/widget/header.dart';
-import '../library/weather/widget/hourly_winget.dart';
-import '../library/weather/widget/sun.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:type21/controller/global_controller.dart';
+import 'package:type21/library/weather/widget/comfort.dart';
+import 'package:type21/library/weather/widget/current_winget.dart';
+import 'package:type21/library/weather/widget/daily_forecast.dart';
+import 'package:type21/library/weather/widget/header.dart';
+import 'package:type21/library/weather/widget/hourly_winget.dart';
+import 'package:type21/library/weather/widget/sun.dart'; // Import Google Fonts
 
 class WeatherScreen extends StatelessWidget {
   WeatherScreen({Key? key}) : super(key: key);
