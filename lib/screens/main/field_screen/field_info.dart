@@ -20,6 +20,7 @@ class Field {
   String createdBy;
   List<TemperatureData> temperatureData;
   List<MonthlyTemperatureData> monthlyTemperatureData;
+  List<AccumulatedGddData> accumulatedGddData;
 
   Field({
     required this.id,
@@ -32,6 +33,17 @@ class Field {
     required this.createdBy,
     required this.temperatureData,
     required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
+  });
+}
+
+class AccumulatedGddData {
+  final double AGDD;
+  final String documentID;
+
+  AccumulatedGddData({
+    required this.AGDD,
+    required this.documentID,
   });
 }
 
@@ -47,6 +59,20 @@ class MonthlyTemperatureData {
     required this.documentID,
     required this.maxGdd,
   });
+
+  MonthlyTemperatureData copyWith({
+    String? documentID,
+    double? gddSum,
+    double? maxGdd,
+    String? monthYear,
+  }) {
+    return MonthlyTemperatureData(
+      documentID: documentID ?? this.documentID,
+      gddSum: gddSum ?? this.gddSum,
+      maxGdd: maxGdd ?? this.maxGdd,
+      monthYear: monthYear ?? this.monthYear,
+    );
+  }
 }
 
 class TemperatureData {
@@ -143,14 +169,14 @@ class _FieldInfoState extends State<FieldInfo> {
 
   Future<void> loadTemperatureData() async {
     try {
-      final temperatureQuerySnapshot = await FirebaseFirestore.instance
+      final dailyTempData = await FirebaseFirestore.instance
           .collection('fields')
           .doc(widget.documentID)
           .collection('temperatures')
           .orderBy('date', descending: true)
           .get();
 
-      final temperatureData = temperatureQuerySnapshot.docs.map((doc) {
+      final temperatureData = dailyTempData.docs.map((doc) {
         final data = doc.data();
         final date = (data['date'] as Timestamp).toDate();
         final maxTemp = (data['maxTemp'] as num).toDouble();
@@ -180,26 +206,23 @@ class _FieldInfoState extends State<FieldInfo> {
 
   Future<void> loadMonthlyTemperatureData() async {
     try {
-      final fieldDocumentSnapshot = await FirebaseFirestore.instance
+      final monthlyTempData = await FirebaseFirestore.instance
           .collection('fields')
           .doc(widget.documentID)
           .get();
 
-      final fieldData = fieldDocumentSnapshot.data();
+      final fieldData = monthlyTempData.data();
       final maxGdd = fieldData?['riceMaxGdd'];
       if (kDebugMode) {
         print("maxGdd from fieldData: $maxGdd");
       }
-
-      final monthlyTemperatureQuerySnapshot = await FirebaseFirestore.instance
-          .collection('fields')
-          .doc(widget.documentID)
-          .collection('temperatures_monthly')
-          .orderBy('date', descending: true)
+      final monthlyTemperatureCollectionGroup = await FirebaseFirestore.instance
+          .collectionGroup('temperatures_monthly')
+          .where('gddSum' != null)
           .get();
 
       final monthlyTemperatureData =
-          monthlyTemperatureQuerySnapshot.docs.map((doc) {
+          monthlyTemperatureCollectionGroup.docs.map((doc) {
         final data = doc.data();
         final monthYear = doc.id;
         final gddSum = (data['gddSum']).toDouble();
@@ -208,10 +231,9 @@ class _FieldInfoState extends State<FieldInfo> {
           monthYear: monthYear,
           gddSum: gddSum,
           documentID: doc.id,
-          maxGdd: maxGdd,
+          maxGdd: maxGdd != null ? maxGdd.toDouble() : 0.0,
         );
       }).toList();
-
       if (monthlyTemperatureData.isNotEmpty) {
         setState(() {
           widget.field.monthlyTemperatureData = monthlyTemperatureData;
@@ -220,6 +242,40 @@ class _FieldInfoState extends State<FieldInfo> {
     } catch (error) {
       if (kDebugMode) {
         print("Error loading monthly temperature data: $error");
+      }
+    }
+  }
+
+  Future<void> loadAccumulatedGddData() async {
+    try {
+      final monthlyTempData = await FirebaseFirestore.instance
+          .collection('fields')
+          .doc(widget.documentID)
+          .get();
+
+      final fieldData = monthlyTempData.data();
+      final maxGdd = fieldData?['riceMaxGdd'];
+
+      final accumulatedGddCollectionGroup = await FirebaseFirestore.instance
+          .collectionGroup('temperatures_monthly')
+          .where('AGDD' != null)
+          .get();
+      final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {
+        final data = doc.data();
+        final AGDD = (data['AGDD']).toDouble();
+        return AccumulatedGddData(
+          AGDD: AGDD,
+          documentID: doc.id,
+        );
+      }).toList();
+      if (accumulatedGddData.isNotEmpty) {
+        setState(() {
+          widget.field.accumulatedGddData = accumulatedGddData;
+        });
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error loading accumulated GDD data: $error");
       }
     }
   }
@@ -236,7 +292,7 @@ class _FieldInfoState extends State<FieldInfo> {
     if (widget.field.polygons.isEmpty) {
       return const Scaffold(
         body: Center(
-          child: Text('ไม่พบข้อมูลแปลง'),
+          child: CircularProgressIndicator(),
         ),
       );
     } else {
@@ -249,7 +305,7 @@ class _FieldInfoState extends State<FieldInfo> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            backgroundColor: Colors.blue, // Change app bar color
+            backgroundColor: Colors.blue,
           ),
           body: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -365,6 +421,8 @@ class _FieldInfoState extends State<FieldInfo> {
                                   temperatureData: widget.field.temperatureData,
                                   monthlyTemperatureData:
                                       widget.field.monthlyTemperatureData,
+                                  accumulatedGddData:
+                                      widget.field.accumulatedGddData,
                                 ),
                               ),
                             );

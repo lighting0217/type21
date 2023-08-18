@@ -51,6 +51,10 @@ collection:fields
             .......:number
             ...:number
     sub-collection:temperatures_monthly
+        document:Accumulated Gdd
+            documentID: same as main document id from main collection
+            date:timestamp
+            AGDD:number (use for calculated accumulate of gdd of field)
         document:
             documentID: same as main document id from main collection
             date:timestamp
@@ -87,7 +91,8 @@ collection:fields
     sub-collections:temperatures
         August 16, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 16, 2023 at 12:00:18PM UTC+7            gdd:18.62
+            date:August 16, 2023 at 12:00:18PM UTC+7
+            gdd:18.62
             maxTemp:30.12
             minTemp:23.76
         August 17, 2023
@@ -98,27 +103,32 @@ collection:fields
             minTemp:23.61
         August 18, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.76
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:20.76
             maxTemp:25.08
             minTemp:23.39
         August 19, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.96
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:20.96
             maxTemp:26.36
             minTemp:22.82
         August 20, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:20.64
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:20.64
             maxTemp:29.78
             minTemp:22.66
         August 21, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:19.08
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:19.08
             maxTemp:29.38
             minTemp:22.09
         August 22, 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:August 18, 2023 at 12:00:18PM UTC+7            gdd:18.165
+            date:August 18, 2023 at 12:00:18PM UTC+7
+            gdd:18.165
             maxTemp:30.75
             minTemp:23.38
         August 23, 2023
@@ -143,11 +153,15 @@ collection:fields
         August 2023
             documentID:HimhD5KoPrZliLpEWFqT
             date:Aug 18, 2023 at 12:00:18PM UTC+7
-            gddSum:184.95
-        September 2023
+            gddSum:257.62
+        July 2023
             documentID:HimhD5KoPrZliLpEWFqT
-            date:Aug 18, 2023 at 12:00:18PM UTC+7
-            gdd:.......
+            date:July 21, 2023 at 12:00:18PM UTC+7
+            gddSum:865.35
+        Accumulated Gdd
+            documentID:HimhD5KoPrZliLpEWFqT
+            date:August 22, 2023 at 12:00:18PM UTC+7
+            AGDD:1122.97
 
 นี้คือ Rules
 service cloud.firestore {
@@ -176,6 +190,7 @@ service cloud.firestore {
     }
   }
 }
+
 นี้คือ Index
 single index
 Collection ID   Field path  Collection scope    Collection group scope

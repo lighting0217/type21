@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
+import 'package:type21/screens/main/field_screen/chart_screen.dart';
+import 'package:type21/screens/main/field_screen/test_chart_screen.dart';
 
 import 'field_info.dart';
 import 'temp_chart_screen.dart';
@@ -8,11 +10,13 @@ import 'temp_chart_screen.dart';
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final List<AccumulatedGddData> accumulatedGddData;
 
   const TemperatureScreen({
     Key? key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
   }) : super(key: key);
 
   @override
@@ -73,48 +77,81 @@ class TemperatureScreen extends StatelessWidget {
                 const Center(child: Text('GDD รายเดือน')),
                 Expanded(
                     child: ListView.builder(
-                        itemCount: monthlyTemperatureData.length,
-                        itemBuilder: (context, index) {
-                          final monthlyTemperature =
-                              monthlyTemperatureData[index];
-                          try {
-                            final formattedDate = thFormatDateMonth(
-                                monthlyTemperature.documentID);
-                            final gdd =
-                                monthlyTemperature.gddSum.toStringAsFixed(2);
-                            return ListTile(
-                              title: Text(
-                                formattedDate,
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      itemCount: monthlyTemperatureData.length,
+                      itemBuilder: (context, index) {
+                        final monthlyTemperature =
+                            monthlyTemperatureData[index];
+                        try {
+                          final formattedDate =
+                              thFormatDateMonth(monthlyTemperature.documentID);
+                          final gdd =
+                              monthlyTemperature.gddSum.toStringAsFixed(2);
+                          return ListTile(
+                            title: Text(
+                              formattedDate,
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
-                              subtitle: Text('GDD รายเดือน: $gdd °C\n'),
-                            );
-                          } catch (e) {
-                            return ListTile(
-                              title: Text(
-                                  'Error parsing date: ${monthlyTemperature.documentID}'),
-                            );
-                          }
-                        }))
-              ],
+                            ),
+                            subtitle: Text('GDD รายเดือน: $gdd °C\n'),
+                          );
+                        } catch (e) {
+                          return ListTile(
+                            title: Text(
+                                'Error parsing date: ${monthlyTemperature.documentID}'),
+                          );
+                        }
+                      },
+                    ),
+                  )
+                ],
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TempChartScreen(
-                      temperatureData: temperatureData,
-                      monthlyTemperatureData: monthlyTemperatureData,
-                    )),
-          );
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.navigate_next),
-      ),
-    );
+      floatingActionButton: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 75),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TempChartScreen(
+                              temperatureData: temperatureData,
+                              monthlyTemperatureData: monthlyTemperatureData,
+                              accumulatedGddData: accumulatedGddData,
+                            )),
+                );
+              },
+              backgroundColor: Colors.blue,
+              child: const Icon(Icons.navigate_next),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const TestChartScreen()),
+              );
+            },
+            backgroundColor: Colors.blue,
+            child: const Icon(Icons.graphic_eq),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PieChartScreen(
+                          monthlyTemperatureData: monthlyTemperatureData,
+                          accumulatedGddData: accumulatedGddData,
+                          temperatureData: temperatureData,
+                        )),
+              );
+            })
+          ],
+        ));
   }
 }

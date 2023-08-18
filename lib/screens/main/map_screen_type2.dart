@@ -112,8 +112,6 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
 
       area = (area.abs() * 0.5); // Half of the absolute area
     }
-
-    // Convert the area to square meters
     area = area.abs() * 0.000001;
 
     if (kDebugMode) {
@@ -244,7 +242,6 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     }
 
     if (_polygons.length > 2) {
-      // Calculate the distance between the last and first corners
       final LatLng lastPoint = _polygons.last;
       final LatLng firstPoint = _polygons.first;
       final double distance = Geolocator.distanceBetween(

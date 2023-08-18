@@ -162,7 +162,6 @@ class _FieldListState extends State<FieldList> {
                 if (data['createdBy'] == currentUserUid) {
                   return Field(
                     id: doc.id,
-                    // Set the document ID here
                     fieldName: data['fieldName'],
                     riceType: data['riceType'],
                     polygonArea: data['polygonArea'].toDouble(),
@@ -179,6 +178,7 @@ class _FieldListState extends State<FieldList> {
                     createdBy: data['createdBy'] ?? '',
                     temperatureData: [],
                     monthlyTemperatureData: [],
+                    accumulatedGddData: [],
                   );
                 } else {
                   return null;

@@ -37,7 +37,7 @@ class SelectScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue, // Change app bar color
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -165,7 +165,6 @@ class SelectScreen extends StatelessWidget {
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } catch (e) {
-      // Handle sign out error
       if (kDebugMode) {
         print('Error signing out: $e');
       }

@@ -7,11 +7,13 @@ import 'field_info.dart';
 class TempChartScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final List<AccumulatedGddData> accumulatedGddData;
 
   const TempChartScreen({
     Key? key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,8 @@ class _TempChartScreenState extends State<TempChartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<MonthlyTemperatureData> modifiedData =
+        computeCumulativeGddSum(widget.monthlyTemperatureData);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -158,14 +162,27 @@ class _TempChartScreenState extends State<TempChartScreen> {
                 enablePinching: true,
               ),
               series: <ChartSeries>[
-                RangeColumnSeries<MonthlyTemperatureData, String>(
-                  dataSource: widget.monthlyTemperatureData,
+                StackedColumn100Series<MonthlyTemperatureData, String>(
+                  dataSource: modifiedData,
                   xValueMapper: (MonthlyTemperatureData data, _) =>
                       thFormatDateMonth(data.documentID),
-                  lowValueMapper: (MonthlyTemperatureData data, _) =>
-                      data.gddSum,
-                  highValueMapper: (MonthlyTemperatureData data, _) =>
-                      data.maxGdd,
+                  yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
+                  dataLabelSettings: const DataLabelSettings(
+                    isVisible: true,
+                    labelAlignment: ChartDataLabelAlignment.outer,
+                    textStyle: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                // Second series for the remaining value (maxGdd - gddSum)
+                StackedColumn100Series<MonthlyTemperatureData, String>(
+                  dataSource: modifiedData,
+                  xValueMapper: (MonthlyTemperatureData data, _) =>
+                      thFormatDateMonth(data.documentID),
+                  yValueMapper: (MonthlyTemperatureData data, _) =>
+                      data.maxGdd - data.gddSum,
                   dataLabelSettings: const DataLabelSettings(
                     isVisible: true,
                     labelAlignment: ChartDataLabelAlignment.outer,
@@ -176,29 +193,29 @@ class _TempChartScreenState extends State<TempChartScreen> {
                   ),
                 ),
               ],
-              annotations: <CartesianChartAnnotation>[
-                for (var monthlyData in widget.monthlyTemperatureData)
-                  if (monthlyData.gddSum >= 0.5 * monthlyData.maxGdd &&
-                      monthlyData.gddSum <= 1.1 * monthlyData.maxGdd)
-                    CartesianChartAnnotation(
-                      widget: SizedBox(
-                        height: 300,
-                        child: Text(
-                          '${(monthlyData.gddSum / monthlyData.maxGdd * 100).toStringAsFixed(1)}%',
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      coordinateUnit: CoordinateUnit.point,
-                      x: monthlyData.documentID,
-                      y: monthlyData.gddSum,
-                      verticalAlignment: ChartAlignment.near,
-                      horizontalAlignment: ChartAlignment.center,
-                    ),
-              ],
             ),
           ),
         ],
       ),
     );
   }
+}
+
+List<MonthlyTemperatureData> computeCumulativeGddSum(
+    List<MonthlyTemperatureData> newData,
+    [List<MonthlyTemperatureData>? existingData]) {
+  double cumulativeSum = 0;
+  existingData ??= [];
+
+  if (existingData.isNotEmpty) {
+    cumulativeSum = existingData.last.gddSum;
+  }
+
+  List<MonthlyTemperatureData> updatedData = [];
+  for (var monthData in newData) {
+    cumulativeSum += monthData.gddSum;
+    updatedData.add(monthData.copyWith(gddSum: cumulativeSum));
+  }
+
+  return List.from(existingData)..addAll(updatedData);
 }

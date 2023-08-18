@@ -125,6 +125,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       temperatureData: [],
       id: '',
       monthlyTemperatureData: [],
+      accumulatedGddData: [],
     );
     Navigator.pop(context);
     Navigator.push(
