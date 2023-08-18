@@ -153,9 +153,9 @@ class _FieldInfoState extends State<FieldInfo> {
       final temperatureData = temperatureQuerySnapshot.docs.map((doc) {
         final data = doc.data();
         final date = (data['date'] as Timestamp).toDate();
-        final maxTemp = (data['maxTemp'] as double?) ?? 0.0;
-        final minTemp = (data['minTemp'] as double?) ?? 0.0;
-        final gdd = (data['gdd'] is num) ? data['gdd'].toDouble() : 0.0;
+        final maxTemp = (data['maxTemp'] as num).toDouble();
+        final minTemp = (data['minTemp'] as num).toDouble();
+        final gdd = (data['gdd'] as num).toDouble();
 
         final documentID = doc.id;
         return TemperatureData(
@@ -187,7 +187,9 @@ class _FieldInfoState extends State<FieldInfo> {
 
       final fieldData = fieldDocumentSnapshot.data();
       final maxGdd = fieldData?['riceMaxGdd'];
-      print("maxGdd from fieldData: $maxGdd");
+      if (kDebugMode) {
+        print("maxGdd from fieldData: $maxGdd");
+      }
 
       final monthlyTemperatureQuerySnapshot = await FirebaseFirestore.instance
           .collection('fields')
@@ -200,8 +202,7 @@ class _FieldInfoState extends State<FieldInfo> {
           monthlyTemperatureQuerySnapshot.docs.map((doc) {
         final data = doc.data();
         final monthYear = doc.id;
-        final gddSum =
-            (data['gddSum'] is num) ? data['gddSum'].toDouble() : 0.0;
+        final gddSum = (data['gddSum']).toDouble();
 
         return MonthlyTemperatureData(
           monthYear: monthYear,

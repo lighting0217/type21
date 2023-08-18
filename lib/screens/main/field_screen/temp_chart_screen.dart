@@ -181,7 +181,8 @@ class _TempChartScreenState extends State<TempChartScreen> {
                   if (monthlyData.gddSum >= 0.5 * monthlyData.maxGdd &&
                       monthlyData.gddSum <= 1.1 * monthlyData.maxGdd)
                     CartesianChartAnnotation(
-                      widget: Container(
+                      widget: SizedBox(
+                        height: 300,
                         child: Text(
                           '${(monthlyData.gddSum / monthlyData.maxGdd * 100).toStringAsFixed(1)}%',
                           style: const TextStyle(color: Colors.black),
