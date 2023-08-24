@@ -24,6 +24,7 @@ class ChartScreen extends StatelessWidget {
     final maxGddValue = monthlyTemperatureData.isNotEmpty
         ? monthlyTemperatureData[0].maxGdd
         : 0.0;
+
     if (kDebugMode) {
       print('AGDD = $agddValue');
       print('Max GDD = $maxGddValue');
@@ -34,25 +35,23 @@ class ChartScreen extends StatelessWidget {
         title: const Text('Chart Screen'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: GddComparisonChart(
-                  agddValue: agddValue,
-                  maxGddValue: maxGddValue,
-                ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: GddComparisonChart(
+                agddValue: agddValue,
+                maxGddValue: maxGddValue,
               ),
-              const SizedBox(height: 16),
-              MinMaxTempChart(temperatureData: temperatureData),
-              const SizedBox(height: 16),
-              MonthlyAgddChart(
-                monthlyTemperatureData: monthlyTemperatureData,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            TempChart(temperatureData: temperatureData),
+            const SizedBox(height: 16),
+            MinMaxTempChart(temperatureData: temperatureData),
+            const SizedBox(height: 16),
+            MonthlyAgddChart(monthlyTemperatureData: monthlyTemperatureData),
+          ],
         ),
       ),
     );
@@ -70,9 +69,10 @@ class TempChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: 300,
-        width: double.infinity,
-        child: Column(children: [
+      height: 350,
+      width: double.infinity,
+      child: Column(
+        children: [
           LineChart(
             LineChartData(
               gridData: const FlGridData(show: true),
@@ -101,23 +101,26 @@ class TempChart extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           SizedBox(
-              height: 300,
-              width: double.infinity,
-              child: (LineChart(
-                LineChartData(
-                  gridData: const FlGridData(show: true),
-                  titlesData: const FlTitlesData(show: false),
-                  minX: 0,
-                  maxX: temperatureData.length.toDouble() - 1,
-                  minY: temperatureData
-                      .map((data) => data.minTemp)
-                      .reduce((a, b) => a < b ? a : b),
-                  maxY: temperatureData
-                      .map((data) => data.maxTemp)
-                      .reduce((a, b) => a > b ? a : b),
-                ),
-              ))),
-        ]));
+            height: 300,
+            width: double.infinity,
+            child: LineChart(
+              LineChartData(
+                gridData: const FlGridData(show: true),
+                titlesData: const FlTitlesData(show: false),
+                minX: 0,
+                maxX: temperatureData.length.toDouble() - 1,
+                minY: temperatureData
+                    .map((data) => data.minTemp)
+                    .reduce((a, b) => a < b ? a : b),
+                maxY: temperatureData
+                    .map((data) => data.maxTemp)
+                    .reduce((a, b) => a > b ? a : b),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -131,8 +134,9 @@ class MinMaxTempChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.5,
+    return SizedBox(
+      height: 350,
+      width: double.infinity,
       child: SfCartesianChart(
         primaryXAxis: CategoryAxis(),
         series: <ChartSeries>[
@@ -164,18 +168,18 @@ class GddComparisonChart extends StatelessWidget {
     required this.agddValue,
     required this.maxGddValue,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.5,
+    return SizedBox(
+      height: 350,
+      width: double.infinity,
       child: PieChart(
         PieChartData(
           sections: [
             PieChartSectionData(
               value: agddValue,
               title: 'AGDD',
-              color: Colors.blue,
+              color: Colors.green,
             ),
             PieChartSectionData(
               value: maxGddValue,
@@ -188,7 +192,6 @@ class GddComparisonChart extends StatelessWidget {
     );
   }
 }
-
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 
@@ -199,20 +202,23 @@ class MonthlyAgddChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.5,
-      child: SfCircularChart(
+    return SizedBox(
+      height: 350,
+      width: double.infinity,
+      child: SfCartesianChart(
         series: <CircularSeries>[
           DoughnutSeries<MonthlyTemperatureData, String>(
-            dataSource: monthlyTemperatureData,
-            xValueMapper: (MonthlyTemperatureData data, _) => data.monthYear,
-            yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
-            innerRadius: '50%',
-            dataLabelSettings: const DataLabelSettings(
-              isVisible: true,
-              textStyle: TextStyle(fontSize: 16),
-            ),
-          )
+              dataSource: monthlyTemperatureData,
+              xValueMapper: (MonthlyTemperatureData data, _) => data.monthYear,
+              yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
+              innerRadius: '50%',
+              dataLabelSettings: const DataLabelSettings(
+                isVisible: true,
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ))
         ],
       ),
     );
