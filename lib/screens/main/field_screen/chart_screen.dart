@@ -75,29 +75,29 @@ class TempChart extends StatelessWidget {
         child: Column(children: [
           LineChart(
             LineChartData(
-          gridData: const FlGridData(show: true),
-          titlesData: const FlTitlesData(show: false),
-          minX: 0,
-          maxX: temperatureData.length.toDouble() - 1,
-          minY: 0,
-          maxY: temperatureData
-              .map((data) => data.maxTemp)
-              .reduce((a, b) => a > b ? a : b),
-          lineBarsData: [
-            LineChartBarData(
-              spots: temperatureData.asMap().entries.map((entry) {
-                final index = entry.key.toDouble();
-                final maxTemp = entry.value.maxTemp;
-                return FlSpot(index, maxTemp);
-              }).toList(),
-              isCurved: true,
+              gridData: const FlGridData(show: true),
+              titlesData: const FlTitlesData(show: false),
+              minX: 0,
+              maxX: temperatureData.length.toDouble() - 1,
+              minY: 0,
+              maxY: temperatureData
+                  .map((data) => data.maxTemp)
+                  .reduce((a, b) => a > b ? a : b),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: temperatureData.asMap().entries.map((entry) {
+                    final index = entry.key.toDouble();
+                    final maxTemp = entry.value.maxTemp;
+                    return FlSpot(index, maxTemp);
+                  }).toList(),
+                  isCurved: true,
                   dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(show: true),
-              aboveBarData: BarAreaData(show: false),
-              color: Colors.green,
+                  aboveBarData: BarAreaData(show: false),
+                  color: Colors.green,
+                ),
+              ],
             ),
-          ],
-        ),
           ),
           const SizedBox(height: 10),
           SizedBox(

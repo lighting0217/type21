@@ -23,60 +23,62 @@ class TemperatureScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'ข้อมูลอุณหภูมิ (รูปแบบภาษาไทย)',
-          style: GoogleFonts.openSans(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: Text(
+            'ข้อมูลอุณหภูมิ (รูปแบบภาษาไทย)',
+            style: GoogleFonts.openSans(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          backgroundColor: Colors.blue,
         ),
-        backgroundColor: Colors.blue,
-      ),
-      body: temperatureData.isEmpty
-          ? Center(
-              child: Text(
-                'ไม่พบข้อมูลอุณหภูมิ',
-                style: GoogleFonts.openSans(fontSize: 18),
-              ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: temperatureData.length,
-                    itemBuilder: (context, index) {
-                      final temperature = temperatureData[index];
-                      try {
-                        final formattedDate =
-                            thFormatDate(temperature.documentID);
-                        final maxTemp = temperature.maxTemp.toStringAsFixed(2);
-                        final minTemp = temperature.minTemp.toStringAsFixed(2);
-                        final gdd = temperature.gdd.toStringAsFixed(2);
-                        return ListTile(
-                          title: Text(
-                            formattedDate,
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text('อุณหภูมิสูงสุด: $maxTemp °C\n'
-                              'อุณหภูมิต่ำสุด: $minTemp °C\n'
-                              'GDD: $gdd °C\n'),
-                        );
-                      } catch (e) {
-                        return ListTile(
-                          title: Text(
-                              'Error parsing date: ${temperature.documentID}'),
-                        );
-                      }
-                    },
-                  ),
+        body: temperatureData.isEmpty
+            ? Center(
+                child: Text(
+                  'ไม่พบข้อมูลอุณหภูมิ',
+                  style: GoogleFonts.openSans(fontSize: 18),
                 ),
-                const SizedBox(height: 10),
-                const Center(child: Text('GDD รายเดือน')),
-                Expanded(
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: temperatureData.length,
+                      itemBuilder: (context, index) {
+                        final temperature = temperatureData[index];
+                        try {
+                          final formattedDate =
+                              thFormatDate(temperature.documentID);
+                          final maxTemp =
+                              temperature.maxTemp.toStringAsFixed(2);
+                          final minTemp =
+                              temperature.minTemp.toStringAsFixed(2);
+                          final gdd = temperature.gdd.toStringAsFixed(2);
+                          return ListTile(
+                            title: Text(
+                              formattedDate,
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text('อุณหภูมิสูงสุด: $maxTemp °C\n'
+                                'อุณหภูมิต่ำสุด: $minTemp °C\n'
+                                'GDD: $gdd °C\n'),
+                          );
+                        } catch (e) {
+                          return ListTile(
+                            title: Text(
+                                'Error parsing date: ${temperature.documentID}'),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Center(child: Text('GDD รายเดือน')),
+                  Expanded(
                     child: ListView.builder(
                       itemCount: monthlyTemperatureData.length,
                       itemBuilder: (context, index) {
@@ -110,41 +112,40 @@ class TemperatureScreen extends StatelessWidget {
                     ),
                   )
                 ],
-            ),
-      floatingActionButton: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 75),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TempChartScreen(
+              ),
+        floatingActionButton: Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 75),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TempChartScreen(
                               temperatureData: temperatureData,
                               monthlyTemperatureData: monthlyTemperatureData,
                               accumulatedGddData: accumulatedGddData,
                             )),
+                  );
+                },
+                backgroundColor: Colors.blue,
+                child: const Icon(Icons.navigate_next),
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TestChartScreen()),
                 );
               },
               backgroundColor: Colors.blue,
-              child: const Icon(Icons.navigate_next),
+              child: const Icon(Icons.graphic_eq),
             ),
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const TestChartScreen()),
-              );
-            },
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.graphic_eq),
-          ),
-          FloatingActionButton(
-            onPressed: () {
+            FloatingActionButton(onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
