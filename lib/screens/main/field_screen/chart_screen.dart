@@ -71,8 +71,9 @@ class TempChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1.5,
-      child: LineChart(
-        LineChartData(
+        child: Column(children: [
+          LineChart(
+            LineChartData(
           gridData: const FlGridData(show: true),
           titlesData: const FlTitlesData(show: false),
           minX: 0,
@@ -89,15 +90,32 @@ class TempChart extends StatelessWidget {
                 return FlSpot(index, maxTemp);
               }).toList(),
               isCurved: true,
-              dotData: const FlDotData(show: true),
-              belowBarData: BarAreaData(show: true),
+                  dotData: const FlDotData(show: false),
+                  belowBarData: BarAreaData(show: true),
               aboveBarData: BarAreaData(show: false),
               color: Colors.green,
             ),
           ],
         ),
-      ),
-    );
+          ),
+          const SizedBox(height: 10),
+          AspectRatio(
+              aspectRatio: 1.5,
+              child: (LineChart(
+                LineChartData(
+                  gridData: const FlGridData(show: true),
+                  titlesData: const FlTitlesData(show: false),
+                  minX: 0,
+                  maxX: temperatureData.length.toDouble() - 1,
+                  minY: temperatureData
+                      .map((data) => data.minTemp)
+                      .reduce((a, b) => a < b ? a : b),
+                  maxY: temperatureData
+                      .map((data) => data.maxTemp)
+                      .reduce((a, b) => a > b ? a : b),
+                ),
+              ))),
+        ]));
   }
 }
 
