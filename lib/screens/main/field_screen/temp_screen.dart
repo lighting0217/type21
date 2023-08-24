@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
@@ -81,6 +82,9 @@ class TemperatureScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final monthlyTemperature =
                             monthlyTemperatureData[index];
+                        if (kDebugMode) {
+                          print("Monthly Temperature: $monthlyTemperature");
+                        }
                         try {
                           final formattedDate =
                               thFormatDateMonth(monthlyTemperature.documentID);
@@ -144,7 +148,7 @@ class TemperatureScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PieChartScreen(
+                    builder: (context) => ChartScreen(
                           monthlyTemperatureData: monthlyTemperatureData,
                           accumulatedGddData: accumulatedGddData,
                           temperatureData: temperatureData,

@@ -217,9 +217,15 @@ class _FieldInfoState extends State<FieldInfo> {
         print("maxGdd from fieldData: $maxGdd");
       }
       final monthlyTemperatureCollectionGroup = await FirebaseFirestore.instance
-          .collectionGroup('temperatures_monthly')
-          .where('gddSum' != null)
+          .collection('fields')
+          .doc(widget.documentID)
+          .collection('temperatures_monthly')
+          .where('gddSum', isGreaterThan: 0)
           .get();
+      /*
+          .collectionGroup('temperatures_monthly')
+          .where('gddSum', isGreaterThan: 0)
+          .get();*/
 
       final monthlyTemperatureData =
           monthlyTemperatureCollectionGroup.docs.map((doc) {
@@ -257,9 +263,17 @@ class _FieldInfoState extends State<FieldInfo> {
       final maxGdd = fieldData?['riceMaxGdd'];
 
       final accumulatedGddCollectionGroup = await FirebaseFirestore.instance
-          .collectionGroup('temperatures_monthly')
-          .where('AGDD' != null)
+          .collection('fields')
+          .doc(widget.documentID)
+          .collection('temperatures_monthly')
+          .where('ADGG', isGreaterThan: 0)
           .get();
+      /*
+          .collectionGroup('temperatures_monthly')
+          .where('AGDD', isGreaterThan: 0)
+          .get();
+          */
+
       final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {
         final data = doc.data();
         final AGDD = (data['AGDD']).toDouble();
