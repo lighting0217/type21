@@ -69,8 +69,9 @@ class TempChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.5,
+    return SizedBox(
+        height: 300,
+        width: double.infinity,
         child: Column(children: [
           LineChart(
             LineChartData(
@@ -99,8 +100,9 @@ class TempChart extends StatelessWidget {
         ),
           ),
           const SizedBox(height: 10),
-          AspectRatio(
-              aspectRatio: 1.5,
+          SizedBox(
+              height: 300,
+              width: double.infinity,
               child: (LineChart(
                 LineChartData(
                   gridData: const FlGridData(show: true),
