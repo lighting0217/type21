@@ -263,7 +263,6 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('fields')
           .doc(widget.documentID)
           .collection('temperatures_monthly')
-          .where('ADGG', isGreaterThan: 0)
           .get();
 
       final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {

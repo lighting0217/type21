@@ -45,6 +45,9 @@ class _ChartScreenState extends State<ChartScreen> {
             MinMaxTempChart(temperatureData: widget.temperatureData),
             MonthlyAgddChart(
                 monthlyTemperatureData: widget.monthlyTemperatureData),
+            PercentageGdd(
+                accumulatedGddData: widget.accumulatedGddData,
+                monthlyTemperatureData: widget.monthlyTemperatureData)
             //TempChart(temperatureData: temperatureData),
             //GddComparisonChart(agddValue: agddValue, maxGddValue: maxGddValue),
           ],
@@ -69,23 +72,22 @@ class MinMaxTempChart extends StatelessWidget {
       child: SfCartesianChart(
         primaryXAxis: CategoryAxis(),
         zoomPanBehavior: ZoomPanBehavior(
-            enablePanning: true,
-            enablePinching: true,
-            enableDoubleTapZooming: true,
-            enableSelectionZooming: true,
-            selectionRectBorderWidth: 1,
-            selectionRectBorderColor: Colors.cyan),
+          enablePanning: true,
+          enablePinching: true,
+          enableDoubleTapZooming: true,
+          zoomMode: ZoomMode.xy,
+        ),
         series: <ChartSeries>[
           ColumnSeries<TemperatureData, String>(
             dataSource: temperatureData,
             xValueMapper: (TemperatureData data, _) => data.formattedDate,
-            yValueMapper: (TemperatureData data, _) => data.maxTemp,
+            yValueMapper: (TemperatureData data, _) => data.maxTemp + 10,
             name: 'Max Temp',
           ),
           ColumnSeries<TemperatureData, String>(
             dataSource: temperatureData,
             xValueMapper: (TemperatureData data, _) => data.formattedDate,
-            yValueMapper: (TemperatureData data, _) => data.minTemp,
+            yValueMapper: (TemperatureData data, _) => data.minTemp - 10,
             name: 'Min Temp',
           ),
         ],
@@ -97,7 +99,6 @@ class MinMaxTempChart extends StatelessWidget {
 
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
-  final zoomPanBehavior = ZoomPanBehavior;
 
   const MonthlyAgddChart({
     Key? key,
@@ -131,6 +132,54 @@ class MonthlyAgddChart extends StatelessWidget {
     );
   }
 }
+
+class PercentageGdd extends StatelessWidget {
+  final List<AccumulatedGddData> accumulatedGddData;
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
+
+  const PercentageGdd(
+      {Key? key,
+      required this.accumulatedGddData,
+      required this.monthlyTemperatureData})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    double agddValue =
+        accumulatedGddData.isNotEmpty ? accumulatedGddData[0].AGDD : 0.0;
+    double maxGddValue = monthlyTemperatureData.isNotEmpty
+        ? monthlyTemperatureData[0].maxGdd
+        : 0.0;
+
+    double percentage =
+        maxGddValue != 0.0 ? (agddValue / maxGddValue) * 100 : 0.0;
+    print('AGDD value = $agddValue');
+    print('Max GDD value = $maxGddValue');
+    return SizedBox(
+      height: 400,
+      child: SfCircularChart(
+        series: [
+          DoughnutSeries<double, double>(
+            dataSource: [percentage, 100 - percentage],
+            xValueMapper: (data, _) => data,
+            yValueMapper: (data, _) => data,
+            startAngle: 270,
+            endAngle: 90,
+            innerRadius: '50%',
+            dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // class GddComparisonChart extends StatelessWidget {
 //   final double agddValue;
 //   final double maxGddValue;
