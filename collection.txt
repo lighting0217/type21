@@ -186,22 +186,23 @@ service cloud.firestore {
 
     // Allow authenticated users to read monthly temperature data
     match /fields/{fieldId}/temperatures_monthly/{monthlyTemperatureDoc} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null &&  get(/databases/
+      $(database)/documents/fields/
+      $(fieldId)).data.createdBy == request.auth.uid;
     }
   }
 }
+
 
 นี้คือ Index
 single index
 Collection ID   Field path  Collection scope    Collection group scope
 temperatures    documentID
-
-Indexes     Collection scope    Collection group scope
-Ascending   Enabled             Enabled
-Descending  Enabled             Disabled
-Arrays      Enabled             Disabled
+temperatures_monthly AGDD
+temperatures_monthly gddSum
 
 นี้คือ composite index
 Collection ID	Fields indexed                                                                              Query scope
 temperatures	documentID Ascending date Ascending __name__ Ascending                                      Collection group
+temperatures_monthly documentID Ascending gddSum Ascending AGDD Ascending __name__ Ascending
 te%2Cperatures	documentID Ascending date Ascending minTemp Ascending maxTemp Ascending __name__ Ascending	Collection group

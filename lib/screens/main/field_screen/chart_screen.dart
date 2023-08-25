@@ -1,11 +1,10 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'field_info.dart';
 
-class ChartScreen extends StatelessWidget {
+class ChartScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
@@ -18,108 +17,39 @@ class ChartScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final agddValue =
-        accumulatedGddData.isNotEmpty ? accumulatedGddData[0].AGDD : 0.0;
-    final maxGddValue = monthlyTemperatureData.isNotEmpty
-        ? monthlyTemperatureData[0].maxGdd
-        : 0.0;
+  State<ChartScreen> createState() => _ChartScreenState();
+}
 
+class _ChartScreenState extends State<ChartScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final agddValue = widget.accumulatedGddData.isNotEmpty
+        ? widget.accumulatedGddData[0].AGDD
+        : 0.0;
+    final maxGddValue = widget.monthlyTemperatureData.isNotEmpty
+        ? widget.monthlyTemperatureData[0].maxGdd
+        : 0.0;
     if (kDebugMode) {
       print('AGDD = $agddValue');
       print('Max GDD = $maxGddValue');
     }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chart Screen'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+          child: Padding(
+        padding: const EdgeInsets.only(top: 10, left: 5, right: 5),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: GddComparisonChart(
-                agddValue: agddValue,
-                maxGddValue: maxGddValue,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TempChart(temperatureData: temperatureData),
-            const SizedBox(height: 16),
-            MinMaxTempChart(temperatureData: temperatureData),
-            const SizedBox(height: 16),
-            MonthlyAgddChart(monthlyTemperatureData: monthlyTemperatureData),
+            MinMaxTempChart(temperatureData: widget.temperatureData),
+            MonthlyAgddChart(
+                monthlyTemperatureData: widget.monthlyTemperatureData),
+            //TempChart(temperatureData: temperatureData),
+            //GddComparisonChart(agddValue: agddValue, maxGddValue: maxGddValue),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class TempChart extends StatelessWidget {
-  final List<TemperatureData> temperatureData;
-
-  const TempChart({
-    Key? key,
-    required this.temperatureData,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 350,
-      width: double.infinity,
-      child: Column(
-        children: [
-          LineChart(
-            LineChartData(
-              gridData: const FlGridData(show: true),
-              titlesData: const FlTitlesData(show: false),
-              minX: 0,
-              maxX: temperatureData.length.toDouble() - 1,
-              minY: 0,
-              maxY: temperatureData
-                  .map((data) => data.maxTemp)
-                  .reduce((a, b) => a > b ? a : b),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: temperatureData.asMap().entries.map((entry) {
-                    final index = entry.key.toDouble();
-                    final maxTemp = entry.value.maxTemp;
-                    return FlSpot(index, maxTemp);
-                  }).toList(),
-                  isCurved: true,
-                  dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(show: true),
-                  aboveBarData: BarAreaData(show: false),
-                  color: Colors.green,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: true),
-                titlesData: const FlTitlesData(show: false),
-                minX: 0,
-                maxX: temperatureData.length.toDouble() - 1,
-                minY: temperatureData
-                    .map((data) => data.minTemp)
-                    .reduce((a, b) => a < b ? a : b),
-                maxY: temperatureData
-                    .map((data) => data.maxTemp)
-                    .reduce((a, b) => a > b ? a : b),
-              ),
-            ),
-          ),
-        ],
-      ),
+      )),
     );
   }
 }
@@ -136,9 +66,15 @@ class MinMaxTempChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 350,
-      width: double.infinity,
       child: SfCartesianChart(
         primaryXAxis: CategoryAxis(),
+        zoomPanBehavior: ZoomPanBehavior(
+            enablePanning: true,
+            enablePinching: true,
+            enableDoubleTapZooming: true,
+            enableSelectionZooming: true,
+            selectionRectBorderWidth: 1,
+            selectionRectBorderColor: Colors.cyan),
         series: <ChartSeries>[
           ColumnSeries<TemperatureData, String>(
             dataSource: temperatureData,
@@ -153,47 +89,15 @@ class MinMaxTempChart extends StatelessWidget {
             name: 'Min Temp',
           ),
         ],
-        legend: const Legend(isVisible: true),
+        legend: const Legend(isVisible: false),
       ),
     );
   }
 }
 
-class GddComparisonChart extends StatelessWidget {
-  final double agddValue;
-  final double maxGddValue;
-
-  const GddComparisonChart({
-    Key? key,
-    required this.agddValue,
-    required this.maxGddValue,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 350,
-      width: double.infinity,
-      child: PieChart(
-        PieChartData(
-          sections: [
-            PieChartSectionData(
-              value: agddValue,
-              title: 'AGDD',
-              color: Colors.green,
-            ),
-            PieChartSectionData(
-              value: maxGddValue,
-              title: 'Max GDD',
-              color: Colors.grey,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final zoomPanBehavior = ZoomPanBehavior;
 
   const MonthlyAgddChart({
     Key? key,
@@ -204,23 +108,109 @@ class MonthlyAgddChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 350,
-      width: double.infinity,
-      child: SfCartesianChart(
-        series: <CircularSeries>[
-          DoughnutSeries<MonthlyTemperatureData, String>(
-              dataSource: monthlyTemperatureData,
-              xValueMapper: (MonthlyTemperatureData data, _) => data.monthYear,
-              yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
-              innerRadius: '50%',
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ))
-        ],
+      child: SizedBox(
+        height: 325,
+        child: SfCircularChart(
+          series: <CircularSeries>[
+            DoughnutSeries<MonthlyTemperatureData, String>(
+                dataSource: monthlyTemperatureData,
+                xValueMapper: (MonthlyTemperatureData data, _) =>
+                    data.monthYear,
+                yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
+                innerRadius: '50%',
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ))
+          ],
+        ),
       ),
     );
   }
 }
+// class GddComparisonChart extends StatelessWidget {
+//   final double agddValue;
+//   final double maxGddValue;
+//
+//   const GddComparisonChart({
+//     Key? key,
+//     required this.agddValue,
+//     required this.maxGddValue,
+//   }) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 350,
+//       child: SizedBox(
+//         height: 350,
+//         child: PieChart(
+//           PieChartData(
+//             sections: [
+//               PieChartSectionData(
+//                 value: agddValue,
+//                 title: 'AGDD',
+//                 color: Colors.green,
+//               ),
+//               PieChartSectionData(
+//                 value: maxGddValue,
+//                 title: 'Max GDD',
+//                 color: Colors.grey,
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class TempChart extends StatelessWidget {
+//   final List<TemperatureData> temperatureData;
+//
+//   const TempChart({
+//     Key? key,
+//     required this.temperatureData,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return  Column(
+//         children: [
+//           SizedBox(
+//             height: 350,
+//             child: LineChart(
+//               LineChartData(
+//                 gridData: const FlGridData(show: true),
+//                 titlesData: const FlTitlesData(show: false),
+//                 minX: 0,
+//                 maxX: temperatureData.length.toDouble() - 1,
+//                 minY: 0,
+//                 maxY: temperatureData
+//                     .map((data) => data.maxTemp)
+//                     .reduce((a, b) => a > b ? a : b),
+//                 lineBarsData: [
+//                   LineChartBarData(
+//                     spots: temperatureData.asMap().entries.map((entry) {
+//                       final index = entry.key.toDouble();
+//                       final maxTemp = entry.value.maxTemp;
+//                       return FlSpot(index, maxTemp);
+//                     }).toList(),
+//                     isCurved: true,
+//                     dotData: const FlDotData(show: false),
+//                     belowBarData: BarAreaData(show: true),
+//                     aboveBarData: BarAreaData(show: false),
+//                     color: Colors.green,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+//         ],
+//       );
+//
+//   }
+// }

@@ -18,6 +18,7 @@ class Field {
   double totalDistance;
   DateTime? selectedDate;
   String createdBy;
+  double riceMaxGdd;
   List<TemperatureData> temperatureData;
   List<MonthlyTemperatureData> monthlyTemperatureData;
   List<AccumulatedGddData> accumulatedGddData;
@@ -34,6 +35,7 @@ class Field {
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
+    required this.riceMaxGdd,
   });
 }
 
@@ -222,11 +224,6 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures_monthly')
           .where('gddSum', isGreaterThan: 0)
           .get();
-      /*
-          .collectionGroup('temperatures_monthly')
-          .where('gddSum', isGreaterThan: 0)
-          .get();*/
-
       final monthlyTemperatureData =
           monthlyTemperatureCollectionGroup.docs.map((doc) {
         final data = doc.data();
@@ -268,11 +265,6 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures_monthly')
           .where('ADGG', isGreaterThan: 0)
           .get();
-      /*
-          .collectionGroup('temperatures_monthly')
-          .where('AGDD', isGreaterThan: 0)
-          .get();
-          */
 
       final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {
         final data = doc.data();
@@ -437,6 +429,7 @@ class _FieldInfoState extends State<FieldInfo> {
                                       widget.field.monthlyTemperatureData,
                                   accumulatedGddData:
                                       widget.field.accumulatedGddData,
+                                  field: const [],
                                 ),
                               ),
                             );

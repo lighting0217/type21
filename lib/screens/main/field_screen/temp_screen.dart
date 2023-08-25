@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
+import 'package:type21/screens/main/field_screen/calendar_screen.dart';
 import 'package:type21/screens/main/field_screen/chart_screen.dart';
 import 'package:type21/screens/main/field_screen/test_chart_screen.dart';
 
@@ -12,12 +13,14 @@ class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
+  final List<Field> field;
 
   const TemperatureScreen({
     Key? key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
+    required this.field,
   }) : super(key: key);
 
   @override
@@ -117,7 +120,7 @@ class TemperatureScreen extends StatelessWidget {
           alignment: Alignment.bottomRight,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 75),
+              padding: const EdgeInsets.only(right: 195),
               child: FloatingActionButton(
                 onPressed: () {
                   Navigator.push(
@@ -134,28 +137,53 @@ class TemperatureScreen extends StatelessWidget {
                 child: const Icon(Icons.navigate_next),
               ),
             ),
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const TestChartScreen()),
-                );
-              },
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.graphic_eq),
+            Padding(
+              padding: const EdgeInsets.only(right: 130),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TestChartScreen()),
+                  );
+                },
+                backgroundColor: Colors.blue,
+                child: const Icon(Icons.graphic_eq),
+              ),
             ),
-            FloatingActionButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChartScreen(
-                          monthlyTemperatureData: monthlyTemperatureData,
-                          accumulatedGddData: accumulatedGddData,
-                          temperatureData: temperatureData,
-                        )),
-              );
-            })
+            Padding(
+              padding: const EdgeInsets.only(right: 65),
+              child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChartScreen(
+                                monthlyTemperatureData: monthlyTemperatureData,
+                                accumulatedGddData: accumulatedGddData,
+                                temperatureData: temperatureData,
+                              )),
+                    );
+                  },
+                  child: const Icon(Icons.show_chart)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CalendarScreen(
+                                temperatureData: temperatureData,
+                                monthlyTemperatureData: monthlyTemperatureData,
+                                accumulatedGddData: accumulatedGddData,
+                                field: field,
+                              )));
+                },
+                child: Icon(Icons.calendar_month_rounded),
+              ),
+            )
           ],
         ));
   }

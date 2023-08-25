@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -40,6 +39,17 @@ class _AddScreenType2State extends State<AddScreenType2> {
     'ข้าวหอมมะลิ': 'KDML105',
     'ข้าวกข.6': 'RD6',
   };
+
+  double getRiceMaxGdd(String riceType) {
+    switch (riceType) {
+      case 'KDML105':
+        return 2777.2;
+      case 'RD6':
+        return 2020.1;
+      default:
+        return 0;
+    }
+  }
 
   String convertAreaToRaiNganWah(double area) {
     final double rai = (area / 1600).floorToDouble();
@@ -102,7 +112,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
     final polygonArea = widget.polygonArea;
     final totalDistance = widget.totalDistance;
     final polygons = widget.polygons;
-
+    final riceMaxGdd = getRiceMaxGdd(riceType);
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     await _addNewFieldToFirestore(
@@ -112,6 +122,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       totalDistance,
       polygons,
       currentUserUid,
+      riceMaxGdd,
     );
 
     final newField = Field(
@@ -126,6 +137,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       id: '',
       monthlyTemperatureData: [],
       accumulatedGddData: [],
+      riceMaxGdd: riceMaxGdd,
     );
     Navigator.pop(context);
     Navigator.push(
@@ -146,6 +158,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
     double totalDistance,
     List<LatLng> polygons,
     String createdBy,
+    double riceMaxGdd,
   ) async {
     if (kDebugMode) {
       print(
@@ -154,7 +167,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     double riceMaxGdd = 0;
     if (riceType == 'KDML105') {
-      riceMaxGdd = 2188.84;
+      riceMaxGdd = 2777.2;
     } else if (riceType == 'RD6') {
       riceMaxGdd = 2000;
     }

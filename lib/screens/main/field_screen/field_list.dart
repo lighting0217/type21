@@ -179,6 +179,7 @@ class _FieldListState extends State<FieldList> {
                     temperatureData: [],
                     monthlyTemperatureData: [],
                     accumulatedGddData: [],
+                    riceMaxGdd: data['riceMaxGdd'] ?? 0.0,
                   );
                 } else {
                   return null;
