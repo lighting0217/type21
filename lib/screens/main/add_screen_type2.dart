@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:type21/screens/main/field_screen/field_info.dart';
 import 'package:type21/screens/main/field_screen/field_list.dart';
+
+import '../../models/temp_data_models.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

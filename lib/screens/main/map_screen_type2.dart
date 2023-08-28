@@ -6,8 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../models/temp_data_models.dart';
 import 'add_screen_type2.dart';
-import 'field_screen/field_info.dart';
 
 class MapScreenType2 extends StatefulWidget {
   const MapScreenType2({
