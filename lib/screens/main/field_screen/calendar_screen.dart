@@ -24,11 +24,9 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      _selectedDay = selectedDay;
       _focusedDay = focusedDay;
     });
 
@@ -45,7 +43,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final accumulatedGddDataForSelectedDate =
           selectedField.accumulatedGddData;
       if (accumulatedGddDataForSelectedDate.isNotEmpty) {
-        final agddValue = accumulatedGddDataForSelectedDate[0].AGDD;
+        final agddValue = accumulatedGddDataForSelectedDate[0].accumulatedGdd;
 
         if (_shouldShowAlert(agddValue, selectedField.riceMaxGdd)) {
           _showAlertDialog('ควรเก็บเกี่ยวได้แล้ว');

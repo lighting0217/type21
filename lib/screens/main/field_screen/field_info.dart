@@ -40,11 +40,11 @@ class Field {
 }
 
 class AccumulatedGddData {
-  final double AGDD;
+  final double accumulatedGdd;
   final String documentID;
 
   AccumulatedGddData({
-    required this.AGDD,
+    required this.accumulatedGdd,
     required this.documentID,
   });
 }
@@ -251,25 +251,17 @@ class _FieldInfoState extends State<FieldInfo> {
 
   Future<void> loadAccumulatedGddData() async {
     try {
-      final monthlyTempData = await FirebaseFirestore.instance
-          .collection('fields')
-          .doc(widget.documentID)
-          .get();
-
-      final fieldData = monthlyTempData.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
-
       final accumulatedGddCollectionGroup = await FirebaseFirestore.instance
           .collection('fields')
           .doc(widget.documentID)
-          .collection('temperatures_monthly')
+          .collection('Accumulated GDD')
           .get();
 
       final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {
         final data = doc.data();
-        final AGDD = (data['AGDD']).toDouble();
+        final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         return AccumulatedGddData(
-          AGDD: AGDD,
+          accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
         );
       }).toList();
@@ -290,6 +282,7 @@ class _FieldInfoState extends State<FieldInfo> {
     super.initState();
     loadTemperatureData();
     loadMonthlyTemperatureData();
+    loadAccumulatedGddData();
   }
 
   @override

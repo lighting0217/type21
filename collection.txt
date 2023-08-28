@@ -51,10 +51,6 @@ collection:fields
             .......:number
             ...:number
     sub-collection:temperatures_monthly
-        document:Accumulated Gdd
-            documentID: same as main document id from main collection
-            date:timestamp
-            AGDD:number (use for calculated accumulate of gdd of field)
         document:
             documentID: same as main document id from main collection
             date:timestamp
@@ -158,10 +154,6 @@ collection:fields
             documentID:HimhD5KoPrZliLpEWFqT
             date:July 21, 2023 at 12:00:18PM UTC+7
             gddSum:865.35
-        Accumulated Gdd
-            documentID:HimhD5KoPrZliLpEWFqT
-            date:August 22, 2023 at 12:00:18PM UTC+7
-            AGDD:1122.97
 
 นี้คือ Rules
 service cloud.firestore {
@@ -206,3 +198,70 @@ Collection ID	Fields indexed                                                    
 temperatures	documentID Ascending date Ascending __name__ Ascending                                      Collection group
 temperatures_monthly documentID Ascending gddSum Ascending AGDD Ascending __name__ Ascending
 te%2Cperatures	documentID Ascending date Ascending minTemp Ascending maxTemp Ascending __name__ Ascending	Collection group
+
+ส่วนนี้คือตัวอย่าง firebase ในแบบที่ฉันต้องการ
+collection:fields
+	    document:Auto-ID
+	    createdBy:string (from user id from firebase auth)
+	    fieldName:string
+	    polygonArea:number
+	    polygons:array
+		    	0:map
+		    	    latitude
+		    	    longitude
+			    1:map
+			        latitude
+			        longitude
+			    2:map
+                    latitude
+                    longitude
+			    3:map
+                    latitude
+                    longitude
+                4:map
+                    latitude
+                    longitude
+	    riceType:string
+	    riceMaxGdd:number
+	    selectedDate:time stamp
+	    totalDistance:number
+
+    sub-collections:temperatures
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            maxTemp:number
+            minTemp:number
+            gdd:number
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            maxTemp:number
+            minTemp:number
+            gdd:number
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            maxTemp:number
+            minTemp:number
+            gdd:number
+        ........:
+            ..........: same as main document id from main collection
+            ....:timestamp
+            .......:number
+            .......:number
+            ...:number
+    sub-collection:temperatures_monthly
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            gddSum:number
+        document:
+            ........: same as main document id from main collection
+            ....:timestamp
+            ......:number
+    sub-collection:accumulated_gdd
+        document:
+            documentID: same as main document id from main collection
+            date:timestamp
+            accumulatedGdd:number
