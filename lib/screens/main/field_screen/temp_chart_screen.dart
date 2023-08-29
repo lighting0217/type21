@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
@@ -245,6 +247,38 @@ class MinMaxTempChart extends StatefulWidget {
 class _MinMaxTempChartState extends State<MinMaxTempChart>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
+  String convertMonthToThai(String month) {
+    switch (month) {
+      case 'January':
+        return 'มกราคม';
+      case 'February':
+        return 'กุมภาพันธ์';
+      case 'March':
+        return 'มีนาคม';
+      case 'April':
+        return 'เมษายน';
+      case 'May':
+        return 'พฤษภาคม';
+      case 'June':
+        return 'มิถุนายน';
+      case 'July':
+        return 'กรกฎาคม';
+      case 'August':
+        return 'สิงหาคม';
+      case 'September':
+        return 'กันยายน';
+      case 'October':
+        return 'ตุลาคม';
+      case 'November':
+        return 'พฤศจิกายน';
+      case 'December':
+        return 'ธันวาคม';
+      default:
+        return month;
+    }
+  }
+
   final List<String> _months = [
     'January',
     'February',
@@ -259,19 +293,16 @@ class _MinMaxTempChartState extends State<MinMaxTempChart>
     'November',
     'December',
   ];
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _months.length, vsync: this);
   }
-
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -284,10 +315,16 @@ class _MinMaxTempChartState extends State<MinMaxTempChart>
           child: TabBarView(
             controller: _tabController,
             children: _months.map((month) {
-              // Filter temperature data based on the selected month
+              String getThaiMonthFromTimestamp(Timestamp timestamp) {
+                final dateTime = timestamp.toDate();
+                return DateFormat('MMMM yyyy', 'th_TH').format(dateTime);
+              }
+
               final filteredData = widget.temperatureData.where((data) {
-                final formattedDate = thFormatDate(data.documentID);
-                return formattedDate.contains(month);
+                final formattedDate =
+                    getThaiMonthFromTimestamp(data.date as Timestamp);
+                final thaiMonth = convertMonthToThai(month);
+                return formattedDate == thaiMonth;
               }).toList();
 
               return SizedBox(
@@ -331,7 +368,6 @@ class _MinMaxTempChartState extends State<MinMaxTempChart>
     );
   }
 }
-
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 
