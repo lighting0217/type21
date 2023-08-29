@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 String thFormatDate(String inputDate) {
@@ -24,11 +25,12 @@ String thFormatDate(String inputDate) {
     final day = int.parse(monthDay[1]);
     final year = int.parse(dateParts[1]) + 543;
 
-    print('Month Day: $monthDay');
-    print('Month Index: $monthIndex');
-    print('Day: $day');
-    print('Year: $year');
-
+    if (kDebugMode) {
+      print('Month Day: $monthDay');
+      print('Month Index: $monthIndex');
+      print('Day: $day');
+      print('Year: $year');
+    }
     final documentIdDateTime = DateTime(year, monthIndex + 1, day, 12, 0);
 
     final formattedDate =
@@ -63,11 +65,12 @@ String thFormatDateShort(String inputDate) {
     final day = int.parse(monthDay[1]);
     final year = int.parse(dateParts[1]) + 543;
 
-    print('Month Day: $monthDay');
-    print('Month Index: $monthIndex');
-    print('Day: $day');
-    print('Year: $year');
-
+    if (kDebugMode) {
+      print('Month Day: $monthDay');
+      print('Month Index: $monthIndex');
+      print('Day: $day');
+      print('Year: $year');
+    }
     final documentIdDateTime = DateTime(year, monthIndex + 1, day, 12, 0);
 
     final formattedDate =
@@ -103,8 +106,10 @@ String thFormatDateMonth(String inputDate) {
 
     final documentIdDateTime = DateTime(year, monthIndex + 1, 12, 0);
 
-    print('Month Index: $monthIndex');
-    print('Year: $year');
+    if (kDebugMode) {
+      print('Month Index: $monthIndex');
+      print('Year: $year');
+    }
 
     final formattedDate =
         DateFormat('MMMM y', 'th_TH').format(documentIdDateTime);

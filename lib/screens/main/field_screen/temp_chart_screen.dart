@@ -194,6 +194,17 @@ class _TempChartScreenState extends State<TempChartScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          SizedBox(
+            child: Column(children: [
+              Expanded(
+                child: MinMaxTempChart(temperatureData: widget.temperatureData),
+              ),
+              const SizedBox(height: 20),
+              MonthlyAgddChart(
+                  monthlyTemperatureData: widget.monthlyTemperatureData),
+            ]),
+          )
         ],
       ),
     );
@@ -217,4 +228,142 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
   }
 
   return List.from(existingData)..addAll(updatedData);
+}
+
+class MinMaxTempChart extends StatefulWidget {
+  final List<TemperatureData> temperatureData;
+
+  const MinMaxTempChart({
+    Key? key,
+    required this.temperatureData,
+  }) : super(key: key);
+
+  @override
+  State<MinMaxTempChart> createState() => _MinMaxTempChartState();
+}
+
+class _MinMaxTempChartState extends State<MinMaxTempChart>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final List<String> _months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _months.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          tabs: _months.map((month) => Tab(text: month)).toList(),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: _months.map((month) {
+              // Filter temperature data based on the selected month
+              final filteredData = widget.temperatureData.where((data) {
+                final formattedDate = thFormatDate(data.documentID);
+                return formattedDate.contains(month);
+              }).toList();
+
+              return SizedBox(
+                height: 350,
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(),
+                  zoomPanBehavior: ZoomPanBehavior(
+                    enablePanning: true,
+                    enablePinching: true,
+                    enableDoubleTapZooming: true,
+                    zoomMode: ZoomMode.xy,
+                  ),
+                  series: <ChartSeries>[
+                    RangeColumnSeries<TemperatureData, String>(
+                      dataSource: filteredData,
+                      xValueMapper: (TemperatureData data, _) =>
+                          thFormatDate(data.documentID),
+                      highValueMapper: (TemperatureData data, _) =>
+                          data.maxTemp,
+                      lowValueMapper: (TemperatureData data, _) => data.minTemp,
+                      color: Colors.blue,
+                      dataLabelSettings: const DataLabelSettings(
+                          isVisible: true,
+                          labelAlignment: ChartDataLabelAlignment.top,
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                          ),
+                          color: Colors.greenAccent,
+                          borderColor: Colors.black,
+                          borderWidth: 0.5),
+                    )
+                  ],
+                  legend: const Legend(isVisible: false),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class MonthlyAgddChart extends StatelessWidget {
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
+
+  const MonthlyAgddChart({
+    Key? key,
+    required this.monthlyTemperatureData,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 350,
+      child: SizedBox(
+        height: 325,
+        child: SfCircularChart(
+          series: <CircularSeries>[
+            DoughnutSeries<MonthlyTemperatureData, String>(
+                dataSource: monthlyTemperatureData,
+                xValueMapper: (MonthlyTemperatureData data, _) =>
+                    data.monthYear,
+                yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
+                innerRadius: '50%',
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
 }

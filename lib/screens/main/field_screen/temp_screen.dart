@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
 import 'package:type21/screens/main/field_screen/calendar_screen.dart';
-import 'package:type21/screens/main/field_screen/chart_screen.dart';
-import 'package:type21/screens/main/field_screen/test_chart_screen.dart';
 
 import 'temp_chart_screen.dart';
 
@@ -120,7 +118,7 @@ class TemperatureScreen extends StatelessWidget {
           alignment: Alignment.bottomRight,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 195),
+              padding: const EdgeInsets.only(right: 65),
               child: FloatingActionButton(
                 onPressed: () {
                   Navigator.push(
@@ -136,36 +134,6 @@ class TemperatureScreen extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 child: const Icon(Icons.navigate_next),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 130),
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const TestChartScreen()),
-                  );
-                },
-                backgroundColor: Colors.blue,
-                child: const Icon(Icons.graphic_eq),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 65),
-              child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChartScreen(
-                                monthlyTemperatureData: monthlyTemperatureData,
-                                accumulatedGddData: accumulatedGddData,
-                                temperatureData: temperatureData,
-                              )),
-                    );
-                  },
-                  child: const Icon(Icons.show_chart)),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 0),
