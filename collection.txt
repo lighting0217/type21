@@ -59,6 +59,11 @@ collection:fields
             ........: same as main document id from main collection
             ....:timestamp
             ......:number
+    sub-collection:accumulated_gdd
+        document:Accumulated GDD
+            accumulatedGdd:number
+            date:timestamp
+            documentID:same as main document id from main collection
 
 ส่วนนี้คือตัวอย่าง firebase ของฉัน
 collection:fields
@@ -154,6 +159,11 @@ collection:fields
             documentID:HimhD5KoPrZliLpEWFqT
             date:July 21, 2023 at 12:00:18PM UTC+7
             gddSum:865.35
+    sub-collection:accumulated_gdd
+        Accumulated GDD
+            accumulatedGdd:1238.585
+            date:August 28, 2023 at 2:56:14PM UTC+7
+            documentID:"HimhD5KoPrZliLpEWFqT"
 
 นี้คือ Rules
 service cloud.firestore {
@@ -171,97 +181,38 @@ service cloud.firestore {
       allow read, update, delete, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Allow authenticated users to read temperature data
+    // Store the user's UID in the temperature documents
     match /fields/{fieldId}/temperatures/{temperatureDoc} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null && resource.data.createdBy == request.auth.uid;
     }
 
-    // Allow authenticated users to read monthly temperature data
+    // Store the user's UID in the monthly temperature documents
     match /fields/{fieldId}/temperatures_monthly/{monthlyTemperatureDoc} {
-      allow read: if request.auth != null &&  get(/databases/
-      $(database)/documents/fields/
-      $(fieldId)).data.createdBy == request.auth.uid;
+      allow read: if request.auth != null && resource.data.createdBy == request.auth.uid;
+    }
+
+    // Store the user's UID in the accumulated GDD documents
+    match /fields/{fieldId}/accumulated_gdd/{accumulatedGddDoc} {
+      allow read: if request.auth != null && resource.data.createdBy == request.auth.uid;
+    }
+
+    // Allow authenticated users to read data from the sub-collections
+    match /fields/{fieldId}/{subCollection}/{subDoc} {
+      allow read: if request.auth != null && get(/databases/$(database)/documents/fields/$(fieldId)).data.createdBy == request.auth.uid;
     }
   }
 }
 
-
 นี้คือ Index
 single index
 Collection ID   Field path  Collection scope    Collection group scope
-temperatures    documentID
-temperatures_monthly AGDD
-temperatures_monthly gddSum
+accumulated_gdd documentID  enabled              enabled
+temperatures    documentID  enabled              enabled
+temperatures_monthly AGDD   enabled              enabled
+temperatures_monthly gddSum enabled              enabled
 
 นี้คือ composite index
 Collection ID	Fields indexed                                                                              Query scope
 temperatures	documentID Ascending date Ascending __name__ Ascending                                      Collection group
 temperatures_monthly documentID Ascending gddSum Ascending AGDD Ascending __name__ Ascending
 te%2Cperatures	documentID Ascending date Ascending minTemp Ascending maxTemp Ascending __name__ Ascending	Collection group
-
-ส่วนนี้คือตัวอย่าง firebase ในแบบที่ฉันต้องการ
-collection:fields
-	    document:Auto-ID
-	    createdBy:string (from user id from firebase auth)
-	    fieldName:string
-	    polygonArea:number
-	    polygons:array
-		    	0:map
-		    	    latitude
-		    	    longitude
-			    1:map
-			        latitude
-			        longitude
-			    2:map
-                    latitude
-                    longitude
-			    3:map
-                    latitude
-                    longitude
-                4:map
-                    latitude
-                    longitude
-	    riceType:string
-	    riceMaxGdd:number
-	    selectedDate:time stamp
-	    totalDistance:number
-
-    sub-collections:temperatures
-        document:
-            documentID: same as main document id from main collection
-            date:timestamp
-            maxTemp:number
-            minTemp:number
-            gdd:number
-        document:
-            documentID: same as main document id from main collection
-            date:timestamp
-            maxTemp:number
-            minTemp:number
-            gdd:number
-        document:
-            documentID: same as main document id from main collection
-            date:timestamp
-            maxTemp:number
-            minTemp:number
-            gdd:number
-        ........:
-            ..........: same as main document id from main collection
-            ....:timestamp
-            .......:number
-            .......:number
-            ...:number
-    sub-collection:temperatures_monthly
-        document:
-            documentID: same as main document id from main collection
-            date:timestamp
-            gddSum:number
-        document:
-            ........: same as main document id from main collection
-            ....:timestamp
-            ......:number
-    sub-collection:accumulated_gdd
-        document:
-            documentID: same as main document id from main collection
-            date:timestamp
-            accumulatedGdd:number

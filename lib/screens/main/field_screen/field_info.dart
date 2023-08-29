@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'package:type21/models/temp_data_models.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -8,19 +7,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:type21/models/temp_data_models.dart';
 import 'package:type21/screens/main/field_screen/temp_screen.dart';
 
 class FieldInfo extends StatefulWidget {
-  const FieldInfo({
-    Key? key,
-    required this.field,
-    required this.documentID,
-    required String fieldName,
-    required String riceType,
-    required double polygonArea,
-    required List<LatLng> polygons,
-    required DateTime? selectedDate, s
-  }) : super(key: key);
+  const FieldInfo(
+      {Key? key,
+      required this.field,
+      required this.documentID,
+      required String fieldName,
+      required String riceType,
+      required double polygonArea,
+      required List<LatLng> polygons,
+      required DateTime? selectedDate,
+      s})
+      : super(key: key);
   final Field field;
   final String documentID;
 
@@ -169,11 +170,9 @@ class _FieldInfoState extends State<FieldInfo> {
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
         );
-
       }).toList();
       if (kDebugMode) {
-        print('Accumulated Gdd is $AccumulatedGddData.accumulatedGdd'
-        );
+        print('Accumulated Gdd is $AccumulatedGddData.accumulatedGdd');
       }
       if (accumulatedGddData.isNotEmpty) {
         if (kDebugMode) {

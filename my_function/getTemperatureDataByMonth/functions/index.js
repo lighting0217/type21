@@ -47,8 +47,8 @@ exports.getTemperatureDataByMonth = functions
 
                     await monthDocRef.set(data);
 
-            console
-                .log(`Field ${fieldDoc.id}:
+                    console
+                        .log(`Field ${fieldDoc.id}:
              Month ${monthYear} GDD Sum = ${data.gddSum}`);
                 }
             }

@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:type21/library/th_format_date.dart';
-
 import 'package:type21/models/temp_data_models.dart';
 
 class ChartScreen extends StatefulWidget {

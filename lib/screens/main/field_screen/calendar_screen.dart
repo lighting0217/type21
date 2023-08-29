@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import 'package:type21/models/temp_data_models.dart';
 
 class CalendarScreen extends StatefulWidget {
