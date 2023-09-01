@@ -9,7 +9,6 @@ import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
 import 'field_screen/field_list.dart';
 import 'map_screen_type2.dart';
-import 'weather_screen.dart';
 
 final auth = FirebaseAuth.instance;
 
@@ -19,7 +18,7 @@ class SelectScreen extends StatelessWidget {
   final List<LatLng> locationList;
 
   void navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => screen),
     );
@@ -127,12 +126,12 @@ class SelectScreen extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
+            /*ListTile(
               title: const Text('To Weather Screen'),
               onTap: () {
                 navigateToScreen(context, WeatherScreen());
               },
-            ),
+            ),*/
             ListTile(
               title: const Text('To Field List Screen'),
               onTap: () {
@@ -144,13 +143,7 @@ class SelectScreen extends StatelessWidget {
                   ),
                 );
               },
-            ),
-            /*ListTile(
-              title: const Text('To TestFetch Screen'),
-              onTap: () {
-                navigateToScreen(context, const LineChartTest());
-              },
-            ),*/
+            )
           ],
         ),
       ),

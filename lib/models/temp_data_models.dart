@@ -47,12 +47,14 @@ class MonthlyTemperatureData {
   final double gddSum;
   final String documentID;
   final double maxGdd;
+  final DateTime forecastedHarvestDate;
 
   MonthlyTemperatureData({
     required this.monthYear,
     required this.gddSum,
     required this.documentID,
     required this.maxGdd,
+    required this.forecastedHarvestDate,
   });
 
   MonthlyTemperatureData copyWith({
@@ -60,12 +62,15 @@ class MonthlyTemperatureData {
     double? gddSum,
     double? maxGdd,
     String? monthYear,
+    DateTime? forecastedHarvestDate,
   }) {
     return MonthlyTemperatureData(
       documentID: documentID ?? this.documentID,
       gddSum: gddSum ?? this.gddSum,
       maxGdd: maxGdd ?? this.maxGdd,
       monthYear: monthYear ?? this.monthYear,
+      forecastedHarvestDate:
+          forecastedHarvestDate ?? this.forecastedHarvestDate,
     );
   }
 }

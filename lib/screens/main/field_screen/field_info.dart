@@ -122,28 +122,37 @@ class _FieldInfoState extends State<FieldInfo> {
 
       final fieldData = monthlyTempData.data();
       final maxGdd = fieldData?['riceMaxGdd'];
-      if (kDebugMode) {
-        print("maxGdd from fieldData: $maxGdd");
+      final DateTime forecastedHarvestDate;
+      final forecastedHarvestDateTimestamp =
+          fieldData?['forecastedHarvestDate'] as Timestamp?;
+
+      if (forecastedHarvestDateTimestamp != null) {
+        forecastedHarvestDate = forecastedHarvestDateTimestamp.toDate();
       }
+
       final monthlyTemperatureCollectionGroup = await FirebaseFirestore.instance
           .collection('fields')
           .doc(widget.documentID)
           .collection('temperatures_monthly')
           .where('gddSum', isGreaterThan: 0)
           .get();
+
       final monthlyTemperatureData =
           monthlyTemperatureCollectionGroup.docs.map((doc) {
         final data = doc.data();
         final monthYear = doc.id;
         final gddSum = (data['gddSum']).toDouble();
+        final forecastedHarvestDate = data['forecastedHarvestDate'] as DateTime;
 
         return MonthlyTemperatureData(
           monthYear: monthYear,
           gddSum: gddSum,
           documentID: doc.id,
           maxGdd: maxGdd != null ? maxGdd.toDouble() : 0.0,
+          forecastedHarvestDate: forecastedHarvestDate,
         );
       }).toList();
+
       if (monthlyTemperatureData.isNotEmpty) {
         setState(() {
           widget.field.monthlyTemperatureData = monthlyTemperatureData;
