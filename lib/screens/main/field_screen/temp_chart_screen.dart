@@ -98,18 +98,24 @@ class _TempChartScreenState extends State<TempChartScreen> {
                   ),
                   if (monthlyData.forecastedHarvestDate != null)
                     Text(
-                      'Forecasted Harvest Date: ${DateFormat('dd MMMM yyyy', 'th_TH').format(monthlyData.forecastedHarvestDate!)}',
+                      DateFormat('DD MMMM YYYY', 'th_TH')
+                          .format(monthlyData.forecastedHarvestDate!),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'arial',
                       ),
                     ),
                   if (monthlyData.forecastedHarvestDate == null)
                     Text(
-                      'Forecasted Harvest Date: Data Unavailable {$calculatePercent(accumulatedGdd, maxGdd)}',
+                      'ยังไม่สามารถแนะนำได้ ข้อมูลยังไม่เพียงพอ ตอนนี้มีข้อมูล GDD อยู่: ${calculatePercent(
+                        monthlyData.accumulatedGddData!,
+                        monthlyData.maxGdd,
+                      ).toStringAsFixed(2)}%',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'arial',
                       ),
                     ),
                 ],
@@ -120,8 +126,9 @@ class _TempChartScreenState extends State<TempChartScreen> {
     );
   }
 
-  double calculatePercent(double accumulatedGdd, double maxGdd) {
-    return (accumulatedGdd / maxGdd) * 100;
+  double calculatePercent(
+      AccumulatedGddData accumulatedGddData, double maxGdd) {
+    return (accumulatedGddData.accumulatedGdd / maxGdd) * 100;
   }
 }
 

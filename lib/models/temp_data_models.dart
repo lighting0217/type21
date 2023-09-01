@@ -48,6 +48,7 @@ class MonthlyTemperatureData {
   final String documentID;
   final double maxGdd;
   final DateTime forecastedHarvestDate;
+  AccumulatedGddData? accumulatedGddData;
 
   MonthlyTemperatureData({
     required this.monthYear,
@@ -55,6 +56,7 @@ class MonthlyTemperatureData {
     required this.documentID,
     required this.maxGdd,
     required this.forecastedHarvestDate,
+    this.accumulatedGddData,
   });
 
   MonthlyTemperatureData copyWith({
