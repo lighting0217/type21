@@ -50,72 +50,79 @@ class _TempChartScreenState extends State<TempChartScreen> {
         backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-          child: Column(
-        children: [
-          const SizedBox(height: 20),
-          SizedBox(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            SizedBox(
               height: 400,
-              child: TempRangedChart(temperatureData: widget.temperatureData)),
-          const SizedBox(height: 20),
-          SizedBox(
+              child: TempRangedChart(temperatureData: widget.temperatureData),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
               height: 400,
-              child: DayGddChart(temperatureData: widget.temperatureData)),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 400,
-            child: MonthlyAgddChart(
-                monthlyTemperatureData: widget.monthlyTemperatureData),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
+              child: DayGddChart(temperatureData: widget.temperatureData),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 400,
+              child: MonthlyAgddChart(
+                monthlyTemperatureData: widget.monthlyTemperatureData,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
               height: 400,
               child: MonthGddChart(
-                  monthlyTemperatureData: widget.monthlyTemperatureData)),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 400,
-            child: MonthlyTempChart(
-                monthlyTemperatureData: widget.monthlyTemperatureData),
-          ),
-          const SizedBox(height: 20),
-          for (var monthlyData in widget.monthlyTemperatureData)
-            Column(
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  'วันที่เหมาะสมเก็บเกี่ยว (${monthlyData.monthYear}):',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'arial',
-                  ),
-                ),
-                if (monthlyData.forecastedHarvestDate != null)
-                  Text(
-                    'Forecasted Harvest Date: ${DateFormat('dd-MM-yyyy').format(monthlyData.forecastedHarvestDate!)}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                if (monthlyData.forecastedHarvestDate == null)
-                  const Text(
-                    'Forecasted Harvest Date: Data Unavailable',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
+                monthlyTemperatureData: widget.monthlyTemperatureData,
+              ),
             ),
-        ],
-      )),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 400,
+              child: MonthlyTempChart(
+                monthlyTemperatureData: widget.monthlyTemperatureData,
+              ),
+            ),
+            const SizedBox(height: 20),
+            for (var monthlyData in widget.monthlyTemperatureData)
+              Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    'วันที่เหมาะสมเก็บเกี่ยว (${monthlyData.monthYear}):',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'arial',
+                    ),
+                  ),
+                  if (monthlyData.forecastedHarvestDate != null)
+                    Text(
+                      'Forecasted Harvest Date: ${DateFormat('dd MMMM yyyy', 'th_TH').format(monthlyData.forecastedHarvestDate!)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  if (monthlyData.forecastedHarvestDate == null)
+                    Text(
+                      'Forecasted Harvest Date: Data Unavailable {$calculatePercent(accumulatedGdd, maxGdd)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
   }
-}
 
-double calculatePercent(double accumulatedGdd, double maxGdd) {
-  return (accumulatedGdd / maxGdd) * 100;
+  double calculatePercent(double accumulatedGdd, double maxGdd) {
+    return (accumulatedGdd / maxGdd) * 100;
+  }
 }
 
 List<MonthlyTemperatureData> computeCumulativeGddSum(
@@ -136,143 +143,6 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
 
   return List.from(existingData)..addAll(updatedData);
 }
-
-/*
-class MinMaxTempChart extends StatefulWidget {
-  final List<TemperatureData> temperatureData;
-
-  const MinMaxTempChart({
-    Key? key,
-    required this.temperatureData,
-    required String Function(DateTime dateTime) getThaiMonthFromDateTime,
-  }) : super(key: key);
-
-  @override
-  State<MinMaxTempChart> createState() => _MinMaxTempChartState();
-}
-class _MinMaxTempChartState extends State<MinMaxTempChart> {
-  String _selectedMonth = 'January';
-
-  String getThaiMonthFromDateTime(DateTime dateTime) {
-    return DateFormat('MMMM yyyy', 'th_TH').format(dateTime);
-  }
-  String convertMonthToThai(String month) {
-    switch (month) {
-      case 'January':
-        return 'มกราคม';
-      case 'February':
-        return 'กุมภาพันธ์';
-      case 'March':
-        return 'มีนาคม';
-      case 'April':
-        return 'เมษายน';
-      case 'May':
-        return 'พฤษภาคม';
-      case 'June':
-        return 'มิถุนายน';
-      case 'July':
-        return 'กรกฎาคม';
-      case 'August':
-        return 'สิงหาคม';
-      case 'September':
-        return 'กันยายน';
-      case 'October':
-        return 'ตุลาคม';
-      case 'November':
-        return 'พฤศจิกายน';
-      case 'December':
-        return 'ธันวาคม';
-      default:
-        return month;
-    }
-  }
-  final List<String> _months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    List<TemperatureData> filteredData = widget.temperatureData
-        .where((data) =>
-    convertMonthToThai(_selectedMonth) ==
-        getThaiMonthFromDateTime(data.date))
-        .toList();
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: DropdownButton<String>(
-                value: _selectedMonth,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedMonth = newValue!;
-                  });
-                },
-                items: _months.map((String month) {
-                  return DropdownMenuItem<String>(
-                    value: month,
-                    child: Text(convertMonthToThai(month)),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: SizedBox(
-            height: 350,
-            child: SfCartesianChart(
-              primaryXAxis: CategoryAxis(),
-              zoomPanBehavior: ZoomPanBehavior(
-                enablePanning: true,
-                enablePinching: true,
-                enableDoubleTapZooming: true,
-                zoomMode: ZoomMode.xy,
-              ),
-              series: <ChartSeries>[
-                RangeColumnSeries<TemperatureData, String>(
-                  dataSource: filteredData,
-                  xValueMapper: (TemperatureData data, _) => thFormatDate(data.date as String),
-                  highValueMapper: (TemperatureData data, _) => data.maxTemp,
-                  lowValueMapper: (TemperatureData data, _) => data.minTemp,
-                  color: Colors.blue,
-                  dataLabelSettings: const DataLabelSettings(
-                    isVisible: true,
-                    labelAlignment: ChartDataLabelAlignment.top,
-                    textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 10,
-                    ),
-                    color: Colors.greenAccent,
-                    borderColor: Colors.black,
-                    borderWidth: 0.5,
-                  ),
-                )
-              ],
-              legend: const Legend(isVisible: false),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-*/
-
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 
