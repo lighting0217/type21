@@ -18,7 +18,7 @@ class SelectScreen extends StatelessWidget {
   final List<LatLng> locationList;
 
   void navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => screen),
     );

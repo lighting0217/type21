@@ -15,6 +15,7 @@ class Field {
   List<TemperatureData> temperatureData;
   List<MonthlyTemperatureData> monthlyTemperatureData;
   List<AccumulatedGddData> accumulatedGddData;
+  DateTime? forecastedHarvestDate;
 
   Field({
     required this.id,
@@ -33,10 +34,12 @@ class Field {
 }
 
 class AccumulatedGddData {
+  final DateTime date;
   final double accumulatedGdd;
   final String documentID;
 
   AccumulatedGddData({
+    required this.date,
     required this.accumulatedGdd,
     required this.documentID,
   });
@@ -47,7 +50,6 @@ class MonthlyTemperatureData {
   final double gddSum;
   final String documentID;
   final double maxGdd;
-  final DateTime forecastedHarvestDate;
   AccumulatedGddData? accumulatedGddData;
 
   MonthlyTemperatureData({
@@ -55,7 +57,6 @@ class MonthlyTemperatureData {
     required this.gddSum,
     required this.documentID,
     required this.maxGdd,
-    required this.forecastedHarvestDate,
     this.accumulatedGddData,
   });
 
@@ -71,8 +72,6 @@ class MonthlyTemperatureData {
       gddSum: gddSum ?? this.gddSum,
       maxGdd: maxGdd ?? this.maxGdd,
       monthYear: monthYear ?? this.monthYear,
-      forecastedHarvestDate:
-          forecastedHarvestDate ?? this.forecastedHarvestDate,
     );
   }
 }

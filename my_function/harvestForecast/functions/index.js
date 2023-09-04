@@ -2,27 +2,21 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-exports.harvestForecast = functions
+exports.harvestForecastDate = functions
     .pubsub
     .schedule("10 09 * * 1")
     .timeZone("Asia/Bangkok")
     .onRun(async (context) => {
         const fieldsSnapshot = await admin
             .firestore()
-            .collection("fields").get();
+            .collection("fields")
+            .get();
         console.log(`Fetched ${fieldsSnapshot.size} field documents.`);
 
         fieldsSnapshot.forEach(async (doc) => {
             const fieldData = doc.data();
             const fieldId = doc.id;
-
-            const selectedDate = fieldData.selectedDate.toDate();
             const riceMaxGdd = fieldData.riceMaxGdd;
-
-            console.log(
-                `Processing field: ${fieldId}.
-         Selected date: ${selectedDate}. 
-         Max GDD: ${riceMaxGdd}`);
 
             const agddDoc = await admin.firestore()
                 .collection("fields")
@@ -30,38 +24,55 @@ exports.harvestForecast = functions
                 .collection("accumulated_gdd")
                 .doc("Accumulated GDD")
                 .get();
-            const accumulatedGdd =
-                agddDoc.data().accumulatedGdd;
 
-            console.log(`For field: ${fieldId},
-     Accumulated GDD: ${accumulatedGdd}`);
+            const accumulatedGdd = agddDoc.data().accumulatedGdd;
+            const accumulatedGddDate = agddDoc.data().date.toDate();
 
-            const thresholdGdd = riceMaxGdd * 0.8;
-            const currentDate = new Date();
-            const forecastedDays = 20;
-            if (selectedDate <= currentDate &&
-                accumulatedGdd >= thresholdGdd) {
-                console
-                    .log(`Forecasting harvest date for field: ${fieldId}`);
+            const temperatureSnapshot = await admin.firestore()
+                .collection("fields")
+                .doc(fieldId)
+                .collection("temperatures")
+                .orderBy("date")
+                .get();
 
-                const forecastedHarvestDate = new Date(selectedDate);
-                forecastedHarvestDate
-                    .setDate(forecastedHarvestDate
-                        .getDate() + forecastedDays);
+            let forecastedDate = null;
+            let currentGdd = 0;
 
+            temperatureSnapshot.forEach((tempDoc) => {
+                const tempData = tempDoc.data();
+                const tempGdd = tempData.gdd;
+                const tempDate = tempData.date.toDate();
+
+                if (tempDate > accumulatedGddDate) {
+                    const gddSinceLastUpdate = tempGdd - currentGdd;
+                    currentGdd = tempGdd;
+
+                    if (accumulatedGdd + gddSinceLastUpdate >= riceMaxGdd) {
+                        const daysSinceLastUpdate = Math
+                            .ceil((riceMaxGdd - accumulatedGdd) / gddSinceLastUpdate);
+                        forecastedDate = new Date(tempDate);
+                        forecastedDate
+                            .setDate(forecastedDate
+                                .getDate() + daysSinceLastUpdate);
+                        return false; // Stop iterating
+                    }
+                }
+            });
+
+            if (forecastedDate) {
                 await admin
                     .firestore()
                     .collection("fields")
-                    .doc(fieldId).update({
-                        forecastedHarvestDate:
-                        forecastedHarvestDate,
+                    .doc(fieldId)
+                    .update({
+                        forecastedHarvestDate: forecastedDate,
                     });
 
-                console.log(`Updated field: ${fieldId}
-       with forecasted harvest date: ${forecastedHarvestDate}`);
+                console
+                    .log(`Forecasted harvest date for field ${fieldId}:
+           ${forecastedDate}`);
             } else {
-                console.log(`Skipping field:
-       ${fieldId} as conditions are not met.`);
+                console.log(`Skipping field ${fieldId} as conditions are not met.`);
             }
         });
 

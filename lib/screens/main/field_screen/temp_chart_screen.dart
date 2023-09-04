@@ -96,28 +96,6 @@ class _TempChartScreenState extends State<TempChartScreen> {
                       fontFamily: 'arial',
                     ),
                   ),
-                  if (monthlyData.forecastedHarvestDate != null)
-                    Text(
-                      DateFormat('DD MMMM YYYY', 'th_TH')
-                          .format(monthlyData.forecastedHarvestDate!),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'arial',
-                      ),
-                    ),
-                  if (monthlyData.forecastedHarvestDate == null)
-                    Text(
-                      'ยังไม่สามารถแนะนำได้ ข้อมูลยังไม่เพียงพอ ตอนนี้มีข้อมูล GDD อยู่: ${calculatePercent(
-                        monthlyData.accumulatedGddData!,
-                        monthlyData.maxGdd,
-                      ).toStringAsFixed(2)}%',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'arial',
-                      ),
-                    ),
                 ],
               ),
           ],
@@ -150,6 +128,7 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
 
   return List.from(existingData)..addAll(updatedData);
 }
+
 class MonthlyAgddChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 

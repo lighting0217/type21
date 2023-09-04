@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:type21/screens/main/field_screen/field_list.dart';
 
 import '../../models/temp_data_models.dart';
@@ -34,6 +36,7 @@ class AddScreenType2 extends StatefulWidget {
 
 class _AddScreenType2State extends State<AddScreenType2> {
   String? selectedValue;
+  DateTime? forecastedHarvestDate;
 
   final TextEditingController _fieldNameController = TextEditingController();
   final Map<String, String> _riceTypeKeys = {
@@ -98,6 +101,28 @@ class _AddScreenType2State extends State<AddScreenType2> {
     return markerList;
   }
 
+  Future<void> fetchForecastedHarvestDate() async {
+    try {
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('fields')
+          .where('createdBy', isEqualTo: currentUserUid)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final fieldData = querySnapshot.docs.first.data();
+        final date = fieldData['forecastedHarvestDate'] as Timestamp?;
+        if (date != null) {
+          setState(() {
+            forecastedHarvestDate = date.toDate();
+          });
+        }
+      }
+    } catch (error) {
+      print('Error fetching forecasted harvest date: $error');
+    }
+  }
+
   void _submitForm() async {
     if (_fieldNameController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -107,7 +132,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
       );
       return;
     }
-
     final fieldName = _fieldNameController.text;
     final riceType = _riceTypeKeys[selectedValue ?? ''] ?? '';
     final polygonArea = widget.polygonArea;
@@ -115,7 +139,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
     final polygons = widget.polygons;
     final riceMaxGdd = getRiceMaxGdd(riceType);
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
-
     await _addNewFieldToFirestore(
       fieldName,
       riceType,
@@ -187,6 +210,28 @@ class _AddScreenType2State extends State<AddScreenType2> {
           .toList(),
       'createdBy': createdBy, // Set createdBy value
     });
+  }
+
+  Widget _buildForecastedHarvestDate() {
+    if (forecastedHarvestDate != null) {
+      final formattedDate =
+          DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate!);
+      return Text(
+        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: $formattedDate',
+        style: GoogleFonts.openSans(fontSize: 18),
+      );
+    } else {
+      return Text(
+        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: ยังมีข้อมูลไม่เพียงพอ',
+        style: GoogleFonts.openSans(fontSize: 18),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchForecastedHarvestDate();
   }
 
   @override

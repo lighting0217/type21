@@ -29,7 +29,6 @@ class MapScreenType2 extends StatefulWidget {
 
 class _MapScreenType2TestState extends State<MapScreenType2> {
   List<Field> fields = [];
-
   bool _addingPolygons = false;
   MapType _currentMapType = MapType.normal;
   Position? _currentPosition;
@@ -43,7 +42,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
   bool _showClearButton = false;
   bool _showGotoAddScreen = false;
   bool _showRedoButton = false;
-  double _totalDistance = 0; // Declare and initialize _totalDistance
+  double _totalDistance = 0;
 
   @override
   void dispose() {

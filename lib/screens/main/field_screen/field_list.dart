@@ -130,7 +130,7 @@ class _FieldListState extends State<FieldList> {
             if (_auth.currentUser != null) {
               Navigator.pop(context);
             } else {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SelectScreen(locationList: []),
