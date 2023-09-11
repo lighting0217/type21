@@ -51,11 +51,9 @@ class GlobalController extends GetxController {
     }
 
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low);
+        desiredAccuracy: LocationAccuracy.high);
     _lat.value = position.latitude;
     _lng.value = position.longitude;
-
-    // Call the fetchData() method from the WeatherDataFetcher instance
     WeatherData data =
         await _weatherDataFetcher.fetchData(_lat.value, _lng.value);
     weatherData.value = data;

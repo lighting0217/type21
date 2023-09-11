@@ -1,0 +1,54 @@
+Class FieldListScreen
+    Initialize state with:
+        - List of fields 
+        - Monthly temperature data
+
+    Function build (Building the UI)
+        Display app bar with the title "Field List"
+        
+        Display a list of fields:
+            For each field in the list:
+                Display:
+                    - Field name
+                    - Field area in hectares
+                    - Button to view more details
+
+        IF user clicks on a field's detail button THEN
+            Navigate to FieldInfoScreen with field details
+        ENDIF
+
+        IF user clicks on the "Add Field" button THEN
+            Navigate to AddScreenType2 to add a new field
+        ENDIF
+        
+        IF user clicks on the "Back" button THEN
+            Navigate back to the SelectScreen
+        ENDIF
+End Class
+
+1. Start
+2. Display app bar with title "Field List"
+3. Display a list of fields
+   a. For each field:
+      i. Display field name
+      ii. Display field area in hectares
+      iii. Display button to view field details
+4. User can click on a field's detail button
+   a. Navigate to FieldInfoScreen with field details
+5. User can click on the "Add Field" button
+   a. Navigate to AddScreenType2 to add a new field
+6. User can click on the "Back" button to navigate back to the SelectScreen
+7. End
+
+1. Entities: 
+   - User
+2. Processes: 
+   - Retrieve and display list of fields
+   - Handle user interactions (viewing field details, adding a field, navigating back)
+3. Data Stores: 
+   - Firebase Firestore (for the list of fields and monthly temperature data)
+4. Data Flow:
+   - System retrieves the list of fields and monthly temperature data from Firebase Firestore
+   - System displays the retrieved data as a list to the user
+   - User can interact by viewing field details, adding a new field, or navigating back
+   - System navigates to the respective screen or performs the respective action based on user's interaction

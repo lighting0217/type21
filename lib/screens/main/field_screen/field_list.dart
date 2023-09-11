@@ -9,6 +9,34 @@ import 'package:type21/screens/main/select_screen.dart';
 
 import 'field_info.dart';
 
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
+class FieldUtils {
+  static String convertAreaToRaiNganWah(double polygonArea) {
+    final double rai = (polygonArea / 1600).floorToDouble();
+    final double ngan = ((polygonArea - (rai * 1600)) / 400).floorToDouble();
+    final double squareWah = (polygonArea / 4) - (rai * 400) - (ngan * 100);
+
+    String result = 'พื้นที่เพาะปลูก \n';
+    result += '${rai.toInt()} ไร่ ';
+    result += '${ngan.toInt()} งาน ';
+    result += '${squareWah.toStringAsFixed(2)} ตารางวา';
+    return result;
+  }
+
+  static String getThaiRiceType(String? riceType) {
+    switch (riceType) {
+      case 'KDML105':
+        return 'ข้าวหอมมะลิ';
+      case 'RD6':
+        return 'ข้าวกข.6';
+      default:
+        return riceType ?? 'N/A';
+    }
+  }
+}
+
 class FieldList extends StatefulWidget {
   const FieldList({
     Key? key,
@@ -24,32 +52,106 @@ class FieldList extends StatefulWidget {
 }
 
 class _FieldListState extends State<FieldList> {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   late final String currentUserUid = _auth.currentUser?.uid ?? '';
 
-  String convertAreaToRaiNganWah(double polygonArea) {
-    final double rai = (polygonArea / 1600).floorToDouble();
-    final double ngan = ((polygonArea - (rai * 1600)) / 400).floorToDouble();
-    final double squareWah = (polygonArea / 4) - (rai * 400) - (ngan * 100);
-
-    String result = 'พื้นที่เพาะปลูก \n';
-    result += '${rai.toInt()} ไร่ ';
-    result += '${ngan.toInt()} งาน ';
-    result += '${squareWah.toStringAsFixed(2)} ตารางวา';
-
-    return result;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Field List',
+          style:
+              TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (_auth.currentUser != null) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SelectScreen(locationList: []),
+                ),
+              );
+            }
+          },
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: firestore.collection('fields').snapshots(),
+        builder: _buildFieldStream,
+      ),
+    );
   }
 
-  String getThaiRiceType(String? riceType) {
-    switch (riceType) {
-      case 'KDML105':
-        return 'ข้าวหอมมะลิ';
-      case 'RD6':
-        return 'ข้าวกข.6';
-      default:
-        return riceType ?? 'N/A';
+  Widget _buildFieldStream(
+      BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    if (!snapshot.hasData) {
+      if (kDebugMode) {
+        print('Snapshot has no data.');
+        print('Snapshot data: ${snapshot.data}');
+        print('Snapshot error: ${snapshot.error}');
+      }
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (snapshot.hasError) {
+      if (kDebugMode) {
+        print('Snapshot has an error: ${snapshot.error}');
+      }
+      return Center(
+        child: Text('Snapshot error: ${snapshot.error}'),
+      );
+    }
+
+    final fieldList = snapshot.data!.docs
+        .map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data['createdBy'] == currentUserUid) {
+            return Field(
+              id: doc.id,
+              fieldName: data['fieldName'],
+              riceType: data['riceType'],
+              polygonArea: data['polygonArea'].toDouble(),
+              totalDistance: data['totalDistance'].toDouble(),
+              polygons: (data['polygons'] as List<dynamic>).map((point) {
+                return LatLng(
+                  point['latitude'].toDouble(),
+                  point['longitude'].toDouble(),
+                );
+              }).toList(),
+              selectedDate: data['selectedDate'] != null
+                  ? (data['selectedDate'] as Timestamp).toDate()
+                  : null,
+              createdBy: data['createdBy'] ?? '',
+              temperatureData: [],
+              monthlyTemperatureData: [],
+              accumulatedGddData: [],
+              riceMaxGdd: data['riceMaxGdd'] ?? 0.0,
+            );
+          } else {
+            return null;
+          }
+        })
+        .whereType<Field>()
+        .toList();
+    if (kDebugMode) {
+      print('Fetched ${fieldList.length} fields.');
+      for (var field in fieldList) {
+        print(
+            'Field Name: ${field.fieldName}, Rice Type: ${field.riceType}, Area: ${field.polygonArea}');
+      }
+    }
+    if (_auth.currentUser != null) {
+      if (kDebugMode) {
+        print("User Authenticated: true");
+      }
+      return _buildFieldList(fieldList);
+    } else {
+      return Container();
     }
   }
 
@@ -59,7 +161,7 @@ class _FieldListState extends State<FieldList> {
 
     if (userFieldList.isEmpty) {
       return const Center(
-        child: Text('You haven\'t created any fields yet.'),
+        child: Text('ยังไม่ได้สร้างแปลงเพาะปลูก.'),
       );
     }
 
@@ -80,13 +182,13 @@ class _FieldListState extends State<FieldList> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'พันธุ์ข้าว: ${getThaiRiceType(field.riceType)}',
+                'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(field.riceType)}',
                 style: GoogleFonts.openSans(
                   fontSize: 16,
                 ),
               ),
               Text(
-                convertAreaToRaiNganWah(field.polygonArea),
+                FieldUtils.convertAreaToRaiNganWah(field.polygonArea),
                 style: GoogleFonts.openSans(
                   fontSize: 16,
                 ),
@@ -113,91 +215,4 @@ class _FieldListState extends State<FieldList> {
       },
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Field List',
-          style:
-              TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.blue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (_auth.currentUser != null) {
-              Navigator.pop(context);
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SelectScreen(locationList: []),
-                ),
-              );
-            }
-          },
-        ),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: firestore.collection('fields').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            if (kDebugMode) {
-              print('\n${snapshot.data}\n ${snapshot.error}');
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Snapshot error: ${snapshot.error}'),
-            );
-          }
-
-          final fieldList = snapshot.data!.docs
-              .map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-
-                if (data['createdBy'] == currentUserUid) {
-                  return Field(
-                    id: doc.id,
-                    fieldName: data['fieldName'],
-                    riceType: data['riceType'],
-                    polygonArea: data['polygonArea'].toDouble(),
-                    totalDistance: data['totalDistance'].toDouble(),
-                    polygons: (data['polygons'] as List<dynamic>).map((point) {
-                      return LatLng(
-                        point['latitude'].toDouble(),
-                        point['longitude'].toDouble(),
-                      );
-                    }).toList(),
-                    selectedDate: data['selectedDate'] != null
-                        ? (data['selectedDate'] as Timestamp).toDate()
-                        : null,
-                    createdBy: data['createdBy'] ?? '',
-                    temperatureData: [],
-                    monthlyTemperatureData: [],
-                    accumulatedGddData: [],
-                    riceMaxGdd: data['riceMaxGdd'] ?? 0.0,
-                  );
-                } else {
-                  return null;
-                }
-              })
-              .whereType<Field>()
-              .toList();
-          if (_auth.currentUser != null) {
-            if (kDebugMode) {
-              print("User Authenticated: true");
-            }
-            return _buildFieldList(fieldList);
-          } else {
-            return Container();
-          }
-        },
-      ),
-    );
-  }
-}
+} /*when i success create my polygon and then i press go to add field screen is work as i want but after i add my field in add screen and then going to fied list as i want and when i prees back button there going back to add scree not going to selected screnn as i want */

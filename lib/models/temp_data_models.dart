@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +17,8 @@ class Field {
   List<MonthlyTemperatureData> monthlyTemperatureData;
   List<AccumulatedGddData> accumulatedGddData;
   DateTime? forecastedHarvestDate;
+  double? maxGdd;
+  double? maxGddSubcollection;
 
   Field({
     required this.id,
@@ -30,18 +33,21 @@ class Field {
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.riceMaxGdd,
+    this.maxGddSubcollection,
   });
 }
 
 class AccumulatedGddData {
-  final DateTime date;
+  final Timestamp date;
   final double accumulatedGdd;
   final String documentID;
+  final double maxGdd;
 
   AccumulatedGddData({
     required this.date,
     required this.accumulatedGdd,
     required this.documentID,
+    required this.maxGdd,
   });
 }
 

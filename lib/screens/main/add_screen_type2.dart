@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:type21/screens/main/field_screen/field_list.dart';
 
 import '../../models/temp_data_models.dart';
@@ -108,7 +106,6 @@ class _AddScreenType2State extends State<AddScreenType2> {
           .collection('fields')
           .where('createdBy', isEqualTo: currentUserUid)
           .get();
-
       if (querySnapshot.docs.isNotEmpty) {
         final fieldData = querySnapshot.docs.first.data();
         final date = fieldData['forecastedHarvestDate'] as Timestamp?;
@@ -119,7 +116,10 @@ class _AddScreenType2State extends State<AddScreenType2> {
         }
       }
     } catch (error) {
-      print('Error fetching forecasted harvest date: $error');
+      if (kDebugMode) {
+        print('Error fetching forecasted harvest date: $error');
+      }
+      _showToast('Error fetching forecasted harvest date');
     }
   }
 
@@ -164,7 +164,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       riceMaxGdd: riceMaxGdd,
     );
     Navigator.pop(context);
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => FieldList(
@@ -184,47 +184,38 @@ class _AddScreenType2State extends State<AddScreenType2> {
     String createdBy,
     double riceMaxGdd,
   ) async {
-    if (kDebugMode) {
-      print(
-          'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
-    }
+    try {
+      if (kDebugMode) {
+        print(
+            'field Name: $fieldName\nrice type: $riceType\npolygon area:$polygonArea\ntotal distance:$totalDistance\nlat,lan:$polygons');
+      }
+      double riceMaxGdd = 0;
+      if (riceType == 'KDML105') {
+        riceMaxGdd = 2422.09;
+      } else if (riceType == 'RD6') {
+        riceMaxGdd = 2000;
+      }
 
-    double riceMaxGdd = 0;
-    if (riceType == 'KDML105') {
-      riceMaxGdd = 2777.2;
-    } else if (riceType == 'RD6') {
-      riceMaxGdd = 2000;
-    }
-
-    return await _firestore.collection('fields').add({
-      'fieldName': fieldName,
-      'riceType': riceType,
-      'riceMaxGdd': riceMaxGdd,
-      'polygonArea': polygonArea,
-      'totalDistance': totalDistance,
-      'polygons': polygons
-          .map((latLng) => {
-                'latitude': latLng.latitude,
-                'longitude': latLng.longitude,
-              })
-          .toList(),
-      'createdBy': createdBy, // Set createdBy value
-    });
-  }
-
-  Widget _buildForecastedHarvestDate() {
-    if (forecastedHarvestDate != null) {
-      final formattedDate =
-          DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate!);
-      return Text(
-        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: $formattedDate',
-        style: GoogleFonts.openSans(fontSize: 18),
-      );
-    } else {
-      return Text(
-        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: ยังมีข้อมูลไม่เพียงพอ',
-        style: GoogleFonts.openSans(fontSize: 18),
-      );
+      return await _firestore.collection('fields').add({
+        'fieldName': fieldName,
+        'riceType': riceType,
+        'riceMaxGdd': riceMaxGdd,
+        'polygonArea': polygonArea,
+        'totalDistance': totalDistance,
+        'polygons': polygons
+            .map((latLng) => {
+                  'latitude': latLng.latitude,
+                  'longitude': latLng.longitude,
+                })
+            .toList(),
+        'createdBy': createdBy, // Set createdBy value
+      });
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error adding field to Firestore: $error');
+      }
+      _showToast('Error adding field to Firestore');
+      throw Exception('Failed to add field to Firestore');
     }
   }
 
@@ -234,10 +225,15 @@ class _AddScreenType2State extends State<AddScreenType2> {
     fetchForecastedHarvestDate();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Calculate the center of the polygons
-    final List<LatLng> polygonLatLngs = widget.polygons;
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+
+  LatLng _calculatePolygonCenter(List<LatLng> polygonLatLngs) {
     final double centerLat = polygonLatLngs
             .map((latLng) => latLng.latitude)
             .reduce((a, b) => a + b) /
@@ -246,6 +242,13 @@ class _AddScreenType2State extends State<AddScreenType2> {
             .map((latLng) => latLng.longitude)
             .reduce((a, b) => a + b) /
         polygonLatLngs.length;
+
+    return LatLng(centerLat, centerLng);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final LatLng center = _calculatePolygonCenter(widget.polygons);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -317,7 +320,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Latitude: ${centerLat.toStringAsFixed(6)}, Longitude: ${centerLng.toStringAsFixed(6)}',
+              'Latitude: ${center.latitude}, Longitude: ${center.longitude}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
@@ -325,17 +328,16 @@ class _AddScreenType2State extends State<AddScreenType2> {
             const SizedBox(height: 16),
             Center(
               child: SizedBox(
-                height: 250,
-                width: 250,
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(centerLat, centerLng),
-                    zoom: 17,
-                  ),
-                  markers: Set<Marker>.from(_createMarkers()),
-                  polygons: _createPolygons(),
-                ),
-              ),
+                  height: 250,
+                  width: 250,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: center,
+                      zoom: 15,
+                    ),
+                    markers: Set<Marker>.from(_createMarkers()),
+                    polygons: _createPolygons(),
+                  )),
             ),
             const SizedBox(height: 16),
             ElevatedButton(

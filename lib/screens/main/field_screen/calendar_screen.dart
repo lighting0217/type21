@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -28,9 +29,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     setState(() {
       _focusedDay = focusedDay;
     });
-
     Field? selectedField;
-
     for (var field in widget.field) {
       if (field.selectedDate?.isAtSameMomentAs(selectedDay) ?? false) {
         selectedField = field;
@@ -52,7 +51,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   bool _shouldShowAlert(double agdd, double maxGdd) {
-    final threshold = (0.9 * maxGdd);
+    final threshold = (0.8 * maxGdd);
     return agdd > threshold;
   }
 
@@ -80,7 +79,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar Screen'),
+        title: Text(thFormatDateMonthShortNumber(
+            '${_focusedDay.month}-${_focusedDay.year}')),
       ),
       body: Column(
         children: [
@@ -89,7 +89,83 @@ class _CalendarScreenState extends State<CalendarScreen> {
             lastDay: DateTime.utc(2023, 12, 31),
             focusedDay: _focusedDay,
             calendarFormat: _calendarFormat,
-            onDaySelected: _onDaySelected,
+            onDaySelected: (selectedDay, focusedDay) {
+              _onDaySelected(selectedDay, focusedDay);
+            },
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, date, _) {
+                final gddValue = widget.temperatureData
+                    .firstWhere((data) => data.date.isAtSameMomentAs(date),
+                        orElse: () => TemperatureData(
+                            date: DateTime.now(),
+                            maxTemp: 0,
+                            minTemp: 0,
+                            gdd: 0,
+                            documentID: ""))
+                    .gdd;
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(date.day.toString()),
+                      Text(gddValue.toString())
+                    ],
+                  ),
+                );
+              },
+              todayBuilder: (context, date, _) {
+                return Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(4.0),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blue,
+                    ),
+                    child: Center(
+                      child: Text(
+                        date.day.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              selectedBuilder: (context, date, _) {
+                return Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(4.0),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.orange,
+                    ),
+                    child: Center(
+                      child: Text(
+                        date.day.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              markerBuilder: (context, date, _) {
+                if (widget.field.any((field) =>
+                    field.forecastedHarvestDate?.isAtSameMomentAs(date) ??
+                    false)) {
+                  return Positioned(
+                    bottom: 1,
+                    child: Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.green,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ],
       ),

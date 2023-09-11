@@ -27,37 +27,43 @@ class WeatherDataFetcher {
     final url = _buildAPIUrl(lat, lng);
     final response = await http.get(Uri.parse(url));
     final jsonData = jsonDecode(response.body);
-
-    // Extract current weather data from the JSON
     final currentWeatherData = CurrentWeatherData.fromJson(jsonData);
-
-    // Extract hourly weather data from the JSON
     final hourlyWeatherData = HourlyWeatherData.fromJson(jsonData);
-
-    // Extract daily weather data from the JSON
     final dailyWeatherData = DailyWeatherData.fromJson(jsonData);
-
-    // Return the combined weather data
     return WeatherData(currentWeatherData, hourlyWeatherData, dailyWeatherData);
   }
 
   String _buildAPIUrl(double lat, double lng) {
     return "https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lng&appid=$openWeatherAPIKey&exclude=minutely&units=metric";
   }
+
+  Future<String?> fetchLocationName(double lat, double lng) async {
+    try {
+      final url = _buildLocationAPIUrl(lat, lng);
+      final response =
+          await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse.isNotEmpty) {
+          return jsonResponse[0]['name'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  String _buildLocationAPIUrl(double lat, double lng) {
+    return 'https://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lng&limit=1&appid=$openWeatherAPIKey';
+  }
 }
 
 class GoogleServices {
   Future<Position> getCurrentLocation() async {
-    // Get the current device location using Geolocator package
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return position;
   }
 }
-
-/*เพิ่มมาแก้บั็คเปิดแอปไม่ได้
- Error: Assertion failed:
-file:///C:/Users/light/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core_web-2.5.0/lib/src/firebase_core_web.dart:256
-:11
-options != null
-*/

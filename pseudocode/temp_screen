@@ -1,0 +1,35 @@
+Class TempScreen
+    Initialize state
+
+    Function build (Building the UI)
+        Display AppBar with title "TempScreen"
+        Display ListView
+            Create ListTile with title "TempScreen"
+            On Tap:
+                Navigate to the respective screen
+
+End Class
+
+Start
+|
+V
+Initialize TempScreen
+|
+V
+Build UI
+|
+V
+Display AppBar with title "TempScreen"
+|
+V
+Create ListView
+|
+V
+Create ListTile with title "TempScreen"
+|
+V
+On Tap:
+|---> Navigate to respective screen
+|
+V
+End

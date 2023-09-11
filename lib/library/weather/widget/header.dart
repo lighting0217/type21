@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../controller/global_controller.dart';
+import '../../th_format_date.dart';
 
 class HeaderSc extends StatefulWidget {
   const HeaderSc({Key? key}) : super(key: key);
@@ -18,7 +19,8 @@ class _HeaderScState extends State<HeaderSc> {
   String city = "";
   final GlobalController globalController =
       Get.put(GlobalController(), permanent: true);
-  String date = DateFormat.yMMMd().format(DateTime.now());
+  String date =
+      thFormatDateShort(DateFormat('MMMM, d yyyy').format(DateTime.now()));
 
   @override
   void initState() {
@@ -28,7 +30,7 @@ class _HeaderScState extends State<HeaderSc> {
 
   Future<void> getCity(double lat, double lng) async {
     final url = Uri.parse(
-        'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$lat&longitude=$lng&localityLanguage=en');
+        'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$lat&longitude=$lng&localityLanguage=th');
     final response = await http.get(url);
     final data = jsonDecode(response.body);
 

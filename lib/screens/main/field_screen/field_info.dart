@@ -10,6 +10,10 @@ import 'package:intl/intl.dart';
 import 'package:type21/models/temp_data_models.dart';
 import 'package:type21/screens/main/field_screen/temp_screen.dart';
 
+import 'field_list.dart';
+
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
 class FieldInfo extends StatefulWidget {
   const FieldInfo({
     Key? key,
@@ -35,41 +39,13 @@ class _FieldInfoState extends State<FieldInfo> {
   LatLng getPolygonCenter(List<LatLng> points) {
     double latSum = points.fold(0.0, (sum, point) => sum + point.latitude);
     double lngSum = points.fold(0.0, (sum, point) => sum + point.longitude);
-
     double latCenter = latSum / points.length;
     double lngCenter = lngSum / points.length;
-
     return LatLng(latCenter, lngCenter);
   }
 
-  String convertAreaToRaiNganWah(double polygonArea) {
-    final double rai = (polygonArea / 1600).floorToDouble();
-    final double ngan = ((polygonArea - (rai * 1600)) / 400).floorToDouble();
-    final double squareWah = (polygonArea / 4) - (rai * 400) - (ngan * 100);
-    final formattedArea = NumberFormat('#,##0.00').format(polygonArea);
-
-    String result = 'พื้นที่เพาะปลูก \n';
-    result += '$formattedArea ตารางเมตร\n';
-    result += '${rai.toInt()} ไร่ ';
-    result += '${ngan.toInt()} งาน ';
-    result += '${squareWah.toStringAsFixed(2)} ตารางวา';
-
-    return result;
-  }
-
-  String getThaiRiceType(String? riceType) {
-    switch (riceType) {
-      case 'KDML105':
-        return 'ข้าวหอมมะลิ';
-      case 'RD6':
-        return 'ข้าวกข.6';
-      default:
-        return riceType ?? 'N/A';
-    }
-  }
-
   String formatDateThai(DateTime? date) {
-    if (date == null) return 'Not selected';
+    if (date == null) return 'ไม่ได้เลือก';
     initializeDateFormatting('th_TH');
     final formatter = DateFormat.yMMMMEEEEd('th_TH');
     return formatter.format(date);
@@ -101,9 +77,7 @@ class _FieldInfoState extends State<FieldInfo> {
         );
       }).toList();
       if (temperatureData.isNotEmpty) {
-        setState(() {
-          widget.field.temperatureData = temperatureData;
-        });
+        widget.field.temperatureData = temperatureData;
       }
     } catch (error) {
       if (kDebugMode) {
@@ -140,7 +114,6 @@ class _FieldInfoState extends State<FieldInfo> {
         final data = doc.data();
         final monthYear = doc.id;
         final gddSum = (data['gddSum']).toDouble();
-        final forecastedHarvestDate = data['forecastedHarvestDate'] as DateTime;
 
         return MonthlyTemperatureData(
           monthYear: monthYear,
@@ -151,9 +124,7 @@ class _FieldInfoState extends State<FieldInfo> {
       }).toList();
 
       if (monthlyTemperatureData.isNotEmpty) {
-        setState(() {
-          widget.field.monthlyTemperatureData = monthlyTemperatureData;
-        });
+        widget.field.monthlyTemperatureData = monthlyTemperatureData;
       }
     } catch (error) {
       if (kDebugMode) {
@@ -164,31 +135,43 @@ class _FieldInfoState extends State<FieldInfo> {
 
   Future<void> loadAccumulatedGddData() async {
     try {
-      final accumulatedGddCollectionGroup = await FirebaseFirestore.instance
+      final fieldDoc = await FirebaseFirestore.instance
           .collection('fields')
           .doc(widget.documentID)
-          .collection('Accumulated GDD')
           .get();
-      final accumulatedGddData = accumulatedGddCollectionGroup.docs.map((doc) {
+
+      final fieldData = fieldDoc.data();
+      final maxGdd = fieldData?['riceMaxGdd'];
+
+      final accumulatedGddCollection = await fieldDoc.reference
+          .collection('accumulated_gdd')
+          .orderBy('date', descending: true)
+          .get();
+
+      final accumulatedGddData = accumulatedGddCollection.docs.map((doc) {
         final data = doc.data();
         final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         final date = (data['date']);
+        final maxGddSub = (data['maxGdd']);
         return AccumulatedGddData(
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
           date: date,
+          maxGdd: maxGddSub ?? maxGdd,
         );
       }).toList();
+
       if (kDebugMode) {
-        print('Accumulated Gdd is $AccumulatedGddData');
+        print('Accumulated Gdd is $accumulatedGddData');
       }
+
       if (accumulatedGddData.isNotEmpty) {
+        widget.field.accumulatedGddData = accumulatedGddData;
+        widget.field.maxGddSubcollection = maxGdd;
+      } else if (accumulatedGddData.isEmpty) {
         if (kDebugMode) {
-          print('$accumulatedGddData $AccumulatedGddData');
+          print('Acccumulate Gdd data is empty');
         }
-        setState(() {
-          widget.field.accumulatedGddData = accumulatedGddData;
-        });
       }
     } catch (error) {
       if (kDebugMode) {
@@ -197,30 +180,36 @@ class _FieldInfoState extends State<FieldInfo> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadTemperatureData();
-    loadMonthlyTemperatureData();
-    loadAccumulatedGddData();
-  }
-
   Widget _buildForecastedHarvestDate() {
     final forecastedHarvestDate = widget.field.forecastedHarvestDate;
-
     if (forecastedHarvestDate != null) {
       final formattedDate =
           DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate);
       return Text(
-        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: $formattedDate',
-        style: GoogleFonts.openSans(fontSize: 18),
+        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: \n$formattedDate',
+        style: GoogleFonts.openSans(fontSize: 16),
       );
     } else {
       return Text(
-        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: ยังมีข้อมูลไม่เพียงพอ',
-        style: GoogleFonts.openSans(fontSize: 18),
+        'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: \nยังมีข้อมูลไม่เพียงพอ',
+        style: GoogleFonts.openSans(fontSize: 16),
       );
     }
+  }
+
+  Future<void> _loadAllData() async {
+    await Future.wait([
+      loadTemperatureData(),
+      loadMonthlyTemperatureData(),
+      loadAccumulatedGddData(),
+    ]);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllData();
   }
 
   @override
@@ -243,151 +232,141 @@ class _FieldInfoState extends State<FieldInfo> {
             ),
             backgroundColor: Colors.blue,
           ),
-          body: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'ชื่อแปลง: ${widget.field.fieldName}',
-                      style: GoogleFonts.openSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'พันธุ์ข้าว: ${getThaiRiceType(widget.field.riceType)}',
-                      style: GoogleFonts.openSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      convertAreaToRaiNganWah(widget.field.polygonArea),
-                      style: GoogleFonts.openSans(fontSize: 18),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'วันที่เลือก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
-                      style: GoogleFonts.openSans(fontSize: 18),
-                    ),
-                    const SizedBox(height: 16),
-                    Center(
-                      child: SizedBox(
-                          height: 350,
-                          width: 350,
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: GoogleMap(
-                                  onMapCreated: (controller) {
-                                    setState(() {
-                                      mapController = controller;
-                                    });
-                                  },
-                                  mapType: MapType.hybrid,
-                                  initialCameraPosition: CameraPosition(
-                                    target:
-                                        getPolygonCenter(widget.field.polygons),
-                                    zoom: 20,
-                                  ),
-                                  polygons: {
-                                    Polygon(
-                                      polygonId:
-                                          const PolygonId('field_polygon'),
-                                      points: widget.field.polygons,
-                                      strokeWidth: 2,
-                                      strokeColor: Colors.black,
-                                      fillColor: Colors.green.withOpacity(0.3),
+          body: SingleChildScrollView(
+              child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ชื่อแปลง: ${widget.field.fieldName}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(widget.field.riceType)}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          FieldUtils.convertAreaToRaiNganWah(
+                              widget.field.polygonArea),
+                          style: GoogleFonts.openSans(fontSize: 18),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'วันที่เลือก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
+                          style: GoogleFonts.openSans(fontSize: 18),
+                        ),
+                        const SizedBox(height: 16),
+                        Center(
+                          child: SizedBox(
+                              height: 350,
+                              width: 350,
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: GoogleMap(
+                                      onMapCreated: (controller) {
+                                        setState(() {
+                                          mapController = controller;
+                                        });
+                                      },
+                                      mapType: MapType.hybrid,
+                                      initialCameraPosition: CameraPosition(
+                                        target: getPolygonCenter(
+                                            widget.field.polygons),
+                                        zoom: 20,
+                                      ),
+                                      polygons: {
+                                        Polygon(
+                                          polygonId:
+                                              const PolygonId('field_polygon'),
+                                          points: widget.field.polygons,
+                                          strokeWidth: 2,
+                                          strokeColor: Colors.black,
+                                          fillColor:
+                                              Colors.green.withOpacity(0.3),
+                                        ),
+                                      },
                                     ),
-                                  },
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 20,
-                                left: 20,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    if (mapController != null) {
-                                      final center = getPolygonCenter(
-                                          widget.field.polygons);
-                                      final cameraUpdate =
-                                          CameraUpdate.newLatLng(center);
-                                      mapController!
-                                          .animateCamera(cameraUpdate);
-                                    }
-                                  },
-                                  tooltip: 'กลับไปยังศูนย์กลางแปลง',
-                                  child: const Icon(Icons.center_focus_strong),
-                                ),
+                                  ),
+                                  Positioned(
+                                    bottom: 20,
+                                    left: 20,
+                                    child: FloatingActionButton(
+                                      onPressed: () {
+                                        if (mapController != null) {
+                                          final center = getPolygonCenter(
+                                              widget.field.polygons);
+                                          final cameraUpdate =
+                                              CameraUpdate.newLatLng(center);
+                                          mapController!
+                                              .animateCamera(cameraUpdate);
+                                        }
+                                      },
+                                      tooltip: 'กลับไปยังศูนย์กลางแปลง',
+                                      child:
+                                          const Icon(Icons.center_focus_strong),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                        const SizedBox(height: 8),
+                        if (widget.field.temperatureData.isEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ไม่พบข้อมูลอุณหภูมิ',
+                                style: GoogleFonts.openSans(fontSize: 18),
                               ),
                             ],
-                          )),
-                    ),
-                    _buildForecastedHarvestDate(),
-                    const SizedBox(height: 16),
-                    if (widget.field.accumulatedGddData.isNotEmpty)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 16),
-                          Text(
-                            'ข้อมูลสะสมค่า GDD',
-                            style: GoogleFonts.openSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          if (widget.field.temperatureData.isEmpty)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ไม่พบข้อมูลอุณหภูมิ',
-                                  style: GoogleFonts.openSans(fontSize: 18),
+                          )
+                        else
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ข้อมูลอุณภูมิ',
+                                style: GoogleFonts.openSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ข้อมูลอุณภูมิ',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TemperatureScreen(
-                                          temperatureData:
-                                              widget.field.temperatureData,
-                                          monthlyTemperatureData: widget
-                                              .field.monthlyTemperatureData,
-                                          accumulatedGddData:
-                                              widget.field.accumulatedGddData,
-                                          field: const [],
-                                        ),
+                              ),
+                              const SizedBox(height: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TemperatureScreen(
+                                        temperatureData:
+                                            widget.field.temperatureData,
+                                        monthlyTemperatureData:
+                                            widget.field.monthlyTemperatureData,
+                                        accumulatedGddData:
+                                            widget.field.accumulatedGddData,
+                                        field: const [],
                                       ),
-                                    );
-                                  },
-                                  child: const Text("ดูข้อมูลอุณหภูมิ"),
-                                ),
-                              ],
-                            )
-                        ],
-                      )
-                  ])));
+                                    ),
+                                  );
+                                },
+                                child: const Text("ดูข้อมูลอุณหภูมิ"),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 10),
+                        _buildForecastedHarvestDate(),
+                      ]))));
     }
   }
 }

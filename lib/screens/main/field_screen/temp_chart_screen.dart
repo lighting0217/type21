@@ -1,5 +1,8 @@
+import 'dart:ui';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
@@ -8,20 +11,19 @@ class TempChartScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
+  final double maxGdd;
 
   const TempChartScreen({
     Key? key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
+    required this.maxGdd,
+    required List<Field> field,
   }) : super(key: key);
 
   @override
   State<TempChartScreen> createState() => _TempChartScreenState();
-}
-
-String getThaiMonthFromDateTime(DateTime dateTime) {
-  return DateFormat('MMMM yyyy', 'th_TH').format(dateTime);
 }
 
 class _TempChartScreenState extends State<TempChartScreen> {
@@ -42,72 +44,55 @@ class _TempChartScreenState extends State<TempChartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Temperature Charts',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.blue,
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: const Text(
+        'Temperature Charts',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: TempRangedChart(temperatureData: widget.temperatureData),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: DayGddChart(temperatureData: widget.temperatureData),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: MonthlyAgddChart(
-                monthlyTemperatureData: widget.monthlyTemperatureData,
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: MonthGddChart(
-                monthlyTemperatureData: widget.monthlyTemperatureData,
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 400,
-              child: MonthlyTempChart(
-                monthlyTemperatureData: widget.monthlyTemperatureData,
-              ),
-            ),
-            const SizedBox(height: 20),
-            for (var monthlyData in widget.monthlyTemperatureData)
-              Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'วันที่เหมาะสมเก็บเกี่ยว (${monthlyData.monthYear}):',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'arial',
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
+      backgroundColor: Colors.blue,
+    );
+  }
+
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildChartSection(
+              TempRangedChart(temperatureData: widget.temperatureData)),
+          _buildChartSection(
+              DayGddChart(temperatureData: widget.temperatureData)),
+          _buildChartSection(MonthlyAgddPieChart(
+              monthlyTemperatureData: widget.monthlyTemperatureData)),
+          _buildChartSection(MonthGddChart(
+              monthlyTemperatureData: widget.monthlyTemperatureData)),
+          _buildChartSection(HalfCircularChart(
+            accumulatedGddData: widget.accumulatedGddData,
+            maxGdd: widget.maxGdd,
+          )),
+        ],
       ),
     );
   }
 
-  double calculatePercent(
-      AccumulatedGddData accumulatedGddData, double maxGdd) {
-    return (accumulatedGddData.accumulatedGdd / maxGdd) * 100;
+  Widget _buildChartSection(Widget chart) {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        SizedBox(height: 400, child: chart),
+        const SizedBox(height: 20),
+      ],
+    );
   }
+}
+
+double calculatePercent(AccumulatedGddData accumulatedGddData, double maxGdd) {
+  return (accumulatedGddData.accumulatedGdd / maxGdd) * 100;
 }
 
 List<MonthlyTemperatureData> computeCumulativeGddSum(
@@ -129,10 +114,10 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
   return List.from(existingData)..addAll(updatedData);
 }
 
-class MonthlyAgddChart extends StatelessWidget {
+class MonthlyAgddPieChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 
-  const MonthlyAgddChart({
+  const MonthlyAgddPieChart({
     Key? key,
     required this.monthlyTemperatureData,
   }) : super(key: key);
@@ -144,103 +129,33 @@ class MonthlyAgddChart extends StatelessWidget {
       child: SizedBox(
         height: 325,
         child: SfCircularChart(
-          title: ChartTitle(text: ('Pie chart')),
+          title: ChartTitle(text: 'Pie chart'),
           series: <CircularSeries>[
-            DoughnutSeries<MonthlyTemperatureData, String>(
-                dataSource: monthlyTemperatureData,
-                xValueMapper: (MonthlyTemperatureData data, _) =>
-                    data.monthYear,
-                yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
-                innerRadius: '0%',
-                dataLabelSettings: const DataLabelSettings(
-                  isVisible: true,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.normal,
-                    fontFamily: ('arial'),
-                  ),
-                ))
+            PieSeries<MonthlyTemperatureData, String>(
+              dataSource: monthlyTemperatureData,
+              xValueMapper: (MonthlyTemperatureData data, _) => data.monthYear,
+              yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
+              radius: '105%',
+              dataLabelMapper: (MonthlyTemperatureData data, _) =>
+                  '${thFormatDateMonth(data.monthYear)}\n${data.gddSum.toStringAsFixed(2)}',
+              dataLabelSettings: const DataLabelSettings(
+                labelIntersectAction: LabelIntersectAction.none,
+                labelAlignment: ChartDataLabelAlignment.auto,
+                isVisible: true,
+                labelPosition: ChartDataLabelPosition.inside,
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Jasmine',
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-}
-
-List<MonthlyTemperatureData> computeRemainingGdd(
-    List<MonthlyTemperatureData> data) {
-  List<MonthlyTemperatureData> remainingData = [];
-  for (var monthData in data) {
-    remainingData
-        .add(monthData.copyWith(gddSum: monthData.maxGdd - monthData.gddSum));
-  }
-  return remainingData;
-}
-
-class MonthlyTempChart extends StatelessWidget {
-  final List<MonthlyTemperatureData> monthlyTemperatureData;
-  final List<MonthlyTemperatureData> cumulativeData;
-  final List<MonthlyTemperatureData> remainingData;
-
-  MonthlyTempChart({
-    Key? key,
-    required this.monthlyTemperatureData,
-  })  : cumulativeData = computeCumulativeGddSum(monthlyTemperatureData),
-        remainingData = computeRemainingGdd(monthlyTemperatureData),
-        super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        height: 300,
-        child: SfCartesianChart(
-          title: ChartTitle(text: 'GDD vs Max GDD'),
-          primaryXAxis: CategoryAxis(
-            labelRotation: 30,
-          ),
-          primaryYAxis: NumericAxis(
-            title: AxisTitle(text: 'GDD'),
-          ),
-          zoomPanBehavior: ZoomPanBehavior(
-            enableDoubleTapZooming: true,
-            enablePanning: true,
-            enablePinching: true,
-          ),
-          series: <ChartSeries>[
-            StackedColumn100Series<MonthlyTemperatureData, String>(
-              dataSource: cumulativeData,
-              xValueMapper: (MonthlyTemperatureData data, _) =>
-                  thFormatDateMonth(data.documentID),
-              yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
-                labelAlignment: ChartDataLabelAlignment.outer,
-                textStyle: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            // Second series for the remaining value (maxGdd - gddSum)
-            StackedColumn100Series<MonthlyTemperatureData, String>(
-              dataSource: remainingData,
-              xValueMapper: (MonthlyTemperatureData data, _) =>
-                  thFormatDateMonth(data.documentID),
-              yValueMapper: (MonthlyTemperatureData data, _) =>
-                  data.maxGdd - data.gddSum,
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
-                labelAlignment: ChartDataLabelAlignment.outer,
-                textStyle: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ));
   }
 }
 
@@ -260,15 +175,17 @@ class _TempRangedChartState extends State<TempRangedChart> {
     return SizedBox(
       height: 300,
       child: SfCartesianChart(
-        title: ChartTitle(text: 'Temperature Range วัน'),
+        title: ChartTitle(text: 'ช่วงอุณหภูมิของวัน'),
         primaryXAxis: CategoryAxis(
-          labelRotation: 30,
+          labelRotation: 25,
         ),
         primaryYAxis: NumericAxis(),
         zoomPanBehavior: ZoomPanBehavior(
           enableDoubleTapZooming: true,
           enablePanning: true,
           enablePinching: true,
+          enableMouseWheelZooming: true,
+          enableSelectionZooming: false,
         ),
         series: <ChartSeries>[
           RangeColumnSeries<TemperatureData, String>(
@@ -279,10 +196,13 @@ class _TempRangedChartState extends State<TempRangedChart> {
             highValueMapper: (TemperatureData data, _) => data.maxTemp,
             dataLabelSettings: const DataLabelSettings(
               isVisible: true,
-              labelAlignment: ChartDataLabelAlignment.outer,
+              labelAlignment: ChartDataLabelAlignment.bottom,
+              labelPosition: ChartDataLabelPosition.outside,
+              labelIntersectAction: LabelIntersectAction.none,
               textStyle: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Jasmine',
               ),
             ),
           ),
@@ -308,7 +228,7 @@ class _DayGddChartState extends State<DayGddChart> {
     return SizedBox(
         height: 300,
         child: SfCartesianChart(
-          title: ChartTitle(text: 'Growing Degree Days (GDD) วัน'),
+          title: ChartTitle(text: 'Growing Degree Days (GDD)/วัน'),
           primaryXAxis: CategoryAxis(
             labelRotation: 30,
           ),
@@ -328,8 +248,9 @@ class _DayGddChartState extends State<DayGddChart> {
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.outer,
                 textStyle: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'Jasmine',
                 ),
               ),
             ),
@@ -354,7 +275,7 @@ class _MonthGddChartState extends State<MonthGddChart> {
     return SizedBox(
         height: 300,
         child: SfCartesianChart(
-          title: ChartTitle(text: 'Growing Degree Days (GDD) เดือน'),
+          title: ChartTitle(text: 'Growing Degree Days (GDD)/เดือน'),
           primaryXAxis: CategoryAxis(
             labelRotation: 30,
           ),
@@ -381,5 +302,75 @@ class _MonthGddChartState extends State<MonthGddChart> {
             ),
           ],
         ));
+  }
+}
+
+class HalfCircularChart extends StatelessWidget {
+  final List<AccumulatedGddData> accumulatedGddData;
+  final double? maxGdd;
+
+  const HalfCircularChart({
+    Key? key,
+    required this.accumulatedGddData,
+    required this.maxGdd,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("maxGdd: $maxGdd");
+      print("accumulatedGddData: $accumulatedGddData");
+    }
+
+    double accumulatedValue = accumulatedGddData.isNotEmpty
+        ? accumulatedGddData.last.accumulatedGdd
+        : 0;
+    double remainingGdd = (maxGdd ?? 0) - accumulatedValue;
+    bool shouldHarvest = accumulatedValue >= (maxGdd ?? 0);
+    double accumulatedPercentage = (accumulatedValue / (maxGdd ?? 1)) * 100;
+    double remainingPercentage = (remainingGdd / (maxGdd ?? 1)) * 100;
+
+    return AspectRatio(
+      aspectRatio: 1.5,
+      child: Stack(
+        children: [
+          // Pie chart
+          PieChart(
+            PieChartData(
+              sections: [
+                if (!shouldHarvest)
+                  PieChartSectionData(
+                    value: remainingGdd,
+                    title: '${remainingPercentage.toStringAsFixed(2)}% Max GDD',
+                    color: Colors.blue,
+                    radius: 155,
+                  ),
+                PieChartSectionData(
+                  value: accumulatedValue,
+                  title:
+                      '${accumulatedPercentage.toStringAsFixed(2)}% Accumulated GDD',
+                  color: Colors.green,
+                  radius: 155,
+                ),
+              ],
+              sectionsSpace: 0,
+              centerSpaceRadius: 0,
+            ),
+          ),
+          // Message
+          if (shouldHarvest)
+            const Center(
+              child: Text(
+                'ควรเก็บเกี่ยวได้แล้ว',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

@@ -119,33 +119,69 @@ String thFormatDateMonth(String inputDate) {
   }
 }
 
+String thFormatDateMonthShortNumber(String inputDate) {
+  const monthNames = [
+    'มกราคม',
+    'กุมภาพันธ์',
+    'มีนาคม',
+    'เมษายน',
+    'พฤษภาคม',
+    'มิถุนายน',
+    'กรกฎาคม',
+    'สิงหาคม',
+    'กันยายน',
+    'ตุลาคม',
+    'พฤศจิกายน',
+    'ธันวาคม',
+  ];
+  try {
+    final dateParts = inputDate.split('-');
+    final month = dateParts[0];
+    final monthInThai = convertMonthToThai(month);
+    final monthIndex = monthNames.indexOf(monthInThai);
+    final year = int.parse(dateParts[1]) + 543;
+
+    final documentIdDateTime = DateTime(year, monthIndex + 1, 12, 0);
+
+    if (kDebugMode) {
+      print('Month Index: $monthIndex');
+      print('Year: $year');
+    }
+
+    final formattedDate =
+        DateFormat('MMMM y', 'th_TH').format(documentIdDateTime);
+    return formattedDate;
+  } catch (e) {
+    return 'Error parsing date: $inputDate';
+  }
+}
+
 String convertMonthToThai(String month) {
-  switch (month) {
-    case 'January':
-      return 'มกราคม';
-    case 'February':
-      return 'กุมภาพันธ์';
-    case 'March':
-      return 'มีนาคม';
-    case 'April':
-      return 'เมษายน';
-    case 'May':
-      return 'พฤษภาคม';
-    case 'June':
-      return 'มิถุนายน';
-    case 'July':
-      return 'กรกฎาคม';
-    case 'August':
-      return 'สิงหาคม';
-    case 'September':
-      return 'กันยายน';
-    case 'October':
-      return 'ตุลาคม';
-    case 'November':
-      return 'พฤศจิกายน';
-    case 'December':
-      return 'ธันวาคม';
-    default:
-      return month;
+  if (['January', 'Jan', '1'].contains(month)) {
+    return 'มกราคม';
+  } else if (['February', 'Feb', '2'].contains(month)) {
+    return 'กุมภาพันธ์';
+  } else if (['March', 'Mar', '3'].contains(month)) {
+    return 'มีนาคม';
+  } else if (['April', 'Apr', '4'].contains(month)) {
+    return 'เมษายน';
+  } else if (['May', '5'].contains(month)) {
+    return 'พฤษภาคม';
+  } else if (['June', 'Jun', '6'].contains(month)) {
+    return 'มิถุนายน';
+  } else if (['July', 'Jul', '7'].contains(month)) {
+    return 'กรกฎาคม';
+  } else if (['August', 'Aug', '8'].contains(month)) {
+    return 'สิงหาคม';
+  } else if (['September', 'Sep', '9'].contains(month)) {
+    return 'กันยายน';
+  } else if (['October', 'Oct', '10'].contains(month)) {
+    return 'ตุลาคม';
+  } else if (['November', 'Nov', '11'].contains(month)) {
+    return 'พฤศจิกายน';
+  } else if (['December', 'Dec', '12'].contains(month)) {
+    return 'ธันวาคม';
+  } else {
+    return month;
   }
 }

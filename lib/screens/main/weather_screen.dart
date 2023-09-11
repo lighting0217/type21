@@ -7,7 +7,7 @@ import 'package:type21/library/weather/widget/current_winget.dart';
 import 'package:type21/library/weather/widget/daily_forecast.dart';
 import 'package:type21/library/weather/widget/header.dart';
 import 'package:type21/library/weather/widget/hourly_winget.dart';
-import 'package:type21/library/weather/widget/sun.dart'; // Import Google Fonts
+import 'package:type21/library/weather/widget/sun.dart';
 
 class WeatherScreen extends StatelessWidget {
   WeatherScreen({Key? key}) : super(key: key);

@@ -56,6 +56,42 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     _getCurrentLocation();
   }
 
+  Future<void> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showSnackBar('Location services are disabled');
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showSnackBar('Location permission denied');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showSnackBar('Location permissions are permanently denied');
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        _currentPosition = position;
+      });
+      _moveToCurrentLocation();
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error fetching current location: $error");
+      }
+    }
+  }
+
   double computeSignedArea(List<LatLng> polygon) {
     int numPoints = polygon.length;
     double signedArea = 0;
@@ -150,6 +186,10 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     }
   }
 
+  void _showSnackBar(String message) {
+    Get.snackbar('', message);
+  }
+
   void _addField() {
     setState(() {
       if (!_addingPolygons) {
@@ -189,36 +229,6 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
         ),
       ),
     );
-  }
-
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      Get.snackbar('', 'Location services are disabled');
-      return Future.error('Location services are disabled');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        Get.snackbar('', 'Location permission denied');
-        return Future.error('Location permission denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      Get.snackbar('', 'Location permissions are permanently denied');
-      return Future.error('Location permissions are permanently denied');
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    setState(() {
-      _currentPosition = position;
-    });
-    _moveToCurrentLocation();
   }
 
   void _measureDistance() {

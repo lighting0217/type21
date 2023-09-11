@@ -2,7 +2,31 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+/**
+ * Calculate the Simple Moving Average (SMA) of an array of data.
+ *
+ * @param {number[]} data - The array of numbers to calculate the SMA for.
+ * @param {number} days - The number of days for the SMA calculation.
+ * @return {number|null}
+ *
+ */
+function calculateSMA(data, days) {
+    if (data.length < days) {
+        console.warn("Not enough data for SMA calculation.");
+        return null;
+    }
+
+    let sum = 0;
+    for (let i = 0; i < days; i++) {
+        sum += data[data.length - i - 1];
+    }
+
+    return sum / days;
+}
+
+
 exports.harvestForecastDate = functions
+    .region("asia-southeast1")
     .pubsub
     .schedule("10 09 * * 1")
     .timeZone("Asia/Bangkok")
@@ -25,8 +49,25 @@ exports.harvestForecastDate = functions
                 .doc("Accumulated GDD")
                 .get();
 
+            if (!agddDoc.exists) {
+                console.warn(
+                    `No accumulated GDD found for field ${fieldId}. Skipping.`);
+                return;
+            }
+
             const accumulatedGdd = agddDoc.data().accumulatedGdd;
-            const accumulatedGddDate = agddDoc.data().date.toDate();
+            const eightyPercentMaxGdd = 0.8 * riceMaxGdd;
+
+            if (accumulatedGdd < eightyPercentMaxGdd) {
+                console.info(
+                    `Field ${fieldId} has not reached 80% of Max GDD. Skipping.`);
+                return;
+            }
+
+            console.log(`Field ID: ${fieldId}`);
+            console.log(`Rice Max GDD: ${riceMaxGdd}`);
+            console.log(`Accumulated GDD: ${accumulatedGdd}`);
+            console.log(`80% of Max GDD: ${eightyPercentMaxGdd}`);
 
             const temperatureSnapshot = await admin.firestore()
                 .collection("fields")
@@ -35,45 +76,47 @@ exports.harvestForecastDate = functions
                 .orderBy("date")
                 .get();
 
-            let forecastedDate = null;
-            let currentGdd = 0;
+            if (temperatureSnapshot.empty) {
+                console.warn(
+                    `No temperature data found for field ${fieldId}. Skipping.`);
+                return;
+            }
 
+            const gddData = [];
             temperatureSnapshot.forEach((tempDoc) => {
-                const tempData = tempDoc.data();
-                const tempGdd = tempData.gdd;
-                const tempDate = tempData.date.toDate();
-
-                if (tempDate > accumulatedGddDate) {
-                    const gddSinceLastUpdate = tempGdd - currentGdd;
-                    currentGdd = tempGdd;
-
-                    if (accumulatedGdd + gddSinceLastUpdate >= riceMaxGdd) {
-                        const daysSinceLastUpdate = Math
-                            .ceil((riceMaxGdd - accumulatedGdd) / gddSinceLastUpdate);
-                        forecastedDate = new Date(tempDate);
-                        forecastedDate
-                            .setDate(forecastedDate
-                                .getDate() + daysSinceLastUpdate);
-                        return false; // Stop iterating
-                    }
-                }
+                gddData.push(tempDoc.data().gdd);
             });
 
-            if (forecastedDate) {
-                await admin
-                    .firestore()
-                    .collection("fields")
-                    .doc(fieldId)
-                    .update({
-                        forecastedHarvestDate: forecastedDate,
-                    });
+            const sma = calculateSMA(gddData, 7); // Calculate 7-day SMA
 
-                console
-                    .log(`Forecasted harvest date for field ${fieldId}:
-           ${forecastedDate}`);
-            } else {
-                console.log(`Skipping field ${fieldId} as conditions are not met.`);
+            if (!sma) {
+                console.warn(
+                    `Unable to calculate SMA for field ${fieldId}. Skipping.`);
+                return;
             }
+
+            let daysRequired = 0;
+            let forecastedAgdd = accumulatedGdd;
+
+            while (forecastedAgdd < riceMaxGdd) {
+                forecastedAgdd += sma;
+                daysRequired++;
+            }
+
+            daysRequired = Math.ceil(daysRequired);
+            const forecastedDate = new Date();
+            forecastedDate.setDate(forecastedDate.getDate() + daysRequired);
+
+            await admin
+                .firestore()
+                .collection("fields")
+                .doc(fieldId)
+                .update({
+                    forecastedHarvestDate: forecastedDate,
+                });
+
+            console.log(
+                `Forecasted harvest date for field ${fieldId}: ${forecastedDate}`);
         });
 
         console.log("Finished processing all fields.");

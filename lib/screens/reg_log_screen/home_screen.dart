@@ -12,13 +12,13 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Login Or Register Screen",
+          "เข้าสุ่ระบบ/สร้างบัญชี",
           style: GoogleFonts.openSans(
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blue, // Change app bar color
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(40),
@@ -27,42 +27,47 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Add your desired image here
-                // Image.asset("assets/images/NWJNSR15.png"),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: const Text("Create Account",
-                        style: TextStyle(fontSize: 20)),
-                    onPressed: () {
-                      // Navigate to the RegisterScreen
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const RegisterScreen();
-                      }));
-                    },
-                  ),
+                _buildButton(
+                  context: context,
+                  icon: Icons.add,
+                  label: "สร้างบัญชี",
+                  onPressed: () => _navigateTo(context, const RegisterScreen()),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.login),
-                    label: const Text("Login", style: TextStyle(fontSize: 20)),
-                    onPressed: () {
-                      // Navigate to the LoginScreen
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const LoginScreen();
-                      }));
-                    },
-                  ),
+                const SizedBox(height: 20),
+                _buildButton(
+                  context: context,
+                  icon: Icons.login,
+                  label: "เข้าสู่ระบบ",
+                  onPressed: () => _navigateTo(context, const LoginScreen()),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        icon: Icon(icon),
+        label: Text(label, style: const TextStyle(fontSize: 20)),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  void _navigateTo(BuildContext context, Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
     );
   }
 }
