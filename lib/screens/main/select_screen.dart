@@ -8,7 +8,6 @@ import 'package:type21/controller/myapi.dart';
 import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
 import '../../library/weather/models/wd.dart';
-import '../../library/weather/widget/header.dart';
 import 'field_screen/field_list.dart';
 import 'map_screen_type2.dart';
 
@@ -16,26 +15,15 @@ final auth = FirebaseAuth.instance;
 
 class SelectScreen extends StatefulWidget {
   const SelectScreen({Key? key, required this.locationList}) : super(key: key);
-
   final List<LatLng> locationList;
-
   @override
   State<SelectScreen> createState() => _SelectScreenState();
 }
-
 class _SelectScreenState extends State<SelectScreen> {
   late WeatherData _weatherData;
   final _weatherFetcher = WeatherDataFetcher();
   final _googleServices = GoogleServices();
   bool _isLoading = true;
-  String? locationName;
-
-  void navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => screen),
-    );
-  }
 
   @override
   void initState() {
@@ -45,15 +33,16 @@ class _SelectScreenState extends State<SelectScreen> {
 
   _fetchWeatherData() async {
     Position position = await _googleServices.getCurrentLocation();
-    locationName = await _weatherFetcher.fetchLocationName(
-        position.latitude, position.longitude);
     WeatherData weatherData =
         await _weatherFetcher.fetchData(position.latitude, position.longitude);
-
     setState(() {
       _weatherData = weatherData;
       _isLoading = false;
     });
+  }
+
+  void navigateToScreen(BuildContext context, Widget screen) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
   }
 
   @override
@@ -76,53 +65,68 @@ class _SelectScreenState extends State<SelectScreen> {
             ? const Center(child: CircularProgressIndicator())
             : ListView(
                 children: [
-                  const HeaderSc(),
-                  const SizedBox(height: 20),
                   Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(locationName ?? 'Unknown Location'),
+                        Text(_weatherData.locationNameData().localNames['th'] ??
+                            'Unknown Location'),
+                        Text(_weatherData.locationNameData().state,
+                            style: const TextStyle(fontSize: 16)),
                         Text(
-                          '${_weatherData.current?.current.temp ?? ''}°C',
-                          style: const TextStyle(fontSize: 40),
-                        ),
-                        Text(
-                          _weatherData
-                                  .current?.current.weather?[0].description ??
-                              '',
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        Image.network(
-                          'https://openweathermap.org/img/w/${_weatherData.current?.current.weather?[0].icon ?? ''}.png',
-                          scale: 0.5,
-                        ),
+                            _weatherData.locationNameData().country == 'TH'
+                                ? 'ประเทศไทย'
+                                : _weatherData.locationNameData().country,
+                            style: const TextStyle(fontSize: 16)),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Detailed Weather Parameters
-                  Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: const Icon(Icons.thermostat_outlined),
-                        title: const Text('Feels Like'),
-                        trailing: Text(
-                            '${_weatherData.current?.current.feels_like ?? ''}°C'),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.cloud),
-                        title: const Text('Cloudiness'),
-                        trailing: Text(
-                            '${_weatherData.current?.current.clouds ?? ''}%'),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.wind_power),
-                        title: const Text('Wind Speed'),
-                        trailing: Text(
-                            '${_weatherData.current?.current.windSpeed} m/s'),
-                      ),
-                    ],
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                            '${_weatherData.currentWeatherData().current.temp ?? ''}°C',
+                            style: const TextStyle(fontSize: 40)),
+                        Text(
+                            _weatherData
+                                    .currentWeatherData()
+                                    .current
+                                    .weather?[0]
+                                    .description ??
+                                '',
+                            style: const TextStyle(fontSize: 24)),
+                        Image.network(
+                            'https://openweathermap.org/img/w/${_weatherData.currentWeatherData().current.weather?[0].icon ?? ''}.png',
+                            scale: 0.5),
+                      ],
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _weatherData.hourlyWeatherData().hourly.length,
+                    itemBuilder: (context, index) {
+                      var hourlyData =
+                          _weatherData.hourlyWeatherData().hourly[index];
+                      return ListTile(
+                        leading: Image.network(
+                            'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
+                            scale: 0.5),
+                        title: Text(
+                            '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(hourlyData.weather?[0].description ?? ''),
+                            Text('Temp: ${hourlyData.temp ?? ''}°C'),
+                            Text(
+                                'Chance of Rain: ${(hourlyData.pop ?? 0) * 100}%'),
+                            Text(
+                                'Rainfall: ${hourlyData.rain?.rain1h ?? 0} mm'),
+                          ],
+                  ),
+                      );
+                    },
                   ),
                 ],
               ),

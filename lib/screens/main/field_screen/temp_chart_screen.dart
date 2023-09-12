@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:type21/library/th_format_date.dart';
@@ -71,10 +69,6 @@ class _TempChartScreenState extends State<TempChartScreen> {
               monthlyTemperatureData: widget.monthlyTemperatureData)),
           _buildChartSection(MonthGddChart(
               monthlyTemperatureData: widget.monthlyTemperatureData)),
-          _buildChartSection(HalfCircularChart(
-            accumulatedGddData: widget.accumulatedGddData,
-            maxGdd: widget.maxGdd,
-          )),
         ],
       ),
     );
@@ -302,75 +296,5 @@ class _MonthGddChartState extends State<MonthGddChart> {
             ),
           ],
         ));
-  }
-}
-
-class HalfCircularChart extends StatelessWidget {
-  final List<AccumulatedGddData> accumulatedGddData;
-  final double? maxGdd;
-
-  const HalfCircularChart({
-    Key? key,
-    required this.accumulatedGddData,
-    required this.maxGdd,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("maxGdd: $maxGdd");
-      print("accumulatedGddData: $accumulatedGddData");
-    }
-
-    double accumulatedValue = accumulatedGddData.isNotEmpty
-        ? accumulatedGddData.last.accumulatedGdd
-        : 0;
-    double remainingGdd = (maxGdd ?? 0) - accumulatedValue;
-    bool shouldHarvest = accumulatedValue >= (maxGdd ?? 0);
-    double accumulatedPercentage = (accumulatedValue / (maxGdd ?? 1)) * 100;
-    double remainingPercentage = (remainingGdd / (maxGdd ?? 1)) * 100;
-
-    return AspectRatio(
-      aspectRatio: 1.5,
-      child: Stack(
-        children: [
-          // Pie chart
-          PieChart(
-            PieChartData(
-              sections: [
-                if (!shouldHarvest)
-                  PieChartSectionData(
-                    value: remainingGdd,
-                    title: '${remainingPercentage.toStringAsFixed(2)}% Max GDD',
-                    color: Colors.blue,
-                    radius: 155,
-                  ),
-                PieChartSectionData(
-                  value: accumulatedValue,
-                  title:
-                      '${accumulatedPercentage.toStringAsFixed(2)}% Accumulated GDD',
-                  color: Colors.green,
-                  radius: 155,
-                ),
-              ],
-              sectionsSpace: 0,
-              centerSpaceRadius: 0,
-            ),
-          ),
-          // Message
-          if (shouldHarvest)
-            const Center(
-              child: Text(
-                'ควรเก็บเกี่ยวได้แล้ว',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }

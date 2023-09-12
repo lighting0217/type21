@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
@@ -41,7 +42,7 @@ class WeatherDataFetcher {
     try {
       final url = _buildLocationAPIUrl(lat, lng);
       final response =
-          await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -51,8 +52,11 @@ class WeatherDataFetcher {
       }
       return null;
     } catch (e) {
-      print('Error: $e');
+      if (kDebugMode) {
+        print('Error: $e');
+      }
     }
+    return null;
   }
 
   String _buildLocationAPIUrl(double lat, double lng) {

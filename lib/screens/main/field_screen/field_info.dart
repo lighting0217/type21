@@ -59,6 +59,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures')
           .orderBy('date', descending: true)
           .get();
+      print('fetch data $dailyTempData');
 
       final temperatureData = dailyTempData.docs.map((doc) {
         final data = doc.data();
@@ -92,6 +93,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('fields')
           .doc(widget.documentID)
           .get();
+      print('Monthly Temperature Data: $monthlyTempData');
 
       final fieldData = monthlyTempData.data();
       final maxGdd = fieldData?['riceMaxGdd'];
@@ -108,6 +110,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures_monthly')
           .where('gddSum', isGreaterThan: 0)
           .get();
+      print('Fetched Data: $monthlyTemperatureCollectionGroup');
 
       final monthlyTemperatureData =
           monthlyTemperatureCollectionGroup.docs.map((doc) {
@@ -147,6 +150,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('accumulated_gdd')
           .orderBy('date', descending: true)
           .get();
+      print('Accumulated GDD Collection: $accumulatedGddCollection');
 
       final accumulatedGddData = accumulatedGddCollection.docs.map((doc) {
         final data = doc.data();

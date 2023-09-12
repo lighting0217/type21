@@ -19,7 +19,6 @@ class GlobalController extends GetxController {
 
   WeatherData getWeatherData() => weatherData.value;
 
-  // Create an instance of WeatherDataFetcher
   final WeatherDataFetcher _weatherDataFetcher = WeatherDataFetcher();
 
   @override

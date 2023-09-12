@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
 
 class TestCalendarScreen extends StatefulWidget {
@@ -28,11 +27,9 @@ class _TestCalendarScreenState extends State<TestCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(thFormatDateMonthShortNumber(
-            '${selectedDate.month}-${selectedDate.year}')),
+        title: const Text('เดือน'),
       ),
       body: CalendarCarousel(
-        height: 420,
         onDayPressed: (DateTime date, List<dynamic> events) {},
         thisMonthDayBorderColor: Colors.grey,
         daysTextStyle: const TextStyle(color: Colors.black),

@@ -96,7 +96,7 @@ class _HourlyDataWidgetState extends State<HourlyDataWidget> {
 }
 
 class HourlyDetails extends StatelessWidget {
-  final int tmp;
+  final double tmp;
   final int timeStamp;
   final String icon;
   final int index;
