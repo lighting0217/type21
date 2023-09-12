@@ -1,0 +1,56 @@
+Class AddScreenType2
+    Initialize state with:
+        - Form key for validation
+        - Text editing controllers for field details (name, area, etc.)
+        - Google Map controller
+        - Current map position
+        - List of markers for field corners
+
+    Function build (Building the UI)
+        Display input fields for field details (name, area, etc.)
+        Display Google Map for marking field corners
+        Display "Add Field" button
+
+        IF user adds a marker on the map THEN
+            Add marker to the list of field corners
+        ENDIF
+
+        IF user clicks "Add Field" THEN
+            IF form is valid THEN
+                Save field details and markers to Firebase Firestore
+                Navigate to previous screen
+            ELSE
+                Display validation error messages for respective fields
+            ENDIF
+        ENDIF
+
+        IF user clicks "Back" THEN
+            Navigate to previous screen
+        ENDIF
+End Class
+
+1. Start
+2. Display input fields for field details (name, area, etc.)
+3. Display Google Map for marking field corners
+4. User can add markers on the map for field corners
+5. Display "Add Field" button
+6. User can click "Add Field"
+7. Validate input fields
+8. IF valid, save field details and markers to Firebase Firestore
+9. Navigate back to previous screen
+10. IF user clicks "Back", navigate back without saving
+11. End
+
+1. Entities: 
+   - User
+   - Google Map
+2. Processes: 
+   - Validate input fields
+   - Save field details and markers
+3. Data Stores: 
+   - Firebase Firestore (for field details and markers)
+4. Data Flow:
+   - User inputs field details
+   - User adds markers on Google Map for field corners
+   - System validates input fields
+   - System saves field details and markers to Firebase Firestore

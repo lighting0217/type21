@@ -1,35 +1,43 @@
 Class TempScreen
-    Initialize state
+    Initialize state with:
+        - Selected month's temperature data
+        - Average temperature of the selected month
 
     Function build (Building the UI)
-        Display AppBar with title "TempScreen"
-        Display ListView
-            Create ListTile with title "TempScreen"
-            On Tap:
-                Navigate to the respective screen
+        Display app bar with the title "Monthly Temperature"
+        Display dropdown to select the month
 
+        IF user selects a month from the dropdown THEN
+            Retrieve the temperature data for the selected month
+            Calculate the average temperature for the selected month
+            Display the temperature data and the average temperature
+
+            IF user clicks on "Back" THEN
+                Navigate back to the previous screen
+            ENDIF
+        ENDIF
 End Class
 
-Start
-|
-V
-Initialize TempScreen
-|
-V
-Build UI
-|
-V
-Display AppBar with title "TempScreen"
-|
-V
-Create ListView
-|
-V
-Create ListTile with title "TempScreen"
-|
-V
-On Tap:
-|---> Navigate to respective screen
-|
-V
-End
+1. Start
+2. Display app bar with title "Monthly Temperature"
+3. Display dropdown for month selection
+4. IF user selects a month:
+   a. Retrieve temperature data for the selected month
+   b. Calculate and display the average temperature
+   c. Display the temperature data for each day of the month
+5. User can click "Back" to navigate to the previous screen
+6. End
+
+1. Entities: 
+   - User
+2. Processes: 
+   - Retrieve and display the temperature data
+   - Calculate the average temperature
+   - Handle user interactions (month selection, navigating back)
+3. Data Stores: 
+   - Firebase Firestore (for the temperature data)
+4. Data Flow:
+   - System retrieves the temperature data based on user's month selection from Firebase Firestore
+   - System calculates and displays the average temperature and the temperature data to the user
+   - User interacts (selects a different month or navigates back)
+   - System updates the UI

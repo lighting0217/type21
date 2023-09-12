@@ -1,0 +1,47 @@
+Class MapScreenType2
+    Initialize state with:
+        - Google Map controller
+        - Current map position
+        - List of polygons for marked fields
+        - Polygon area and length details
+        - Callback function for polygon area changes
+
+    Function build (Building the UI)
+        Display Google Map with marked fields as polygons
+        Display "Back" button
+
+        IF user clicks on a polygon THEN
+            Display details of the field (area, lengths, etc.)
+        ENDIF
+
+        IF user modifies the polygon THEN
+            Calculate new area of the polygon
+            Trigger callback function with new area value
+        ENDIF
+
+        IF user clicks "Back" THEN
+            Navigate to previous screen
+        ENDIF
+End Class
+
+1. Start
+2. Display Google Map with marked fields as polygons
+3. User can click on a polygon to view its details
+4. IF user modifies a polygon, recalculate its area and lengths
+5. Display "Back" button
+6. IF user clicks "Back", navigate back to the previous screen
+7. End
+
+1. Entities: 
+   - User
+   - Google Map
+2. Processes: 
+   - Display polygons on the map
+   - Calculate area and lengths of polygons
+3. Data Stores: 
+   - Firebase Firestore (for field details and polygons)
+4. Data Flow:
+   - System retrieves polygons from Firebase Firestore
+   - System displays polygons on Google Map
+   - User can interact with polygons to view or modify
+   - System updates area and lengths details as needed

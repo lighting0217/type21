@@ -1,0 +1,64 @@
+Class RegisterScreen
+    Initialize state with empty fields for name, email, password, and confirm password
+    Initialize form key for validation
+
+    Function build (Building the UI)
+        Display Name, Email, Password, and Confirm Password input fields
+        Display "Register" button
+
+        IF user clicks "Register" THEN
+            IF form is valid THEN
+                Perform registration using Firebase
+                IF registration is successful THEN
+                    Store user details in Firebase Firestore
+                    Navigate to SelectScreen
+                ELSE
+                    Display error message
+                ENDIF
+            ELSE
+                Display validation error messages for respective fields
+            ENDIF
+        ENDIF
+
+        IF user clicks "Already have an account? Log in" THEN
+            Navigate to LoginScreen
+        ENDIF
+
+        IF user clicks "Back" THEN
+            Navigate to HomeScreen
+        ENDIF
+End Class
+
+1. Start
+2. Display input fields for:
+   - Name
+   - Email
+   - Password
+   - Confirm Password
+3. User inputs details
+4. User clicks "Register" button
+5. Validate form inputs
+6. IF any input is invalid, go to step 2
+7. Register user with Firebase
+8. IF registration is successful, store user details in Firebase Firestore and navigate to SelectScreen
+9. IF registration fails, display error message
+10. IF user clicks "Already have an account? Log in", navigate to LoginScreen
+11. IF user clicks "Back", navigate to HomeScreen
+12. End
+
+1. Entities: 
+   - User
+   - Firebase Authentication System
+   - Firebase Firestore
+2. Processes: 
+   - Form validation
+   - Firebase user registration
+   - Firestore data storage
+3. Data Stores: 
+   - User details (name, email, password)
+4. Data Flow:
+   - User inputs details
+   - Data is validated
+   - Valid data is sent to Firebase for registration
+   - Firebase returns success or error message
+   - On success, user data is stored in Firebase Firestore

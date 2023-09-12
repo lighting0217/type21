@@ -1,0 +1,46 @@
+Class WeatherScreen
+    Initialize state with:
+        - Weather data for the current location
+
+    Function build (Building the UI)
+        Display app bar with the title "Current Weather"
+        
+        IF weather data is available THEN
+            Display the weather data, including:
+                - Temperature
+                - Weather description
+                - Weather icon
+                - Additional weather details (like humidity, wind speed, etc.)
+        ELSE
+            Display "Weather data is not available"
+        ENDIF
+        
+        IF user clicks on the "Back" button THEN
+            Navigate back to the SelectScreen
+        ENDIF
+End Class
+
+1. Start
+2. Display app bar with title "Current Weather"
+3. Check if weather data is available
+   a. IF available:
+      i. Display temperature
+      ii. Display weather description
+      iii. Display weather icon
+      iv. Display additional weather details
+   b. ELSE: Display "Weather data is not available"
+4. User can click on the "Back" button to navigate back to the SelectScreen
+5. End
+
+1. Entities: 
+   - User
+2. Processes: 
+   - Retrieve and display the weather data for the current location
+   - Handle user interactions (navigating back)
+3. Data Stores: 
+   - OpenWeatherMap API (for the weather data)
+4. Data Flow:
+   - System retrieves the weather data from the OpenWeatherMap API based on the current location
+   - System displays the retrieved data to the user
+   - User interacts by navigating back to the SelectScreen
+   - System updates the UI based on user's interaction

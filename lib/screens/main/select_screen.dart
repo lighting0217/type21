@@ -20,7 +20,7 @@ class SelectScreen extends StatefulWidget {
   State<SelectScreen> createState() => _SelectScreenState();
 }
 class _SelectScreenState extends State<SelectScreen> {
-  late WeatherData _weatherData;
+  late WeatherData? _weatherData;
   final _weatherFetcher = WeatherDataFetcher();
   final _googleServices = GoogleServices();
   bool _isLoading = true;
@@ -32,13 +32,25 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   _fetchWeatherData() async {
-    Position position = await _googleServices.getCurrentLocation();
-    WeatherData weatherData =
-        await _weatherFetcher.fetchData(position.latitude, position.longitude);
-    setState(() {
-      _weatherData = weatherData;
-      _isLoading = false;
-    });
+    try {
+      Position position = await _googleServices.getCurrentLocation();
+      WeatherData weatherData = await _weatherFetcher.fetchData(
+          position.latitude, position.longitude);
+      setState(() {
+        _weatherData = weatherData;
+        _isLoading = false;
+      });
+      if (kDebugMode) {
+        print('Weather data: $weatherData');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching weather data: $e");
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void navigateToScreen(BuildContext context, Widget screen) {
@@ -69,14 +81,15 @@ class _SelectScreenState extends State<SelectScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(_weatherData.locationNameData().localNames['th'] ??
-                            'Unknown Location'),
-                        Text(_weatherData.locationNameData().state,
+                        Text(
+                            _weatherData?.locationNameData().localNames['th'] ??
+                                'Unknown Location'),
+                        Text(_weatherData!.locationNameData().state,
                             style: const TextStyle(fontSize: 16)),
                         Text(
-                            _weatherData.locationNameData().country == 'TH'
+                            _weatherData?.locationNameData().country == 'TH'
                                 ? 'ประเทศไทย'
-                                : _weatherData.locationNameData().country,
+                                : _weatherData!.locationNameData().country,
                             style: const TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -86,43 +99,53 @@ class _SelectScreenState extends State<SelectScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                            '${_weatherData.currentWeatherData().current.temp ?? ''}°C',
+                            '${_weatherData!.currentWeatherData().current.temp ?? ''}°C',
                             style: const TextStyle(fontSize: 40)),
                         Text(
                             _weatherData
-                                    .currentWeatherData()
+                                    ?.currentWeatherData()
                                     .current
                                     .weather?[0]
                                     .description ??
                                 '',
                             style: const TextStyle(fontSize: 24)),
                         Image.network(
-                            'https://openweathermap.org/img/w/${_weatherData.currentWeatherData().current.weather?[0].icon ?? ''}.png',
+                            'https://openweathermap.org/img/w/${_weatherData?.currentWeatherData().current.weather?[0].icon ?? ''}.png',
                             scale: 0.5),
                       ],
                     ),
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: _weatherData.hourlyWeatherData().hourly.length,
+                    itemCount: _weatherData?.hourlyWeatherData().hourly.length,
                     itemBuilder: (context, index) {
                       var hourlyData =
-                          _weatherData.hourlyWeatherData().hourly[index];
+                          _weatherData!.hourlyWeatherData().hourly[index];
                       return ListTile(
                         leading: Image.network(
                             'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
                             scale: 0.5),
                         title: Text(
-                            '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00'),
+                          '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00',
+                          style: const TextStyle(fontSize: 20),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(hourlyData.weather?[0].description ?? ''),
-                            Text('Temp: ${hourlyData.temp ?? ''}°C'),
+                            Text(hourlyData.weather?[0].description ??
+                                'ไม่ทราบสภาพอากาศ'),
                             Text(
-                                'Chance of Rain: ${(hourlyData.pop ?? 0) * 100}%'),
+                              'อุณหภูมิ: ${hourlyData.temp?.toStringAsFixed(2) ?? ''}°C',
+                              style: const TextStyle(fontSize: 18),
+                            ),
                             Text(
-                                'Rainfall: ${hourlyData.rain?.rain1h ?? 0} mm'),
+                              'โอกาสเกิดฝน: ${(hourlyData.pop ?? 0) * 100}%',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'ปริมาณน้ำฝน: ${hourlyData.rain?.rain1h?.toStringAsFixed(2) ?? 0} mm',
+                              style: const TextStyle(fontSize: 18),
+                            ),
                           ],
                   ),
                       );

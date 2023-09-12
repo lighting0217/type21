@@ -1,54 +1,49 @@
-Class FieldInfo
+Class FieldInfoScreen
     Initialize state with:
         - Field details
-        - Current month
+        - Field's temperature data
 
     Function build (Building the UI)
-        Display app bar with the title "Details of the plot"
-        Display field details:
+        Display app bar with the title "Field Information"
+        
+        Retrieve and display field details:
             - Field name
-            - Field area
-            - Monthly temperature data
+            - Field location (latitude, longitude)
+            - Field size
+            - Field's crop type
 
-        Display a dropdown menu for selecting a month
-        IF a month is selected THEN
-            Display monthly temperature details for the selected month
-        ENDIF
+        Display a section for "Temperature Data"
+        Retrieve and display the field's temperature data for the current month
+        Display average temperature for the current month
 
-        IF user clicks on the "Edit" icon THEN
-            Navigate to EditFieldScreen
-        ENDIF
-
-        IF user clicks on the "Delete" icon THEN
-            Confirm the delete action with the user
-            IF confirmed THEN
-                Delete the field from the database
-                Navigate back to the previous screen
-            ENDIF
+        IF user clicks on "Back" THEN
+            Navigate back to the FieldListScreen
         ENDIF
 End Class
 
 1. Start
-2. Display app bar with title "Details of the plot"
-3. Display field details (name, area, and temperature data)
-4. User can select a month from a dropdown
-5. Display temperature details for the selected month
-6. User can click on "Edit" to navigate to EditFieldScreen
-7. User can click on "Delete" to initiate the delete process
-8. Confirm deletion with the user
-9. IF confirmed, delete field and navigate back
-10. End
+2. Display app bar with title "Field Information"
+3. Retrieve and display the field's details:
+   a. Field name
+   b. Field location
+   c. Field size
+   d. Crop type
+4. Display a "Temperature Data" section
+5. Retrieve and display the field's temperature data for the current month
+6. Display average temperature for the month
+7. User can click "Back" to navigate to the FieldListScreen
+8. End
 
 1. Entities: 
    - User
 2. Processes: 
-   - Display field details
-   - Handle month selection and show respective data
-   - Handle edit and delete actions
+   - Retrieve and display field details
+   - Retrieve and display field's temperature data
+   - Handle user interactions (navigating back)
 3. Data Stores: 
    - Firebase Firestore (for field details and temperature data)
 4. Data Flow:
-   - System retrieves field details from Firebase Firestore
-   - System displays the retrieved details to the user
-   - User interacts (select month, edit, delete)
-   - System updates the UI or navigates based on user's action
+   - System retrieves the field details and temperature data from Firebase Firestore
+   - System displays the retrieved details and data to the user
+   - User interacts (navigates back)
+   - System navigates back to FieldListScreen based on user's action

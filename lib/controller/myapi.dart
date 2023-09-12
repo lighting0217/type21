@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import '../library/weather/models/cwd.dart';
 import '../library/weather/models/dwd.dart';
 import '../library/weather/models/hwd.dart';
+import '../library/weather/models/location_name.dart';
 import '../library/weather/models/wd.dart';
 
 // Google API key for location services
@@ -31,23 +32,28 @@ class WeatherDataFetcher {
     final currentWeatherData = CurrentWeatherData.fromJson(jsonData);
     final hourlyWeatherData = HourlyWeatherData.fromJson(jsonData);
     final dailyWeatherData = DailyWeatherData.fromJson(jsonData);
-    return WeatherData(currentWeatherData, hourlyWeatherData, dailyWeatherData);
+    final locationNameJson = await fetchLocationName(lat, lng);
+    final locationNameData = locationNameJson != null
+        ? LocationNameData.fromJson(locationNameJson)
+        : null;
+    return WeatherData(currentWeatherData, hourlyWeatherData, dailyWeatherData,
+        locationNameData);
   }
 
   String _buildAPIUrl(double lat, double lng) {
     return "https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lng&appid=$openWeatherAPIKey&exclude=minutely&units=metric";
   }
 
-  Future<String?> fetchLocationName(double lat, double lng) async {
+  Future<Map<String, dynamic>?> fetchLocationName(
+      double lat, double lng) async {
     try {
       final url = _buildLocationAPIUrl(lat, lng);
       final response =
           await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
-
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse.isNotEmpty) {
-          return jsonResponse[0]['name'];
+          return jsonResponse[0];
         }
       }
       return null;
