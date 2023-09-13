@@ -52,7 +52,7 @@ class TemperatureScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      subtitle: Text('GDD รายเดือน: $gdd °C\n'),
+      subtitle: Text('(คาดการ์ณ) GDD รายเดือน: $gdd °C\n'),
     );
   }
 

@@ -1,4 +1,3 @@
-
 class HourlyWeatherData {
   List<Hourly> hourly;
 
@@ -66,11 +65,12 @@ class Weather {
   factory Weather.fromJson(Map<String, dynamic> json) => Weather(
         id: (json['id'] as int?),
         main: (json['main'] as String?),
-        description: _translateToThai(json['description'] as String?),
+        description:
+            _translateDescriptionToThai(json['description'] as String?),
         icon: (json['icon'] as String?),
       );
 
-  static String? _translateToThai(String? description) {
+  static String? _translateDescriptionToThai(String? description) {
     final Map<String, String> weatherDescriptionsToThai = {
       "clear sky": "ท้องฟ้าแจ่มใส",
       "few clouds": "มีเมฆบางส่วน",

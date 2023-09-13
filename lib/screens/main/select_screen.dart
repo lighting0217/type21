@@ -16,9 +16,11 @@ final auth = FirebaseAuth.instance;
 class SelectScreen extends StatefulWidget {
   const SelectScreen({Key? key, required this.locationList}) : super(key: key);
   final List<LatLng> locationList;
+
   @override
   State<SelectScreen> createState() => _SelectScreenState();
 }
+
 class _SelectScreenState extends State<SelectScreen> {
   late WeatherData? _weatherData;
   final _weatherFetcher = WeatherDataFetcher();
@@ -72,7 +74,7 @@ class _SelectScreenState extends State<SelectScreen> {
         backgroundColor: Colors.blue,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : ListView(
@@ -82,15 +84,20 @@ class _SelectScreenState extends State<SelectScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                            _weatherData?.locationNameData().localNames['th'] ??
-                                'Unknown Location'),
+                          _weatherData?.locationNameData().localNames['th'] ??
+                              'Unknown Location',
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
                         Text(_weatherData!.locationNameData().state,
-                            style: const TextStyle(fontSize: 16)),
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold)),
                         Text(
                             _weatherData?.locationNameData().country == 'TH'
                                 ? 'ประเทศไทย'
                                 : _weatherData!.locationNameData().country,
-                            style: const TextStyle(fontSize: 16)),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -147,7 +154,7 @@ class _SelectScreenState extends State<SelectScreen> {
                               style: const TextStyle(fontSize: 18),
                             ),
                           ],
-                  ),
+                        ),
                       );
                     },
                   ),
