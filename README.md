@@ -1,10 +1,6 @@
 # type21
-
-From Type2
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
+  -  update version from From Type2
+  -  Under development of graduation project for undergraduate students 
 
 A few resources to get you started if this is your first Flutter project:
 
