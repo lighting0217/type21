@@ -405,7 +405,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
                   visible: _showCancelButton,
                   child: FloatingActionButton(
                     onPressed: _cancelAddPolygon,
-                    tooltip: 'Cancel',
+                    tooltip: 'ยกเลิก',
                     child: const Icon(Icons.cancel_presentation),
                   ),
                 ),
@@ -413,7 +413,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
                   visible: _showClearButton,
                   child: FloatingActionButton(
                     onPressed: _clearPolygons,
-                    tooltip: 'Clear Polygons',
+                    tooltip: 'ลบหมุดทั้งหมด',
                     child: const Icon(Icons.clear),
                   ),
                 ),
@@ -421,7 +421,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
                   visible: _showRedoButton,
                   child: FloatingActionButton(
                     onPressed: _undoAddMarker,
-                    tooltip: 'Redo',
+                    tooltip: 'ย้อนกลับ',
                     child: const Icon(Icons.undo),
                   ),
                 ),
@@ -429,7 +429,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
                   visible: _showGotoAddScreen,
                   child: FloatingActionButton(
                     onPressed: _goToAddScreen,
-                    tooltip: 'Go to the Add field screen',
+                    tooltip: 'ไปยังหน้าเพิ่มแปลง',
                     child: const Icon(Icons.add_box),
                   ),
                 ),
@@ -445,7 +445,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
                   visible: _showAddFieldButton,
                   child: FloatingActionButton(
                     onPressed: _addField,
-                    tooltip: 'Add field',
+                    tooltip: 'เพิ่มแปลง',
                     child: const Icon(Icons.arrow_forward_ios),
                   ),
                 ),

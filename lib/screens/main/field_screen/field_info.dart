@@ -59,7 +59,9 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures')
           .orderBy('date', descending: true)
           .get();
-      print('fetch data $dailyTempData');
+      if (kDebugMode) {
+        print('fetch data $dailyTempData');
+      }
 
       final temperatureData = dailyTempData.docs.map((doc) {
         final data = doc.data();
@@ -93,7 +95,9 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('fields')
           .doc(widget.documentID)
           .get();
-      print('Monthly Temperature Data: $monthlyTempData');
+      if (kDebugMode) {
+        print('Monthly Temperature Data: $monthlyTempData');
+      }
 
       final fieldData = monthlyTempData.data();
       final maxGdd = fieldData?['riceMaxGdd'];
@@ -110,7 +114,9 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('temperatures_monthly')
           .where('gddSum', isGreaterThan: 0)
           .get();
-      print('Fetched Data: $monthlyTemperatureCollectionGroup');
+      if (kDebugMode) {
+        print('Fetched Data: $monthlyTemperatureCollectionGroup');
+      }
 
       final monthlyTemperatureData =
           monthlyTemperatureCollectionGroup.docs.map((doc) {
@@ -150,7 +156,9 @@ class _FieldInfoState extends State<FieldInfo> {
           .collection('accumulated_gdd')
           .orderBy('date', descending: true)
           .get();
-      print('Accumulated GDD Collection: $accumulatedGddCollection');
+      if (kDebugMode) {
+        print('Accumulated GDD Collection: $accumulatedGddCollection');
+      }
 
       final accumulatedGddData = accumulatedGddCollection.docs.map((doc) {
         final data = doc.data();
@@ -191,12 +199,12 @@ class _FieldInfoState extends State<FieldInfo> {
           DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate);
       return Text(
         'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: \n$formattedDate',
-        style: GoogleFonts.openSans(fontSize: 16),
+        style: GoogleFonts.openSans(fontSize: 18),
       );
     } else {
       return Text(
         'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: \nยังมีข้อมูลไม่เพียงพอ',
-        style: GoogleFonts.openSans(fontSize: 16),
+        style: GoogleFonts.openSans(fontSize: 18),
       );
     }
   }
@@ -265,7 +273,7 @@ class _FieldInfoState extends State<FieldInfo> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'วันที่เลือก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
+                          'วันที่เริ่มปลูก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
                           style: GoogleFonts.openSans(fontSize: 18),
                         ),
                         const SizedBox(height: 16),

@@ -252,7 +252,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Field',
+          'เพิ่มแปลง',
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
@@ -263,17 +263,16 @@ class _AddScreenType2State extends State<AddScreenType2> {
         child: ListView(
           children: [
             const Text(
-              'Field Information',
+              'ข้อมูลแปลง',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _fieldNameController,
               decoration: const InputDecoration(
-                labelText: 'Field Name',
+                labelText: 'ชื่อแปลง',
               ),
-              validator:
-                  RequiredValidator(errorText: 'Please enter a field name'),
+              validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -288,24 +287,24 @@ class _AddScreenType2State extends State<AddScreenType2> {
                   .toList(),
               onChanged: (value) => setState(() => selectedValue = value),
               decoration: const InputDecoration(
-                labelText: 'Rice Type',
+                labelText: 'ชนิดพันธุ์ข้าว',
               ),
             ),
             const SizedBox(height: 16),
             const Text(
-              'Polygon Information',
+              'ข้อมูลตำแหน่งแปลง',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
-              'Polygon Area:',
+              'ขนาดแปลง:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
               convertAreaToRaiNganWah(widget.polygonArea),
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16),
+            /*const SizedBox(height: 16),
             const Text(
               'Total Distance:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -323,17 +322,17 @@ class _AddScreenType2State extends State<AddScreenType2> {
               'Latitude: ${center.latitude}, Longitude: ${center.longitude}',
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16),
-            const Divider(),
+            const SizedBox(height: 16),*/
             const SizedBox(height: 16),
             Center(
               child: SizedBox(
-                  height: 250,
-                  width: 250,
+                  height: 300,
+                  width: 300,
                   child: GoogleMap(
+                    mapType: MapType.hybrid,
                     initialCameraPosition: CameraPosition(
                       target: center,
-                      zoom: 15,
+                      zoom: 24,
                     ),
                     markers: Set<Marker>.from(_createMarkers()),
                     polygons: _createPolygons(),
@@ -342,7 +341,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _submitForm,
-              child: const Text('Submit'),
+              child: const Text('บันทึก'),
             ),
           ],
         ),

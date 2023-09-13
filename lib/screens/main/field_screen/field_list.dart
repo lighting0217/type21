@@ -59,7 +59,7 @@ class _FieldListState extends State<FieldList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Field List',
+          'รายชื่อแปลง',
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
@@ -164,53 +164,63 @@ class _FieldListState extends State<FieldList> {
         child: Text('ยังไม่ได้สร้างแปลงเพาะปลูก.'),
       );
     }
-
     return ListView.builder(
       itemCount: userFieldList.length,
       itemBuilder: (context, index) {
         final field = userFieldList[index];
         final doc = fieldList[index];
-        return ListTile(
-          title: Text(
-            field.fieldName,
-            style: GoogleFonts.openSans(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+        return Card(
+          margin: const EdgeInsets.all(8.0),
+          elevation: 4.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FieldInfo(
+                    field: field,
+                    documentID: doc.id,
+                    fieldName: field.fieldName,
+                    polygonArea: field.polygonArea,
+                    riceType: field.riceType,
+                    polygons: field.polygons,
+                    selectedDate: field.selectedDate,
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16.0),
+              title: Text(
+                field.fieldName,
+                style: GoogleFonts.openSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(field.riceType)}',
+                    style: GoogleFonts.openSans(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    FieldUtils.convertAreaToRaiNganWah(field.polygonArea),
+                    style: GoogleFonts.openSans(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(field.riceType)}',
-                style: GoogleFonts.openSans(
-                  fontSize: 16,
-                ),
-              ),
-              Text(
-                FieldUtils.convertAreaToRaiNganWah(field.polygonArea),
-                style: GoogleFonts.openSans(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FieldInfo(
-                  field: field,
-                  documentID: doc.id,
-                  fieldName: field.fieldName,
-                  polygonArea: field.polygonArea,
-                  riceType: field.riceType,
-                  polygons: field.polygons,
-                  selectedDate: field.selectedDate,
-                ),
-              ),
-            );
-          },
         );
       },
     );

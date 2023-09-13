@@ -108,11 +108,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 15,
                       ),
                       const Text("ป้อนรหัสผ่าน",
                           style: TextStyle(fontSize: 20)),
                       TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
                         validator: MultiValidator([
                           RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
                           MinLengthValidator(8,
@@ -126,6 +131,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text("ป้อนรหัสผ่านอีกครั้ง",
                           style: TextStyle(fontSize: 20)),
                       TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.lock),
+                        ),
+                        obscureText: true,
                         validator: (val) {
                           if (val?.isEmpty ?? true) {
                             return "กรุณาป้อนรหัสผ่านอีกครั้ง";
@@ -134,14 +145,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        obscureText: true,
                       ),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blue, // Text color
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(10), // Rounded corners
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15), // Button padding
+                          ),
                           onPressed: _registerAccount,
-                          child: const Text("สร้างบัญชี",
-                              style: TextStyle(fontSize: 20)),
+                          child: const Text('สร้างบัญชี'),
                         ),
                       ),
                     ],

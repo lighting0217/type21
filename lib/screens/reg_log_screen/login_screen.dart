@@ -116,6 +116,11 @@ class _LoginScreenState extends State<LoginScreen> {
           style: GoogleFonts.openSans(fontSize: 20),
         ),
         TextFormField(
+          decoration: const InputDecoration(
+            labelText: 'Email',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.email),
+          ),
           validator: MultiValidator([
             RequiredValidator(errorText: "กรุณาป้อนE-mail"),
             EmailValidator(errorText: "Email ไม่ถูกต้อง"),
@@ -136,6 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
           style: GoogleFonts.openSans(fontSize: 20),
         ),
         TextFormField(
+          decoration: const InputDecoration(
+            labelText: 'Password',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.lock),
+          ),
           validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
           obscureText: true,
           onSaved: (String? password) => _profile.password = password!,
@@ -148,8 +158,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.blue,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        ),
         onPressed: _login,
-        child: Text("Login", style: GoogleFonts.openSans(fontSize: 20)),
+        child: const Text('Login'),
       ),
     );
   }
