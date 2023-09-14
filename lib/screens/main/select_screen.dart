@@ -62,27 +62,113 @@ class _SelectScreenState extends State<SelectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "ยินดีต้อนรับ",
-          style: GoogleFonts.openSans(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: Text(
+            "ยินดีต้อนรับ",
+            style: GoogleFonts.openSans(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: const Text('ผู้ใช้'),
+                accountEmail: Text(auth.currentUser?.email ?? ''),
+              ),
+              ListTile(
+                title: const Text('หน้าแผนที่'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.map),
+                  onPressed: () {
+                    navigateToScreen(
+                        context,
+                        MapScreenType2(
+                          polygons: widget.locationList,
+                          polygonArea: 0,
+                          lengths: const [],
+                          onPolygonAreaChanged: (double value) {},
+                        ));
+                  },
+                ),
+                onTap: () {
+                  navigateToScreen(
+                    context,
+                    MapScreenType2(
+                      polygons: widget.locationList,
+                      polygonArea: 0,
+                      lengths: const [],
+                      onPolygonAreaChanged: (double value) {},
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('หน้ารายชื่อแปลง'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.list),
+                  onPressed: () {
+                    navigateToScreen(
+                        context,
+                        const FieldList(
+                            fields: [], monthlyTemperatureData: []));
+                  },
+                ),
+                onTap: () {
+                  navigateToScreen(
+                    context,
+                    const FieldList(
+                      fields: [],
+                      monthlyTemperatureData: [],
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                  title: const Text("ออกจากระบบ"),
+                  leading: const Icon(Icons.logout),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext dialogContext) {
+                          return AlertDialog(
+                            title: const Text('ออกจากระบบ'),
+                            content: const Text('คุณต้องการออกจากระบบ?'),
+                            actions: [
+                              TextButton(
+                                child: const Text(
+                                  'ยกเลิก',
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(dialogContext);
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('ยืนยัน'),
+                                onPressed: () async {
+                                  Navigator.pop(dialogContext);
+                                  await _handleSignOut(context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  })
+            ],
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                children: [
-                  Center(
+        body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
                         Text(
                           _weatherData?.locationNameData().localNames['th'] ??
                               'Unknown Location',
@@ -98,156 +184,72 @@ class _SelectScreenState extends State<SelectScreen> {
                                 : _weatherData!.locationNameData().country,
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-                  Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                            '${_weatherData!.currentWeatherData().current.temp ?? ''}°C',
-                            style: const TextStyle(fontSize: 40)),
-                        Text(
-                            _weatherData
-                                    ?.currentWeatherData()
-                                    .current
-                                    .weather?[0]
-                                    .description ??
-                                '',
-                            style: const TextStyle(fontSize: 24)),
-                        Image.network(
-                            'https://openweathermap.org/img/w/${_weatherData?.currentWeatherData().current.weather?[0].icon ?? ''}.png',
-                            scale: 0.5),
-                      ],
-                    ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _weatherData?.hourlyWeatherData().hourly.length,
-                    itemBuilder: (context, index) {
-                      var hourlyData =
-                          _weatherData!.hourlyWeatherData().hourly[index];
-                      return ListTile(
-                        leading: Image.network(
-                            'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
-                            scale: 0.5),
-                        title: Text(
-                          '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00',
-                          style: const TextStyle(fontSize: 20),
+                        Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                  '${_weatherData!.currentWeatherData().current.temp ?? ''}°C',
+                                  style: const TextStyle(fontSize: 40)),
+                              Text(
+                                  _weatherData
+                                          ?.currentWeatherData()
+                                          .current
+                                          .weather?[0]
+                                          .description ??
+                                      '',
+                                  style: const TextStyle(fontSize: 24)),
+                              Image.network(
+                                  'https://openweathermap.org/img/w/${_weatherData?.currentWeatherData().current.weather?[0].icon ?? ''}.png',
+                                  scale: 0.5),
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: _weatherData
+                                      ?.hourlyWeatherData()
+                                      .hourly
+                                      .length,
+                                  itemBuilder: (context, index) {
+                                    var hourlyData = _weatherData!
+                                        .hourlyWeatherData()
+                                        .hourly[index];
+                                    return ListTile(
+                                      leading: Image.network(
+                                          'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
+                                          scale: 0.5),
+                                      title: Text(
+                                        '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00',
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(hourlyData
+                                                    .weather?[0].description ??
+                                                'ไม่ทราบสภาพอากาศ'),
+                                            Text(
+                                              'อุณหภูมิ: ${hourlyData.temp?.toStringAsFixed(2) ?? ''}°C',
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            ),
+                                            Text(
+                                              'โอกาสเกิดฝน: ${(hourlyData.pop ?? 0) * 100}%',
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            ),
+                                            Text(
+                                              'ปริมาณน้ำฝน: ${hourlyData.rain?.rain1h?.toStringAsFixed(2) ?? 0} mm',
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            ),
+                                          ]),
+                                    );
+                                  })
+                            ],
+                          ),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(hourlyData.weather?[0].description ??
-                                'ไม่ทราบสภาพอากาศ'),
-                            Text(
-                              'อุณหภูมิ: ${hourlyData.temp?.toStringAsFixed(2) ?? ''}°C',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              'โอกาสเกิดฝน: ${(hourlyData.pop ?? 0) * 100}%',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              'ปริมาณน้ำฝน: ${hourlyData.rain?.rain1h?.toStringAsFixed(2) ?? 0} mm',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: const Text('ผู้ใช้'),
-              accountEmail: Text(auth.currentUser?.email ?? ''),
-            ),
-            ListTile(
-              title: const Text('หน้าแผนที่'),
-              trailing: IconButton(
-                icon: const Icon(Icons.map),
-                onPressed: () {
-                  navigateToScreen(
-                      context,
-                      MapScreenType2(
-                        polygons: widget.locationList,
-                        polygonArea: 0,
-                        lengths: const [],
-                        onPolygonAreaChanged: (double value) {},
-                      ));
-                },
-              ),
-              onTap: () {
-                navigateToScreen(
-                  context,
-                  MapScreenType2(
-                    polygons: widget.locationList,
-                    polygonArea: 0,
-                    lengths: const [],
-                    onPolygonAreaChanged: (double value) {},
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('หน้ารายชื่อแปลง'),
-              trailing: IconButton(
-                icon: const Icon(Icons.list),
-                onPressed: () {
-                  navigateToScreen(context,
-                      const FieldList(fields: [], monthlyTemperatureData: []));
-                },
-              ),
-              onTap: () {
-                navigateToScreen(
-                  context,
-                  const FieldList(
-                    fields: [],
-                    monthlyTemperatureData: [],
-                  ),
-                );
-              },
-            ),
-            ListTile(
-                title: const Text("ออกจากระบบ"),
-                leading: const Icon(Icons.logout),
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext dialogContext) {
-                        return AlertDialog(
-                          title: const Text('ออกจากระบบ'),
-                          content: const Text('คุณต้องการออกจากระบบ?'),
-                          actions: [
-                            TextButton(
-                              child: const Text(
-                                'ยกเลิก',
-                              ),
-                              onPressed: () {
-                                Navigator.pop(dialogContext);
-                              },
-                            ),
-                            TextButton(
-                              child: const Text('ยืนยัน'),
-                              onPressed: () async {
-                                Navigator.pop(dialogContext);
-                                await _handleSignOut(context);
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                })
-          ],
-        ),
-      ),
-    );
+                      ]))));
   }
 
   Future<void> _handleSignOut(BuildContext context) async {
