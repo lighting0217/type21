@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:type21/library/th_format_date.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:type21/models/temp_data_models.dart';
+
+import '../../../library/th_format_date.dart';
 
 class CalendarScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
@@ -18,169 +20,154 @@ class CalendarScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  State<CalendarScreen> createState() => _TestCalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
+class _TestCalendarScreenState extends State<CalendarScreen> {
+  DateTime selectedDate = DateTime.now();
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _focusedDay = focusedDay;
-    });
-    Field? selectedField;
-    for (var field in widget.field) {
-      if (field.selectedDate?.isAtSameMomentAs(selectedDay) ?? false) {
-        selectedField = field;
-        break;
-      }
-    }
-
-    if (selectedField != null) {
-      final accumulatedGddDataForSelectedDate =
-          selectedField.accumulatedGddData;
-      if (accumulatedGddDataForSelectedDate.isNotEmpty) {
-        final agddValue = accumulatedGddDataForSelectedDate[0].accumulatedGdd;
-
-        if (_shouldShowAlert(agddValue, selectedField.riceMaxGdd)) {
-          _showAlertDialog('ควรเก็บเกี่ยวได้แล้ว');
-        }
-      }
+  @override
+  void initState() {
+    super.initState();
+    if (kDebugMode) {
+      print(widget.temperatureData);
+      print(widget.monthlyTemperatureData);
+      print(widget.accumulatedGddData);
+      print(widget.field);
     }
   }
 
-  bool _shouldShowAlert(double agdd, double maxGdd) {
-    final threshold = (0.8 * maxGdd);
-    return agdd > threshold;
+  double getMonthlyMinTemps(int month) {
+    var filteredData = widget.temperatureData
+        .where((data) => data.date.month == month)
+        .toList();
+    if (filteredData.isEmpty) return 0.0;
+    return filteredData
+        .map((data) => data.minTemp)
+        .reduce((a, b) => a < b ? a : b);
   }
 
-  void _showAlertDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alert'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  double getMonthlyMaxTemps(int month) {
+    var filteredData = widget.temperatureData
+        .where((data) => data.date.month == month)
+        .toList();
+    if (filteredData.isEmpty) return 0.0;
+    return filteredData
+        .map((data) => data.maxTemp)
+        .reduce((a, b) => a > b ? a : b);
+  }
+
+  double getMonthlyGdd(int month) {
+    var filteredData = widget.temperatureData
+        .where((data) => data.date.month == month)
+        .toList();
+    if (filteredData.isEmpty) return 0.0;
+    return filteredData.map((data) => data.gdd).reduce((a, b) => a + b);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(thFormatDateMonthShortNumber(
-              '${_focusedDay.month}-${_focusedDay.year}')),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 500,
-                child: TableCalendar(
-                  firstDay: DateTime.utc(2023, 1, 1),
-                  lastDay: DateTime.utc(2023, 12, 31),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  onDaySelected: (selectedDay, focusedDay) {
-                    _onDaySelected(selectedDay, focusedDay);
-                  },
-                  calendarBuilders: CalendarBuilders(
-                    defaultBuilder: (context, date, _) {
-                      final gddValue = widget.temperatureData
-                          .firstWhere(
-                              (data) => data.date.isAtSameMomentAs(date),
-                              orElse: () => TemperatureData(
-                                  date: DateTime.now(),
-                                  maxTemp: 0,
-                                  minTemp: 0,
-                                  gdd: 0,
-                                  documentID: ""))
-                          .gdd;
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(date.day.toString()),
-                            Text(gddValue.toString())
-                          ],
-                        ),
-                      );
-                    },
-                    todayBuilder: (context, date, _) {
-                      return Center(
-                        child: Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.blue,
-                          ),
-                          child: Center(
-                            child: Text(
-                              date.day.toString(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    selectedBuilder: (context, date, _) {
-                      return Center(
-                        child: Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.orange,
-                          ),
-                          child: Center(
-                            child: Text(
-                              date.day.toString(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    markerBuilder: (context, date, _) {
-                      if (widget.field.any((field) =>
-                          field.forecastedHarvestDate?.isAtSameMomentAs(date) ??
-                          false)) {
-                        return Positioned(
-                          bottom: 1,
-                          child: Container(
-                            width: 5,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.green,
-                            ),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
+      appBar: AppBar(
+        title: const Text('เดือน'),
+      ),
+      body: Column(
+        children: [
+          buildCalendar(),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCalendar() {
+    return SizedBox(
+        height: 400,
+        child: CalendarCarousel(
+          onDayPressed: (DateTime date, List<dynamic> events) {},
+          thisMonthDayBorderColor: Colors.grey,
+          daysTextStyle: const TextStyle(color: Colors.black),
+          todayBorderColor: Colors.blue,
+          todayButtonColor: Colors.blue,
+          selectedDayBorderColor: Colors.orange,
+          selectedDayButtonColor: Colors.orange,
+          weekendTextStyle: const TextStyle(color: Colors.red),
+          customDayBuilder: (bool isSelectable,
+              int index,
+              bool isSelectedDay,
+              bool isToday,
+              bool isPrevMonthDay,
+              TextStyle textStyle,
+              bool isNextMonthDay,
+              bool isThisMonthDay,
+              DateTime day) {
+            final gddValue = widget.temperatureData
+                .firstWhere(
+                  (data) =>
+                      data.date.year == day.year &&
+                      data.date.month == day.month &&
+                      data.date.day == day.day,
+                  orElse: () => TemperatureData(
+                    date: DateTime.now(),
+                    maxTemp: 0,
+                    minTemp: 0,
+                    gdd: 0,
+                    documentID: "",
                   ),
+                )
+                .gdd;
+            return GestureDetector(
+              onTap: () => _showDayDetails(day),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(day.day.toString(), style: textStyle),
+                    Text(gddValue.toStringAsFixed(2)),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const SizedBox(
-                height: 300,
-                child: Text('Test Sized Box'),
-              )
-            ],
-          ),
+            );
+          },
         ));
+  }
+
+  void _showDayDetails(DateTime date) {
+    final formattedDate = thFormatDateYMD(date.toIso8601String());
+    final data = widget.temperatureData.firstWhere(
+      (data) =>
+          data.date.year == date.year &&
+          data.date.month == date.month &&
+          data.date.day == date.day,
+      orElse: () => TemperatureData(
+        date: DateTime.now(),
+        maxTemp: 0,
+        minTemp: 0,
+        gdd: 0,
+        documentID: "",
+      ),
+    );
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              title: Text('วันที่: $formattedDate'),
+            ),
+            ListTile(
+              title: Text('อุณหภูมิต่ำสุดของวัน: ${data.minTemp}'),
+            ),
+            ListTile(
+              title: Text('อุณหภูมิสูงสุดของวัน: ${data.maxTemp}'),
+            ),
+            ListTile(
+              title: Text('ค่า GDD ของวัน: ${data.gdd}'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
-import 'package:type21/screens/main/field_screen/test_calendar_screen.dart';
+import 'package:type21/screens/main/field_screen/calendar_screen.dart';
 
 import 'temp_chart_screen.dart';
 
@@ -144,7 +144,7 @@ class TemperatureScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TestCalendarScreen(
+                  builder: (context) => CalendarScreen(
                     temperatureData: temperatureData,
                     monthlyTemperatureData: monthlyTemperatureData,
                     accumulatedGddData: accumulatedGddData,

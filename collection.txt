@@ -27,25 +27,25 @@ collection:fields
         forecastedHarvestDate:timestamp
 
     sub-collections:temperatures
-        document:
+        document:(Date That's get from Open Weather)
             documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
             gdd:number
-        document:
+        document:(Date That's get from Open Weather)
             documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
             gdd:number
-        document:
+        document:(Date That's get from Open Weather)
             documentID: same as main document id from main collection
             date:timestamp
             maxTemp:number
             minTemp:number
             gdd:number
-        ........:
+        ........:(Date That's get from Open Weather)
             ..........: same as main document id from main collection
             ....:timestamp
             .......:number

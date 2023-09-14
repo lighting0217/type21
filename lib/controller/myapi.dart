@@ -41,7 +41,7 @@ class WeatherDataFetcher {
   }
 
   String _buildAPIUrl(double lat, double lng) {
-    return "https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lng&appid=$openWeatherAPIKey&exclude=minutely&units=metric";
+    return "https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lng&appid=$openWeatherAPIKey&exclude=minutely&units=metric&lang=th";
   }
 
   Future<Map<String, dynamic>?> fetchLocationName(
@@ -66,7 +66,7 @@ class WeatherDataFetcher {
   }
 
   String _buildLocationAPIUrl(double lat, double lng) {
-    return 'https://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lng&limit=1&appid=$openWeatherAPIKey';
+    return 'https://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lng&limit=1&appid=$openWeatherAPIKey&lang=th';
   }
 }
 

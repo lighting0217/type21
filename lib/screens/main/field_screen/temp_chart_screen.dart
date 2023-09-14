@@ -1,6 +1,7 @@
 import 'dart:ui';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:type21/library/th_format_date.dart';
 import 'package:type21/models/temp_data_models.dart';
@@ -25,61 +26,115 @@ class TempChartScreen extends StatefulWidget {
 }
 
 class _TempChartScreenState extends State<TempChartScreen> {
-  late ScrollController _scrollController;
+  DateTime selectedDate = DateTime.now();
+  List<TemperatureData> filteredTemperatureData = [];
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _filterDataByMonth();
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  _filterDataByMonth() {
+    setState(() {
+      filteredTemperatureData = widget.temperatureData
+          .where((data) =>
+              data.date.month == selectedDate.month &&
+              data.date.year == selectedDate.year)
+          .toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+      appBar: AppBar(
+        title: Text(
+          'Temperature Charts',
+          style: GoogleFonts.openSans(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            _buildMonthPicker(),
+            _buildChartSection(
+                TempRangedChart(temperatureData: filteredTemperatureData)),
+            _buildChartSection(
+                DayGddChart(temperatureData: filteredTemperatureData)),
+            _buildChartSection(MonthlyAgddPieChart(
+              monthlyTemperatureData: widget.monthlyTemperatureData,
+              accumulatedGddData: widget.accumulatedGddData,
+            )),
+            _buildChartSection(MonthGddChart(
+                monthlyTemperatureData: widget.monthlyTemperatureData)),
+          ],
+        ),
+      ),
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: const Text(
-        'Temperature Charts',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-      backgroundColor: Colors.blue,
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildChartSection(
-              TempRangedChart(temperatureData: widget.temperatureData)),
-          _buildChartSection(
-              DayGddChart(temperatureData: widget.temperatureData)),
-          _buildChartSection(MonthlyAgddPieChart(
-              monthlyTemperatureData: widget.monthlyTemperatureData)),
-          _buildChartSection(MonthGddChart(
-              monthlyTemperatureData: widget.monthlyTemperatureData)),
-        ],
-      ),
-    );
+  String getThaiMonth(int month) {
+    List<String> thaiMonths = [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+    return thaiMonths[month - 1];
   }
 
   Widget _buildChartSection(Widget chart) {
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: SizedBox(height: 400, child: chart),
+    );
+  }
+
+  Widget _buildMonthPicker() {
+    return Row(
       children: [
-        const SizedBox(height: 20),
-        SizedBox(height: 400, child: chart),
-        const SizedBox(height: 20),
+        IconButton(
+          icon: const Icon(Icons.arrow_left),
+          onPressed: () {
+            setState(() {
+              selectedDate =
+                  DateTime(selectedDate.year, selectedDate.month - 1);
+              _filterDataByMonth();
+            });
+          },
+        ),
+        Expanded(
+          child: Center(
+            child: Text(
+              "${getThaiMonth(selectedDate.month)} ${selectedDate.year}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_right),
+          onPressed: () {
+            setState(() {
+              selectedDate =
+                  DateTime(selectedDate.year, selectedDate.month + 1);
+              _filterDataByMonth();
+            });
+          },
+        ),
       ],
     );
   }
@@ -108,38 +163,53 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
   return List.from(existingData)..addAll(updatedData);
 }
 
+// Pie chart ที่รวมGDD ทุกเดือน
 class MonthlyAgddPieChart extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final List<AccumulatedGddData> accumulatedGddData;
 
   const MonthlyAgddPieChart({
     Key? key,
     required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print(
+          'Month Year date:${monthlyTemperatureData.map((data) => data.monthYear).toList()}');
+      print(
+          'Accumulated Gdd is:${accumulatedGddData.map((data) => data.accumulatedGdd).toList()}');
+    }
+    double totalAccumulatedGdd =
+        accumulatedGddData.fold(0, (sum, item) => sum + item.accumulatedGdd);
     return SizedBox(
       height: 350,
       child: SizedBox(
-        height: 325,
+        height: 350,
         child: SfCircularChart(
-          title: ChartTitle(text: 'Pie chart'),
+          title: ChartTitle(
+              text:
+                  'Pie chart ค่าGDD \n${totalAccumulatedGdd.toStringAsFixed(2)}'),
           series: <CircularSeries>[
             PieSeries<MonthlyTemperatureData, String>(
               dataSource: monthlyTemperatureData,
               xValueMapper: (MonthlyTemperatureData data, _) => data.monthYear,
               yValueMapper: (MonthlyTemperatureData data, _) => data.gddSum,
-              radius: '105%',
+              radius: '65%',
               dataLabelMapper: (MonthlyTemperatureData data, _) =>
-                  '${thFormatDateMonth(data.monthYear)}\n${data.gddSum.toStringAsFixed(2)}',
+                  '${thFormatDateMonthShort(data.monthYear)}\n${data.gddSum.toStringAsFixed(2)}',
               dataLabelSettings: const DataLabelSettings(
-                labelIntersectAction: LabelIntersectAction.none,
-                labelAlignment: ChartDataLabelAlignment.auto,
                 isVisible: true,
-                labelPosition: ChartDataLabelPosition.inside,
+                connectorLineSettings: ConnectorLineSettings(
+                    type: ConnectorType.line, color: Colors.black, width: 1),
+                labelIntersectAction: LabelIntersectAction.shift,
+                labelAlignment: ChartDataLabelAlignment.auto,
+                labelPosition: ChartDataLabelPosition.outside,
                 textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+                  color: Colors.black,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Jasmine',
                   fontFeatures: [FontFeature.tabularFigures()],
@@ -153,6 +223,7 @@ class MonthlyAgddPieChart extends StatelessWidget {
   }
 }
 
+// Ranged chart ของอุณหภูมิรายวัน
 class TempRangedChart extends StatefulWidget {
   final List<TemperatureData> temperatureData;
 
@@ -167,7 +238,7 @@ class _TempRangedChartState extends State<TempRangedChart> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 400,
       child: SfCartesianChart(
         title: ChartTitle(text: 'ช่วงอุณหภูมิของวัน'),
         primaryXAxis: CategoryAxis(
@@ -181,6 +252,33 @@ class _TempRangedChartState extends State<TempRangedChart> {
           enableMouseWheelZooming: true,
           enableSelectionZooming: false,
         ),
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+              int seriesIndex) {
+            TemperatureData tempData = data;
+            return Card(
+              color: Colors.blue,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      thFormatDateShort(tempData.documentID),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '${tempData.minTemp.toStringAsFixed(2)} - ${tempData.maxTemp.toStringAsFixed(3)}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
         series: <ChartSeries>[
           RangeColumnSeries<TemperatureData, String>(
             dataSource: widget.temperatureData,
@@ -188,14 +286,17 @@ class _TempRangedChartState extends State<TempRangedChart> {
                 thFormatDateShort(data.documentID),
             lowValueMapper: (TemperatureData data, _) => data.minTemp,
             highValueMapper: (TemperatureData data, _) => data.maxTemp,
+            enableTooltip: true,
             dataLabelSettings: const DataLabelSettings(
-              isVisible: true,
-              labelAlignment: ChartDataLabelAlignment.bottom,
+              isVisible: false,
+              labelAlignment: ChartDataLabelAlignment.middle,
               labelPosition: ChartDataLabelPosition.outside,
-              labelIntersectAction: LabelIntersectAction.none,
+              labelIntersectAction: LabelIntersectAction.hide,
+              overflowMode: OverflowMode.hide,
+              angle: 90,
               textStyle: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
                 fontFamily: 'Jasmine',
               ),
             ),
@@ -206,6 +307,7 @@ class _TempRangedChartState extends State<TempRangedChart> {
   }
 }
 
+// Gdd ต่อ วัน แบบ Column Chart
 class DayGddChart extends StatefulWidget {
   final List<TemperatureData> temperatureData;
 
@@ -224,7 +326,7 @@ class _DayGddChartState extends State<DayGddChart> {
         child: SfCartesianChart(
           title: ChartTitle(text: 'Growing Degree Days (GDD)/วัน'),
           primaryXAxis: CategoryAxis(
-            labelRotation: 30,
+            labelRotation: 25,
           ),
           primaryYAxis: NumericAxis(),
           zoomPanBehavior: ZoomPanBehavior(
@@ -242,8 +344,8 @@ class _DayGddChartState extends State<DayGddChart> {
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.outer,
                 textStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
                   fontFamily: 'Jasmine',
                 ),
               ),
@@ -253,9 +355,9 @@ class _DayGddChartState extends State<DayGddChart> {
   }
 }
 
+// Gdd ต่อ เดือนแบบ Column Chart
 class MonthGddChart extends StatefulWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
-
   const MonthGddChart({Key? key, required this.monthlyTemperatureData})
       : super(key: key);
 
