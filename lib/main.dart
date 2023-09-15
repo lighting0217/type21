@@ -4,10 +4,11 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'screens/reg_log_screen/home_screen.dart';
 import 'screens/reg_log_screen/login_screen.dart';
+import 'screens/main/select_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,8 +30,19 @@ void main() async {
       }
     }
   });
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final prefs = await SharedPreferences.getInstance();
 
-  runApp(const MyApp());
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  bool isFirebaseUserLoggedIn = auth.currentUser != null;
+
+  runApp(MaterialApp(
+    home: isLoggedIn && isFirebaseUserLoggedIn
+        ? const SelectScreen(
+            locationList: [],
+          )
+        : const HomeScreen(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

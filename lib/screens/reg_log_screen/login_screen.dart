@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/profile.dart';
 import '../main/select_screen.dart';
@@ -34,7 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _profile.email,
           password: _profile.password,
         );
-
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
         Navigator.of(ctx).pushReplacement(MaterialPageRoute(
           builder: (context) => const SelectScreen(locationList: []),
         ));

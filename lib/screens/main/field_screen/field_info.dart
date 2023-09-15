@@ -7,10 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
-import '../../../models/temp_data_models.dart';
-import 'field_list.dart';
-import 'temp_screen.dart';
+import 'package:type21/models/temp_data_models.dart';
+import 'package:type21/screens/main/field_screen/field_list.dart';
+import 'package:type21/screens/main/field_screen/temp_screen.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
