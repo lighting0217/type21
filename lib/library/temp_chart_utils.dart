@@ -1,7 +1,7 @@
 // temp_chart_utils.dart
 // This function returns the Thai month name based on the given month index.
 
-import 'package:type21/models/temp_data_models.dart';
+import '../models/temp_data_models.dart';
 
 String getThaiMonth(int month) {
   List<String> thaiMonths = [

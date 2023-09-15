@@ -1,15 +1,13 @@
-// ignore_for_file: unused_import
-
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:type21/screens/reg_log_screen/login_screen.dart';
+
 import 'firebase_options.dart';
 import 'screens/reg_log_screen/home_screen.dart';
+import 'screens/reg_log_screen/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Your App Title',
+      title: 'Type21',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -99,6 +97,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
 
     if (statuses[Permission.location]!.isGranted &&
         statuses[Permission.locationWhenInUse]!.isGranted) {
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(),

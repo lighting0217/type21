@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
-import 'package:type21/models/profile.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../models/profile.dart'; // Import Google Fonts
 
 class ProfileScreen extends StatelessWidget {
   final Profile profile;

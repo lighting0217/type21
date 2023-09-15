@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -5,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:type21/models/profile.dart';
-import 'package:type21/screens/main/select_screen.dart';
+
+import '../../models/profile.dart';
+import '../main/select_screen.dart';
 
 final Future<FirebaseApp> _firebaseInit = Firebase.initializeApp();
 
@@ -122,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
             prefixIcon: Icon(Icons.email),
           ),
           validator: MultiValidator([
-            RequiredValidator(errorText: "กรุณาป้อนE-mail"),
+            RequiredValidator(errorText: "กรุณาป้อน E-mail"),
             EmailValidator(errorText: "Email ไม่ถูกต้อง"),
           ]),
           keyboardType: TextInputType.emailAddress,

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -5,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:type21/models/profile.dart';
 
+import '../../models/profile.dart';
 import 'home_screen.dart';
 
 final Future<FirebaseApp> _firebase = Firebase.initializeApp();
@@ -43,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } on FirebaseAuthException catch (e) {
         String message;
         if (e.code == 'email-already-in-use') {
-          message = "Email นี้มีบัญชีผู้ใช้แล้ว โปรดใช้Emailอื่น.";
+          message = "Email นี้มีบัญชีผู้ใช้แล้ว โปรดใช้ Email อื่น.";
         } else if (e.code == 'weak-password') {
           message = "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร.";
         } else {
@@ -99,8 +101,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text("ป้อน E-mail", style: TextStyle(fontSize: 20)),
                       TextFormField(
                         validator: MultiValidator([
-                          RequiredValidator(errorText: "กรุณาป้อนE-mail"),
-                          EmailValidator(errorText: "รูปแบบE-mailไม่ถูกต้อง"),
+                          RequiredValidator(errorText: "กรุณาป้อน E-mail"),
+                          EmailValidator(errorText: "รูปแบบ E-mailไม่ถูกต้อง"),
                         ]),
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (String? email) {
@@ -154,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             backgroundColor: Colors.blue, // Text color
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(10), // Rounded corners
+                              BorderRadius.circular(10), // Rounded corners
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15), // Button padding

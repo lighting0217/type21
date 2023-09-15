@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:type21/models/temp_data_models.dart';
 
 import '../../../library/th_format_date.dart';
+import '../../../models/temp_data_models.dart';
 
 class CalendarScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;

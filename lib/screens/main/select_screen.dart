@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:type21/controller/myapi.dart';
-import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
+import '../../controller/myapi.dart';
 import '../../library/weather/models/wd.dart';
+import '../reg_log_screen/home_screen.dart';
 import 'field_screen/field_list.dart';
 import 'map_screen_type2.dart';
 
@@ -255,6 +255,7 @@ class _SelectScreenState extends State<SelectScreen> {
   Future<void> _handleSignOut(BuildContext context) async {
     try {
       await auth.signOut();
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

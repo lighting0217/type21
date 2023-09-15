@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -5,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:type21/screens/main/field_screen/field_list.dart';
 
 import '../../models/temp_data_models.dart';
+import 'field_screen/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -175,15 +177,13 @@ class _AddScreenType2State extends State<AddScreenType2> {
     );
   }
 
-  Future<DocumentReference> _addNewFieldToFirestore(
-    String fieldName,
-    String riceType,
-    double polygonArea,
-    double totalDistance,
-    List<LatLng> polygons,
-    String createdBy,
-    double riceMaxGdd,
-  ) async {
+  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
+      String riceType,
+      double polygonArea,
+      double totalDistance,
+      List<LatLng> polygons,
+      String createdBy,
+      double riceMaxGdd,) async {
     try {
       if (kDebugMode) {
         print(
@@ -208,7 +208,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
                   'longitude': latLng.longitude,
                 })
             .toList(),
-        'createdBy': createdBy, // Set createdBy value
+        'createdBy': createdBy,
       });
     } catch (error) {
       if (kDebugMode) {
@@ -235,12 +235,12 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
   LatLng _calculatePolygonCenter(List<LatLng> polygonLatLngs) {
     final double centerLat = polygonLatLngs
-            .map((latLng) => latLng.latitude)
-            .reduce((a, b) => a + b) /
+        .map((latLng) => latLng.latitude)
+        .reduce((a, b) => a + b) /
         polygonLatLngs.length;
     final double centerLng = polygonLatLngs
-            .map((latLng) => latLng.longitude)
-            .reduce((a, b) => a + b) /
+        .map((latLng) => latLng.longitude)
+        .reduce((a, b) => a + b) /
         polygonLatLngs.length;
 
     return LatLng(centerLat, centerLng);
@@ -256,7 +256,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue, // Change app bar color
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(9.0),
@@ -280,10 +280,10 @@ class _AddScreenType2State extends State<AddScreenType2> {
               items: _riceTypeKeys.keys
                   .map(
                     (value) => DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    ),
-                  )
+                  value: value,
+                  child: Text(value),
+                ),
+              )
                   .toList(),
               onChanged: (value) => setState(() => selectedValue = value),
               decoration: const InputDecoration(

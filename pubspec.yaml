@@ -1,6 +1,6 @@
 name: type21
 description: From Type2
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
@@ -9,11 +9,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.5
-  firebase_core: ^2.15.0
-  firebase_auth: ^4.7.0
+  cupertino_icons: ^1.0.6
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
   http: ^1.1.0
-  get: ^4.6.5
+  get: ^4.6.6
   sleek_circular_slider: ^2.0.1
   intl: ^0.18.1
   geocoding: ^2.1.0
@@ -21,34 +21,34 @@ dependencies:
   google_maps_utils: ^1.5.1+0
   geolocator: any
   provider: any
-  firebase_crashlytics: ^3.3.4
+  firebase_crashlytics: ^3.3.5
   form_field_validator: ^1.1.0
   fluttertoast: ^8.2.2
-  firebase_analytics: ^10.4.4
+  firebase_analytics: ^10.4.5
   json_serializable: ^6.7.1
   json_annotation: ^4.8.1
-  firebase_storage: ^11.2.5
-  collection: ^1.17.1
+  firebase_storage: ^11.2.6
+  collection: ^1.17.2
   turf: ^0.0.8
   flutter_map: ^5.0.0
-  cloud_firestore: ^4.8.4
+  cloud_firestore: ^4.9.1
   google_fonts: ^5.1.0
   fl_chart: ^0.63.0
-  firebase_database: ^10.2.4
-  logger: ^2.0.1
+  firebase_database: ^10.2.5
+  logger: ^2.0.2
   table_calendar: ^3.0.9
-  syncfusion_flutter_charts: ^22.2.9
+  syncfusion_flutter_charts: ^23.1.36
   simple_gesture_detector: any
   dartx: any
   flutter_calendar_carousel: ^2.4.2
-  permission_handler: ^10.4.5
+  permission_handler: ^11.0.0
   location: ^5.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.2
+  flutter_lints: ^2.0.3
 
 flutter:
 

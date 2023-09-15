@@ -48,6 +48,7 @@ const monthToThaiMapping = {
   'Dec': 'ธันวาคม',
   '12': 'ธันวาคม',
 };
+
 String convertMonthToThai(String month) {
   return monthToThaiMapping[month] ?? month;
 }
@@ -66,6 +67,7 @@ const convertMonthThaiLongToShort = {
   'พฤศจิกายน': 'พ.ย.',
   'ธันวาคม': 'ธ.ค.'
 };
+
 String convertMonthToThaiShort(String month) {
   return convertMonthThaiLongToShort[month] ?? month;
 }
