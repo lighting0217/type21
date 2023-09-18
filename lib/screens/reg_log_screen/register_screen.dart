@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../models/profile.dart';
-import 'home_screen.dart';
+import 'package:type21/auth_service.dart';
+import 'package:type21/models/profile.dart';
+import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
 final Future<FirebaseApp> _firebase = Firebase.initializeApp();
 
@@ -21,8 +21,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Profile _profile = Profile(email: '', password: '');
+  final AuthService _auth = AuthService();
 
   Future<void> _registerAccount() async {
     final BuildContext ctx = context;
@@ -30,18 +31,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _profile.email,
-          password: _profile.password,
-        );
-        Fluttertoast.showToast(
-          msg: "Create Account Succeeded",
-          gravity: ToastGravity.TOP,
-        );
-        Navigator.pushReplacement(
-          ctx,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        final user = await _auth.signUp(
+            _profile.email, _profile.password); // Use AuthService for sign-up
+
+        if (user != null) {
+          Fluttertoast.showToast(
+            msg: "Create Account Succeeded",
+            gravity: ToastGravity.TOP,
+          );
+          Navigator.pushReplacement(
+            ctx,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Registration failed",
+            gravity: ToastGravity.CENTER,
+          );
+        }
       } on FirebaseAuthException catch (e) {
         String message;
         if (e.code == 'email-already-in-use') {
@@ -108,6 +115,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onSaved: (String? email) {
                           _profile.email = email!;
                         },
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
                       ),
                       const SizedBox(
                         height: 15,
@@ -116,9 +128,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(fontSize: 20)),
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'Email',
+                          labelText: 'Password',
                           border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(Icons.lock),
                         ),
                         validator: MultiValidator([
                           RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
@@ -153,13 +165,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Colors.blue, // Text color
+                            backgroundColor: Colors.blue,
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(10), // Rounded corners
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15), // Button padding
+                                horizontal: 50, vertical: 15),
                           ),
                           onPressed: _registerAccount,
                           child: const Text('สร้างบัญชี'),

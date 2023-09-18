@@ -5,10 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'firebase_options.dart';
+import 'screens/main/select_screen.dart';
 import 'screens/reg_log_screen/home_screen.dart';
 import 'screens/reg_log_screen/login_screen.dart';
-import 'screens/main/select_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

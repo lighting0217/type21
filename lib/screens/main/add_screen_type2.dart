@@ -177,13 +177,15 @@ class _AddScreenType2State extends State<AddScreenType2> {
     );
   }
 
-  Future<DocumentReference> _addNewFieldToFirestore(String fieldName,
-      String riceType,
-      double polygonArea,
-      double totalDistance,
-      List<LatLng> polygons,
-      String createdBy,
-      double riceMaxGdd,) async {
+  Future<DocumentReference> _addNewFieldToFirestore(
+    String fieldName,
+    String riceType,
+    double polygonArea,
+    double totalDistance,
+    List<LatLng> polygons,
+    String createdBy,
+    double riceMaxGdd,
+  ) async {
     try {
       if (kDebugMode) {
         print(
@@ -235,12 +237,12 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
   LatLng _calculatePolygonCenter(List<LatLng> polygonLatLngs) {
     final double centerLat = polygonLatLngs
-        .map((latLng) => latLng.latitude)
-        .reduce((a, b) => a + b) /
+            .map((latLng) => latLng.latitude)
+            .reduce((a, b) => a + b) /
         polygonLatLngs.length;
     final double centerLng = polygonLatLngs
-        .map((latLng) => latLng.longitude)
-        .reduce((a, b) => a + b) /
+            .map((latLng) => latLng.longitude)
+            .reduce((a, b) => a + b) /
         polygonLatLngs.length;
 
     return LatLng(centerLat, centerLng);
@@ -280,10 +282,10 @@ class _AddScreenType2State extends State<AddScreenType2> {
               items: _riceTypeKeys.keys
                   .map(
                     (value) => DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                ),
-              )
+                      value: value,
+                      child: Text(value),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) => setState(() => selectedValue = value),
               decoration: const InputDecoration(
