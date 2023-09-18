@@ -9,6 +9,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/auth_service.dart';
 import 'package:type21/models/profile.dart';
+import 'package:type21/screens/main/select_screen.dart';
 import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
 final Future<FirebaseApp> _firebase = Firebase.initializeApp();
@@ -176,6 +177,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: const Text('สร้างบัญชี'),
                         ),
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildGoogleSigninButton(),
                     ],
                   ),
                 ),
@@ -189,6 +194,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildGoogleSigninButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.blue,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        ),
+        onPressed: () async {
+          final user = await _auth.signInWithGoogle();
+          if (user != null) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => const SelectScreen(locationList: []),
+            ));
+          } else {
+            Fluttertoast.showToast(
+              msg: "Google Sign-In failed",
+              gravity: ToastGravity.CENTER,
+            );
+          }
+        },
+        child: const Text('Sign up with Google'),
+      ),
     );
   }
 }

@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     final BuildContext ctx = context;
-
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       final user = await _auth.signIn(_profile.email, _profile.password);
@@ -154,6 +153,30 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginButton() {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+            ),
+            onPressed: _login,
+            child: const Text('Login'),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _buildGoogleSigninButton(), // Add the Google Sign-In button here
+      ],
+    );
+  }
+
+  Widget _buildGoogleSigninButton() {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -165,8 +188,20 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
         ),
-        onPressed: _login,
-        child: const Text('Login'),
+        onPressed: () async {
+          final user = await _auth.signInWithGoogle();
+          if (user != null) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => const SelectScreen(locationList: []),
+            ));
+          } else {
+            Fluttertoast.showToast(
+              msg: "Google Sign-In failed",
+              gravity: ToastGravity.CENTER,
+            );
+          }
+        },
+        child: const Text('Sign in with Google'),
       ),
     );
   }

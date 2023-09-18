@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:type21/auth_service.dart';
 
 import '../../controller/myapi.dart';
 import '../../library/weather/models/wd.dart';
@@ -258,9 +260,18 @@ class _SelectScreenState extends State<SelectScreen> {
   Future<void> _handleSignOut(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', false); // <-- Add this line
+      await prefs.setBool('isLoggedIn', false);
 
-      await auth.signOut();
+      final currentUser = auth.currentUser;
+      if (currentUser != null) {
+        if (currentUser.providerData[0].providerId == 'google.com') {
+          final GoogleSignIn googleSignIn = GoogleSignIn();
+          await googleSignIn.signOut();
+        }
+
+        await auth.signOut();
+      }
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

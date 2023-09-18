@@ -42,7 +42,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: To fetch and store daily temperature data for every field.
 - **Trigger**: Scheduled to activate daily at 7:00 AM (Asia/Bangkok timezone).
 - **Data Flow**:
-    -
+  -
         1. Initiates by fetching field information from the Firestore collection "fields".
     -
         2. Acquires temperature data for each field through an external weather API.
@@ -54,7 +54,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: Regularly checks weather conditions and updates the Firestore database accordingly.
 - **Trigger**: Scheduled execution (specific intervals can be specified based on requirements).
 - **Data Flow**:
-    -
+  -
         1. Retrieves a list of specified regions or locations from Firestore.
     -
         2. For each location, it contacts an external weather service to get current weather
@@ -67,7 +67,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: Updates user-specific data in the Firestore database.
 - **Trigger**: Activates upon specific user actions or changes in user-related data.
 - **Data Flow**:
-    -
+  -
         1. Detects changes or actions related to user data (e.g., profile update, preferences
            change).
     -
@@ -80,7 +80,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: Computes the Accumulated Growing Degree Days (AGDD) for specific crops.
 - **Trigger**: Scheduled to run at specific intervals or upon request.
 - **Data Flow**:
-    -
+  -
         1. Gathers temperature and crop data from Firestore.
     -
         2. Computes AGDD using crop-specific base temperatures and daily temperature data.
@@ -92,7 +92,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: Sends notifications to users based on specific conditions or triggers.
 - **Trigger**: Based on specified conditions like weather changes, AGDD thresholds, etc.
 - **Data Flow**:
-    -
+  -
         1. Monitors Firestore for changes or conditions that should trigger notifications.
     -
         2. Processes the data to determine which users should receive notifications.
@@ -104,7 +104,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
 - **Purpose**: Calculate and store monthly accumulated temperature data for each field.
 - **Trigger**: Scheduled to activate every Monday at 7:30 AM (Asia/Bangkok timezone).
 - **Data Flow**:
-    -
+  -
         1. Fetch field information from the Firestore collection "fields".
     -
         2. For each field, acquire temperature data from its respective sub-collection.
@@ -123,7 +123,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
     - `days`: The number of days to consider for the SMA calculation.
 - **Returns**: The calculated SMA value or null if not enough data.
 - **Data Flow**:
-    -
+  -
         1. Checks if the array of values contains enough data points for the SMA calculation.
     -
         2. Calculates the SMA using the specified number of days.
@@ -135,7 +135,7 @@ that enhance the app's functionality. Here's a detailed overview of each functio
   data.
 - **Trigger**: Scheduled to activate every Monday at 9:10 AM (Asia/Bangkok timezone).
 - **Data Flow**:
-    -
+  -
         1. Fetch all field documents from the Firestore collection "fields".
     -
         2. For each field, retrieve the riceMaxGdd and accumulated GDD.
