@@ -8,7 +8,6 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:type21/auth_service.dart';
-import 'package:type21/models/profile.dart';
 
 import '../main/select_screen.dart';
 
@@ -23,14 +22,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Profile _profile = Profile(email: '', password: '');
   final AuthService _auth = AuthService();
 
   Future<void> _login() async {
     final BuildContext ctx = context;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      final user = await _auth.signIn(_profile.email, _profile.password);
+      final user = await _auth.signIn(
+          _auth.email, _auth.password);
       if (user != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
@@ -125,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
             EmailValidator(errorText: "Email ไม่ถูกต้อง"),
           ]),
           keyboardType: TextInputType.emailAddress,
-          onSaved: (String? email) => _profile.email = email!,
+          onSaved: (String? email) => _auth.email = email!,
         ),
       ],
     );
@@ -147,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
           obscureText: true,
-          onSaved: (String? password) => _profile.password = password!,
+          onSaved: (String? password) => _auth.password = password!,
         ),
       ],
     );
@@ -182,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: SignInButton(
         Buttons.Google,
-        text:"Sign in with Google",
+        text: "Sign in with Google",
         onPressed: () async {
           final user = await _auth.signInWithGoogle();
           if (user != null) {

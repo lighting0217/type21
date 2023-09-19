@@ -9,7 +9,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/auth_service.dart';
-import 'package:type21/models/profile.dart';
 import 'package:type21/screens/main/select_screen.dart';
 import 'package:type21/screens/reg_log_screen/home_screen.dart';
 
@@ -24,7 +23,6 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Profile _profile = Profile(email: '', password: '');
   final AuthService _auth = AuthService();
 
   Future<void> _registerAccount() async {
@@ -33,10 +31,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
-        final user = await _auth.signUp(
-            _profile.email, _profile.password); // Use AuthService for sign-up
+        if (_auth.password != _auth.passwordConfirmation) {
+          Fluttertoast.showToast(
+            msg: "Passwords do not match",
+            gravity: ToastGravity.CENTER,
+          );
+          return;
+        }
 
-        if (user != null) {
+        final user = await _auth.signUp(
+          _auth.email,
+          _auth.password,
+          _auth.passwordConfirmation,
+        );
+        if (user != null && _auth.password == _auth.passwordConfirmation) {
           Fluttertoast.showToast(
             msg: "Create Account Succeeded",
             gravity: ToastGravity.TOP,
@@ -50,6 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             msg: "Registration failed",
             gravity: ToastGravity.CENTER,
           );
+          if (kDebugMode) {
+            print("email = ${_auth.email}, password = ${_auth.password}, passwordConfirmation = ${_auth.passwordConfirmation}");
+          }
         }
       } on FirebaseAuthException catch (e) {
         String message;
@@ -65,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gravity: ToastGravity.CENTER,
         );
         if (kDebugMode) {
-          print("email = ${_profile.email}, password = ${_profile.password}");
+          print("email = ${_auth.email}, password = ${_auth.password}, passwordConfirmation = ${_auth.passwordConfirmation}");
         }
       }
     }
@@ -115,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ]),
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (String? email) {
-                          _profile.email = email!;
+                          _auth.email = email!;
                         },
                         decoration: const InputDecoration(
                           labelText: 'Email',
@@ -136,30 +147,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: MultiValidator([
                           RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
-                          MinLengthValidator(8,
-                              errorText: 'รหัสผ่านต้องมีมากกว่า 8 ตัวอักษร'),
+                          MinLengthValidator(8, errorText: 'รหัสผ่านต้องมีมากกว่า 8 ตัวอักษร'),
                         ]),
                         obscureText: true,
                         onSaved: (String? password) {
-                          _profile.password = password!;
+                          _auth.setPassword(password!);
+                          if (kDebugMode) {
+                            print('Password saved: $password');
+                          }
                         },
                       ),
                       const Text("ป้อนรหัสผ่านอีกครั้ง",
                           style: TextStyle(fontSize: 20)),
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'Confirm Password',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.lock),
                         ),
                         obscureText: true,
-                        validator: (val) {
-                          if (val?.isEmpty ?? true) {
+                        validator: (passwordConfirmation) {
+                          if (passwordConfirmation?.isEmpty ?? true) {
                             return "กรุณาป้อนรหัสผ่านอีกครั้ง";
-                          } else if (val != _profile.password) {
+                          } else if (passwordConfirmation != _auth.password) {
                             return "รหัสผ่านไม่ตรงกัน!";
                           }
                           return null;
+                        },
+                        onSaved: (String? passwordConfirmation) {
+                          _auth.setPasswordConfirmation(passwordConfirmation!);
+                          if (kDebugMode) {
+                            print('Password Confirmation saved: $passwordConfirmation');
+                          }
                         },
                       ),
                       SizedBox(
@@ -203,7 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       width: double.infinity,
       child: SignInButton(
         Buttons.Google,
-        text:"Sign in with Google",
+        text: "Sign in with Google",
         onPressed: () async {
           final user = await _auth.signInWithGoogle();
           if (user != null) {

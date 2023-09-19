@@ -6,11 +6,33 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
+  // User profile data
+  String? email;
+  String? password;
+  String? passwordConfirmation;
+
+  void setEmail(String value) {
+    email = value;
+  }
+
+  void setPassword(String value) {
+    password = value;
+  }
+void setPasswordConfirmation(String value) {
+    passwordConfirmation = value;
+  }
   // Sign up with email & password
-  Future<User?> signUp(String email, String password) async {
+  Future<User?> signUp(String? email, String? password, String? passwordConfirmation) async {
     try {
+      if (password != passwordConfirmation) {
+        throw FirebaseAuthException(
+          code: 'password-mismatch',
+          message: 'Passwords do not match',
+        );
+      }
       var result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+          email: email!, password: password!
+      );
       return result.user;
     } catch (e) {
       if (kDebugMode) {
@@ -21,10 +43,10 @@ class AuthService {
   }
 
   // Sign in with email & password
-  Future<User?> signIn(String email, String password) async {
+  Future<User?> signIn(String? email, String? password, ) async {
     try {
       var result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+          email: email!, password: password!);
       return result.user;
     } catch (e) {
       if (kDebugMode) {
@@ -38,10 +60,10 @@ class AuthService {
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
+      await googleSignIn.signIn();
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
+        await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
