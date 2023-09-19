@@ -2,6 +2,7 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        _buildGoogleSigninButton(), // Add the Google Sign-In button here
+        //_buildGoogleSigninButton(), // Add the Google Sign-In button here
       ],
     );
   }
@@ -179,15 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildGoogleSigninButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.blue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-        ),
+      child: SignInButton(
+        Buttons.Google,
+        text:"Sign in with Google",
         onPressed: () async {
           final user = await _auth.signInWithGoogle();
           if (user != null) {
@@ -201,7 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           }
         },
-        child: const Text('Sign in with Google'),
       ),
     );
   }
