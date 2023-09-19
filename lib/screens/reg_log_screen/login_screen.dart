@@ -131,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildPasswordField() {
+    bool obscureText = true;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,13 +140,23 @@ class _LoginScreenState extends State<LoginScreen> {
           style: GoogleFonts.openSans(fontSize: 20),
         ),
         TextFormField(
-          decoration: const InputDecoration(
+          obscureText: obscureText,
+          decoration:  InputDecoration(
             labelText: 'Password',
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.lock),
+            border: const OutlineInputBorder(),
+            prefixIcon:  const Icon(Icons.lock),
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscureText ? Icons.visibility: Icons.visibility_off
+              ),
+              onPressed: () {
+                setState(() {
+                  obscureText = !obscureText;
+                });
+              },
+            ),
           ),
           validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
-          obscureText: true,
           onSaved: (String? password) => _auth.password = password!,
         ),
       ],

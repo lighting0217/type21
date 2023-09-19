@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,20 +30,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
-        if (_auth.password != _auth.passwordConfirmation) {
-          Fluttertoast.showToast(
-            msg: "Passwords do not match",
-            gravity: ToastGravity.CENTER,
-          );
-          return;
-        }
-
         final user = await _auth.signUp(
           _auth.email,
           _auth.password,
           _auth.passwordConfirmation,
         );
-        if (user != null && _auth.password == _auth.passwordConfirmation) {
+        if (user != null) {
           Fluttertoast.showToast(
             msg: "Create Account Succeeded",
             gravity: ToastGravity.TOP,
@@ -58,9 +49,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             msg: "Registration failed",
             gravity: ToastGravity.CENTER,
           );
-          if (kDebugMode) {
-            print("email = ${_auth.email}, password = ${_auth.password}, passwordConfirmation = ${_auth.passwordConfirmation}");
-          }
         }
       } on FirebaseAuthException catch (e) {
         String message;
@@ -68,6 +56,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message = "Email นี้มีบัญชีผู้ใช้แล้ว โปรดใช้ Email อื่น.";
         } else if (e.code == 'weak-password') {
           message = "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร.";
+        } else if (e.code == 'password-mismatch') {
+          message = "Passwords do not match";
         } else {
           message = e.message!;
         }
@@ -75,12 +65,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           msg: message,
           gravity: ToastGravity.CENTER,
         );
-        if (kDebugMode) {
-          print("email = ${_auth.email}, password = ${_auth.password}, passwordConfirmation = ${_auth.passwordConfirmation}");
-        }
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         validator: MultiValidator([
                           RequiredValidator(errorText: "กรุณาป้อน E-mail"),
-                          EmailValidator(errorText: "รูปแบบ E-mailไม่ถูกต้อง"),
+                          EmailValidator(errorText: "รูปแบบ E-mail ไม่ถูกต้อง"),
                         ]),
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (String? email) {
@@ -137,49 +125,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 15,
                       ),
-                      const Text("ป้อนรหัสผ่าน",
-                          style: TextStyle(fontSize: 20)),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.lock),
-                        ),
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
-                          MinLengthValidator(8, errorText: 'รหัสผ่านต้องมีมากกว่า 8 ตัวอักษร'),
-                        ]),
-                        obscureText: true,
-                        onSaved: (String? password) {
-                          _auth.setPassword(password!);
-                          if (kDebugMode) {
-                            print('Password saved: $password');
-                          }
+                      PasswordFormField(
+                        onChanged: (value) {
+                          _auth.setPassword(value);
                         },
+                        labelText: 'รหัสผ่าน',
+                        hintText: 'ป้อนรหัสผ่านของคุณ',
                       ),
-                      const Text("ป้อนรหัสผ่านอีกครั้ง",
-                          style: TextStyle(fontSize: 20)),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Confirm Password',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.lock),
-                        ),
-                        obscureText: true,
-                        validator: (passwordConfirmation) {
-                          if (passwordConfirmation?.isEmpty ?? true) {
-                            return "กรุณาป้อนรหัสผ่านอีกครั้ง";
-                          } else if (passwordConfirmation != _auth.password) {
-                            return "รหัสผ่านไม่ตรงกัน!";
-                          }
-                          return null;
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      PasswordFormField(
+                        onChanged: (value) {
+                          _auth.setPasswordConfirmation(value);
                         },
-                        onSaved: (String? passwordConfirmation) {
-                          _auth.setPasswordConfirmation(passwordConfirmation!);
-                          if (kDebugMode) {
-                            print('Password Confirmation saved: $passwordConfirmation');
-                          }
-                        },
+                        labelText: 'ยืนยันรหัสผ่าน',
+                        hintText: 'ป้อนรหัสผ่านอีกครั้ง',
                       ),
                       SizedBox(
                         width: double.infinity,
@@ -191,7 +152,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
+                              horizontal: 50,
+                              vertical: 15,
+                            ),
                           ),
                           onPressed: _registerAccount,
                           child: const Text('สร้างบัญชี'),
@@ -236,6 +199,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class PasswordFormField extends StatefulWidget {
+  final ValueChanged<String> onChanged;
+  final String labelText;
+  final String hintText;
+
+  const PasswordFormField({super.key,
+    required this.onChanged,
+    required this.labelText,
+    required this.hintText,
+  });
+
+  @override
+  State<PasswordFormField> createState() => _PasswordFormFieldState();
+}
+
+class _PasswordFormFieldState extends State<PasswordFormField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: widget.onChanged,
+      obscureText: _obscureText,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Please enter ${widget.labelText.toLowerCase()}';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: widget.labelText,
+        hintText: widget.hintText,
+        border: const OutlineInputBorder(),
+        prefixIcon: const Icon(Icons.lock),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
       ),
     );
   }
