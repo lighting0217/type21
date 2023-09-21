@@ -1,6 +1,9 @@
 # Function to Check GDD Against Max GDD
 
-This function checks the Growing Degree Days (GDD) for each field against the specified Max GDD. It runs every Monday at 8:00 AM (Asia/Bangkok time). The function retrieves data for all fields and monthly temperature data from Firestore and calculates the GDD for each field. If the GDD for a field exceeds the Max GDD, the function prints a notification message to the console.
+This function checks the Growing Degree Days (GDD) for each field against the specified Max GDD. It
+runs every Monday at 8:00 AM (Asia/Bangkok time). The function retrieves data for all fields and
+monthly temperature data from Firestore and calculates the GDD for each field. If the GDD for a
+field exceeds the Max GDD, the function prints a notification message to the console.
 
 ## Function Configuration
 
@@ -14,20 +17,24 @@ This function checks the Growing Degree Days (GDD) for each field against the sp
 
 1. Retrieve data for all fields and monthly temperature data from Firestore.
 2. For each field:
-   * Calculate the GDD for that field.
-   * If the GDD for the field exceeds the Max GDD:
-      * Print a notification message to the console.
+    * Calculate the GDD for that field.
+    * If the GDD for the field exceeds the Max GDD:
+        * Print a notification message to the console.
 
 ## Benefits
 
-This function is useful for farmers to monitor the GDD for each field and receive notifications if the GDD for any field exceeds the specified Max GDD. This helps farmers make appropriate decisions regarding field management.
+This function is useful for farmers to monitor the GDD for each field and receive notifications if
+the GDD for any field exceeds the specified Max GDD. This helps farmers make appropriate decisions
+regarding field management.
 
 ## Limitations
 
 This function has some limitations, including:
 
-* The function calculates GDD using base temperatures for rice growth, which may vary depending on rice varieties.
-* The function calculates GDD using monthly average temperatures, which may not be as accurate as daily temperature measurements.
+* The function calculates GDD using base temperatures for rice growth, which may vary depending on
+  rice varieties.
+* The function calculates GDD using monthly average temperatures, which may not be as accurate as
+  daily temperature measurements.
 
 ## Code
 

@@ -101,7 +101,7 @@ class _FieldInfoState extends State<FieldInfo> {
       final fieldData = monthlyTempData.data();
       final maxGdd = fieldData?['riceMaxGdd'];
       final forecastedHarvestDateTimestamp =
-          fieldData?['forecastedHarvestDate'] as Timestamp?;
+      fieldData?['forecastedHarvestDate'] as Timestamp?;
       if (forecastedHarvestDateTimestamp != null) {
         final forecastedHarvestDate = forecastedHarvestDateTimestamp.toDate();
         widget.field.forecastedHarvestDate = forecastedHarvestDate;
@@ -118,7 +118,7 @@ class _FieldInfoState extends State<FieldInfo> {
       }
 
       final monthlyTemperatureData =
-          monthlyTemperatureCollectionGroup.docs.map((doc) {
+      monthlyTemperatureCollectionGroup.docs.map((doc) {
         final data = doc.data();
         final monthYear = doc.id;
         final gddSum = (data['gddSum']).toDouble();
@@ -195,7 +195,7 @@ class _FieldInfoState extends State<FieldInfo> {
     final forecastedHarvestDate = widget.field.forecastedHarvestDate;
     if (forecastedHarvestDate != null) {
       final formattedDate =
-          DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate);
+      DateFormat('dd MMMM yyyy', 'th_TH').format(forecastedHarvestDate);
       return Text(
         'วันคาดการ์ณวันเก็บเกี่ยวที่เหมาะสม: \n$formattedDate',
         style: GoogleFonts.openSans(fontSize: 18),
@@ -258,7 +258,8 @@ class _FieldInfoState extends State<FieldInfo> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(widget.field.riceType)}',
+                          'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(
+                              widget.field.riceType)}',
                           style: GoogleFonts.openSans(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -272,7 +273,8 @@ class _FieldInfoState extends State<FieldInfo> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'วันที่เริ่มปลูก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
+                          'วันที่เริ่มปลูก: ${formatDateThai(
+                              widget.field.selectedDate ?? DateTime.now())}',
                           style: GoogleFonts.openSans(fontSize: 18),
                         ),
                         const SizedBox(height: 16),
@@ -299,12 +301,12 @@ class _FieldInfoState extends State<FieldInfo> {
                                       polygons: {
                                         Polygon(
                                           polygonId:
-                                              const PolygonId('field_polygon'),
+                                          const PolygonId('field_polygon'),
                                           points: widget.field.polygons,
                                           strokeWidth: 2,
                                           strokeColor: Colors.black,
                                           fillColor:
-                                              Colors.green.withOpacity(0.3),
+                                          Colors.green.withOpacity(0.3),
                                         ),
                                       },
                                     ),
@@ -318,14 +320,14 @@ class _FieldInfoState extends State<FieldInfo> {
                                           final center = getPolygonCenter(
                                               widget.field.polygons);
                                           final cameraUpdate =
-                                              CameraUpdate.newLatLng(center);
+                                          CameraUpdate.newLatLng(center);
                                           mapController!
                                               .animateCamera(cameraUpdate);
                                         }
                                       },
                                       tooltip: 'กลับไปยังศูนย์กลางแปลง',
                                       child:
-                                          const Icon(Icons.center_focus_strong),
+                                      const Icon(Icons.center_focus_strong),
                                     ),
                                   ),
                                 ],
@@ -359,15 +361,16 @@ class _FieldInfoState extends State<FieldInfo> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => TemperatureScreen(
-                                        temperatureData:
+                                      builder: (context) =>
+                                          TemperatureScreen(
+                                            temperatureData:
                                             widget.field.temperatureData,
-                                        monthlyTemperatureData:
+                                            monthlyTemperatureData:
                                             widget.field.monthlyTemperatureData,
-                                        accumulatedGddData:
+                                            accumulatedGddData:
                                             widget.field.accumulatedGddData,
-                                        field: const [],
-                                      ),
+                                            field: const [],
+                                          ),
                                     ),
                                   );
                                 },

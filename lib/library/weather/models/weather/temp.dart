@@ -8,7 +8,8 @@ class Temp {
 
   Temp({this.day, this.min, this.max, this.night, this.eve, this.morn});
 
-  factory Temp.fromJson(Map<String, dynamic> json) => Temp(
+  factory Temp.fromJson(Map<String, dynamic> json) =>
+      Temp(
         day: json['day']?.toDouble(),
         min: json['min']?.toDouble(),
         max: json['max']?.toDouble(),
@@ -17,7 +18,8 @@ class Temp {
         morn: json['morn']?.toDouble(),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'day': day,
         'min': min,
         'max': max,

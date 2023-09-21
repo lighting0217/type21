@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
             ),
             onPressed: _login,
-            child: const Text('Login'),
+            child: const Text('เข้าสู่ระบบ'),
           ),
         ),
         const SizedBox(height: 20),

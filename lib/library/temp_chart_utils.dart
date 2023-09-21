@@ -43,5 +43,6 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
     updatedData.add(monthData.copyWith(gddSum: cumulativeSum));
   }
 
-  return List.from(existingData)..addAll(updatedData);
+  return List.from(existingData)
+    ..addAll(updatedData);
 }

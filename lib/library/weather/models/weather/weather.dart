@@ -21,13 +21,14 @@ class Weather {
     this.daily,
   });
 
-  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
+  factory Weather.fromJson(Map<String, dynamic> json) =>
+      Weather(
         lat: json['lat']?.toDouble(),
         lon: json['lon']?.toDouble(),
         timezone: json['timezone'],
         timezoneOffset: json['timezone_offset'],
         current:
-            json['current'] == null ? null : Current.fromJson(json['current']),
+        json['current'] == null ? null : Current.fromJson(json['current']),
         hourly: (json['hourly'] as List<dynamic>?)
             ?.map((e) => Hourly.fromJson(e))
             .toList(),
@@ -36,7 +37,8 @@ class Weather {
             .toList(),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'lat': lat,
         'lon': lon,
         'timezone': timezone,

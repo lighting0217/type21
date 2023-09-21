@@ -6,7 +6,7 @@ class HourlyWeatherData {
   factory HourlyWeatherData.fromJson(Map<String, dynamic> json) =>
       HourlyWeatherData(
           hourly:
-              List<Hourly>.from(json['hourly'].map((e) => Hourly.fromJson(e))));
+          List<Hourly>.from(json['hourly'].map((e) => Hourly.fromJson(e))));
 }
 
 class Hourly {
@@ -24,7 +24,8 @@ class Hourly {
     this.rain,
   });
 
-  factory Hourly.fromJson(Map<String, dynamic> json) => Hourly(
+  factory Hourly.fromJson(Map<String, dynamic> json) =>
+      Hourly(
         dt: json['dt'] as int?,
         temp: _toDouble(json['temp']),
         weather: (json['weather'] as List<dynamic>?)
@@ -34,11 +35,12 @@ class Hourly {
         rain: json['rain'] != null ? Rain.fromJson(json['rain']) : null,
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'dt': dt,
         'temp': temp,
         'weather':
-            weather == null ? [] : weather?.map((e) => e.toJson()).toList(),
+        weather == null ? [] : weather?.map((e) => e.toJson()).toList(),
         'pop': pop,
         'rain': rain?.toJson(),
       };
@@ -62,11 +64,12 @@ class Weather {
 
   Weather({this.id, this.main, this.description, this.icon});
 
-  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
+  factory Weather.fromJson(Map<String, dynamic> json) =>
+      Weather(
         id: (json['id'] as int?),
         main: (json['main'] as String?),
         description:
-            _translateDescriptionToThai(json['description'] as String?),
+        _translateDescriptionToThai(json['description'] as String?),
         icon: (json['icon'] as String?),
       );
 
@@ -135,7 +138,8 @@ class Weather {
     return weatherDescriptionsToThai[description] ?? description;
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'id': id,
         'main': main,
         'description': description,
@@ -148,13 +152,15 @@ class Rain {
 
   Rain({this.rain1h});
 
-  factory Rain.fromJson(Map<String, dynamic> json) => Rain(
+  factory Rain.fromJson(Map<String, dynamic> json) =>
+      Rain(
         rain1h: json['1h'] is int
             ? (json['1h'] as int).toDouble()
             : (json['1h'] as double?),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         '1h': rain1h,
       };
 }

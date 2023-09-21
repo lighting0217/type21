@@ -1,6 +1,9 @@
 # Function to Calculate Accumulated GDD for Each Field
 
-This function calculates and stores the accumulated Growing Degree Days (GDD) for each field. It runs every Monday at 8:30 AM (Asia/Bangkok time). The function retrieves data for all fields from Firestore and calculates the accumulated GDD by summing up the monthly GDD values for each field. The function then saves the accumulated GDD in Firestore for each field.
+This function calculates and stores the accumulated Growing Degree Days (GDD) for each field. It
+runs every Monday at 8:30 AM (Asia/Bangkok time). The function retrieves data for all fields from
+Firestore and calculates the accumulated GDD by summing up the monthly GDD values for each field.
+The function then saves the accumulated GDD in Firestore for each field.
 
 ## Function Configuration
 
@@ -14,10 +17,10 @@ This function calculates and stores the accumulated Growing Degree Days (GDD) fo
 
 1. Retrieve data for all fields from Firestore.
 2. For each field:
-   * Retrieve all monthly temperature data for the field from Firestore.
-   * Calculate the accumulated GDD by summing up the monthly GDD values.
-   * Calculate the difference between the accumulated GDD and the field's maximum GDD.
-   * Save the accumulated GDD, maximum GDD, and the difference in Firestore for that field.
+    * Retrieve all monthly temperature data for the field from Firestore.
+    * Calculate the accumulated GDD by summing up the monthly GDD values.
+    * Calculate the difference between the accumulated GDD and the field's maximum GDD.
+    * Save the accumulated GDD, maximum GDD, and the difference in Firestore for that field.
 
 ## Code
 
