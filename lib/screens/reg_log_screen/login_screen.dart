@@ -8,6 +8,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:type21/auth_service.dart';
+import 'package:type21/screens/reg_log_screen/register_screen.dart';
 
 import '../main/select_screen.dart';
 
@@ -67,34 +68,36 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                "เข้าสู่ระบบ",
-                style: GoogleFonts.openSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              backgroundColor: Colors.blue,
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(35.0),
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildEmailField(),
-                      const SizedBox(height: 20),
-                      _buildPasswordField(),
-                      _buildLoginButton(),
-                    ],
+              appBar: AppBar(
+                title: Text(
+                  "เข้าสู่ระบบ",
+                  style: GoogleFonts.openSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                backgroundColor: Colors.blue,
               ),
-            ),
-          );
+              body: Padding(
+                padding: const EdgeInsets.all(35.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildEmailField(),
+                        const SizedBox(height: 20),
+                        _buildPasswordField(),
+                        const SizedBox(height: 20),
+                        _buildLoginButton(),
+                        const SizedBox(height: 20),
+                        _buildDontHaveAccout(),
+                      ],
+                    ),
+                  ),
+                ),
+              ));
         }
         return const Scaffold(
           body: Center(
@@ -102,6 +105,36 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDontHaveAccout() {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "ยังไม่มีบัญชีผู้ใช้?",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.blue,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RegisterScreen(),
+                ),
+              );
+            },
+            child: const Text("เข้าสู่ระบบ"),
+          ),
+        ],
+      ),
     );
   }
 
@@ -187,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        //_buildGoogleSigninButton(),
+        _buildGoogleSigninButton(),
       ],
     );
   }

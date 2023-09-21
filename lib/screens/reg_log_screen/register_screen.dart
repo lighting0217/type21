@@ -9,7 +9,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/auth_service.dart';
 import 'package:type21/screens/main/select_screen.dart';
-import 'package:type21/screens/reg_log_screen/home_screen.dart';
+import 'package:type21/screens/reg_log_screen/login_screen.dart';
 
 final Future<FirebaseApp> _firebase = Firebase.initializeApp();
 
@@ -42,7 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
           Navigator.pushReplacement(
             ctx,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         } else {
           Fluttertoast.showToast(
@@ -165,7 +165,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      //_buildGoogleSigninButton(),
+                      _buildGoogleSigninButton(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildAlreadyHaveAccout(),
                     ],
                   ),
                 ),
@@ -179,6 +183,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildAlreadyHaveAccout() {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text("มีบัญชีผู้ใช้แล้ว?",
+              style: TextStyle(fontSize: 16, color: Colors.blue)),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
+            },
+            child: const Text("เข้าสู่ระบบ"),
+          ),
+        ],
+      ),
     );
   }
 

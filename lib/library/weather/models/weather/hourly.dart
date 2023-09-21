@@ -33,8 +33,7 @@ class Hourly {
     this.pop,
   });
 
-  factory Hourly.fromJson(Map<String, dynamic> json) =>
-      Hourly(
+  factory Hourly.fromJson(Map<String, dynamic> json) => Hourly(
         dt: json['dt'] as int?,
         temp: json['temp']?.toDouble(),
         feelsLike: json['feels_like']?.toDouble(),
@@ -53,8 +52,7 @@ class Hourly {
         pop: json['pop'] as int?,
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'dt': dt,
         'temp': temp,
         'feels_like': feelsLike,

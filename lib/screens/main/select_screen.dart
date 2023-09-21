@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/myapi.dart';
 import '../../library/weather/models/weather_data.dart';
-import '../reg_log_screen/home_screen.dart';
+import '../reg_log_screen/login_screen.dart';
 import 'field_screen/field_list.dart';
 import 'map_screen.dart';
 
@@ -304,7 +304,7 @@ class _SelectScreenState extends State<SelectScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } catch (e) {
       if (kDebugMode) {

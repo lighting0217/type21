@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:type21/screens/reg_log_screen/register_screen.dart';
 
 import 'firebase_options.dart';
 import 'screens/main/select_screen.dart';
-import 'screens/reg_log_screen/home_screen.dart';
 import 'screens/reg_log_screen/login_screen.dart';
 
 void main() async {
@@ -42,7 +42,7 @@ void main() async {
         ? const SelectScreen(
             locationList: [],
           )
-        : const HomeScreen(),
+        : const LoginScreen(),
   ));
 }
 
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
             if (user == null) {
               return const LoginScreen();
             }
-            return const HomeScreen();
+            return const RegisterScreen();
           }
           return const Scaffold(
             body: Center(
@@ -113,7 +113,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const LoginScreen(),
         ),
       );
     }

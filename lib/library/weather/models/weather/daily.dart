@@ -43,8 +43,7 @@ class Daily {
     this.uvi,
   });
 
-  factory Daily.fromJson(Map<String, dynamic> json) =>
-      Daily(
+  factory Daily.fromJson(Map<String, dynamic> json) => Daily(
         dt: json['dt'] as int?,
         sunrise: json['sunrise'] as int?,
         sunset: json['sunset'] as int?,
@@ -77,8 +76,7 @@ class Daily {
         uvi: json['uvi'] != null ? (json['uvi'] as num).toDouble() : null,
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'dt': dt,
         'sunrise': sunrise,
         'sunset': sunset,

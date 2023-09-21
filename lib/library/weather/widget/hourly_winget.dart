@@ -55,11 +55,11 @@ class _HourlyDataWidgetState extends State<HourlyDataWidget> {
                   ],
                   gradient: isCardSelected
                       ? const LinearGradient(
-                    colors: [
-                      CustomColors.firstGradientColor,
-                      CustomColors.secondGradientColor,
-                    ],
-                  )
+                          colors: [
+                            CustomColors.firstGradientColor,
+                            CustomColors.secondGradientColor,
+                          ],
+                        )
                       : null,
                 ),
                 child: HourlyDetails(
@@ -68,7 +68,7 @@ class _HourlyDataWidgetState extends State<HourlyDataWidget> {
                   tmp: widget.hourlyWeatherData!.hourly[index].temp!,
                   timeStamp: widget.hourlyWeatherData!.hourly[index].dt!,
                   icon:
-                  widget.hourlyWeatherData!.hourly[index].weather![0].icon!,
+                      widget.hourlyWeatherData!.hourly[index].weather![0].icon!,
                 ),
               ),
             );
@@ -130,7 +130,7 @@ class HourlyDetails extends StatelessWidget {
             getTime(timeStamp),
             style: isCardSelected
                 ? const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white)
+                    fontWeight: FontWeight.bold, color: Colors.white)
                 : null,
           ),
         ),
@@ -148,7 +148,7 @@ class HourlyDetails extends StatelessWidget {
             '$tmp°',
             style: isCardSelected
                 ? const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white)
+                    fontWeight: FontWeight.bold, color: Colors.white)
                 : null,
           ),
         ),
