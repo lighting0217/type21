@@ -29,8 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final BuildContext ctx = context;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      final user = await _auth.signIn(
-          _auth.email, _auth.password);
+      final user = await _auth.signIn(_auth.email, _auth.password);
       if (user != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
@@ -38,12 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => const SelectScreen(locationList: []),
         ));
         Fluttertoast.showToast(
-          msg: "Login Successful",
+          msg: "เข้าสู่ระบบสําเร็จ",
           gravity: ToastGravity.TOP,
         );
       } else {
         Fluttertoast.showToast(
-          msg: "Login failed",
+          msg: "เข้าสู่ระบบไม่สําเร็จ",
           gravity: ToastGravity.CENTER,
         );
       }
@@ -58,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text("Error"),
+              title: const Text("ข้อผิดพลาด"),
               backgroundColor: Colors.red,
             ),
             body: Center(
@@ -117,6 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
         TextFormField(
           decoration: const InputDecoration(
             labelText: 'Email',
+            hintText: 'ป้อน E-mail',
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.email),
           ),
@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
+
   Widget _buildPasswordField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,8 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
           style: GoogleFonts.openSans(fontSize: 20),
         ),
         TextFormField(
-          obscureText: _obscureText, // Use the member variable here
-          decoration: _buildPasswordInputDecoration(), // Remove the argument
+          obscureText: _obscureText,
+          decoration: _buildPasswordInputDecoration(),
           validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
           onSaved: (String? password) => _auth.password = password!,
         ),
@@ -186,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        //_buildGoogleSigninButton(), // Add the Google Sign-In button here
+        //_buildGoogleSigninButton(),
       ],
     );
   }

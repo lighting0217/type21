@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
-import '../library/weather/models/cwd.dart';
-import '../library/weather/models/dwd.dart';
-import '../library/weather/models/hwd.dart';
+import '../library/weather/models/current_weather_data.dart';
+import '../library/weather/models/daily_weather_data.dart';
+import '../library/weather/models/hourly_weather_data.dart';
 import '../library/weather/models/location_name.dart';
-import '../library/weather/models/wd.dart';
+import '../library/weather/models/weather_data.dart';
 
 // Google API key for location services
 const googleAPIKey = "AIzaSyBN5RgBSi2pq5KGV0E8kLsYlIx0h2KHMZk";

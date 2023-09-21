@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../models/cwd.dart';
+import '../models/current_weather_data.dart';
 import '../util/custom_colors.dart';
 
 class CurrentWeatherWidget extends StatelessWidget {

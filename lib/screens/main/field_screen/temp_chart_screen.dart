@@ -52,7 +52,7 @@ class _TempChartScreenState extends State<TempChartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Temperature Charts',
+          'แผนภูมิอุณหภูมิ',
           style: GoogleFonts.openSans(
             fontSize: 20,
             fontWeight: FontWeight.bold,

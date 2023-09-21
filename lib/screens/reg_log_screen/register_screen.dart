@@ -57,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         } else if (e.code == 'weak-password') {
           message = "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร.";
         } else if (e.code == 'password-mismatch') {
-          message = "Passwords do not match";
+          message = "รหัสผ่านไม่ตรงกัน.";
         } else {
           message = e.message!;
         }
@@ -69,7 +69,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -78,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text("Error"),
+              title: const Text("ข้อผิดพลาด"),
               backgroundColor: Colors.red,
             ),
             body: Center(
@@ -141,6 +140,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         labelText: 'ยืนยันรหัสผ่าน',
                         hintText: 'ป้อนรหัสผ่านอีกครั้ง',
+                      ),
+                      const SizedBox(
+                        height: 20,
                       ),
                       SizedBox(
                         width: double.infinity,
@@ -209,7 +211,8 @@ class PasswordFormField extends StatefulWidget {
   final String labelText;
   final String hintText;
 
-  const PasswordFormField({super.key,
+  const PasswordFormField({
+    super.key,
     required this.onChanged,
     required this.labelText,
     required this.hintText,
@@ -229,7 +232,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
       obscureText: _obscureText,
       validator: (value) {
         if (value!.isEmpty) {
-          return 'Please enter ${widget.labelText.toLowerCase()}';
+          return 'กรุณาป้อน ${widget.labelText.toLowerCase()}';
         }
         return null;
       },

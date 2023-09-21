@@ -14,8 +14,8 @@ import 'field_screen/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class AddScreenType2 extends StatefulWidget {
-  const AddScreenType2({
+class AddScreen extends StatefulWidget {
+  const AddScreen({
     Key? key,
     required this.totalDistance,
     required this.polygons,
@@ -34,10 +34,10 @@ class AddScreenType2 extends StatefulWidget {
   final DateTime selectedDate;
 
   @override
-  State<AddScreenType2> createState() => _AddScreenType2State();
+  State<AddScreen> createState() => _AddScreenState();
 }
 
-class _AddScreenType2State extends State<AddScreenType2> {
+class _AddScreenState extends State<AddScreen> {
   String? selectedValue;
   DateTime? forecastedHarvestDate;
   DateTime? selectedDate;
@@ -211,6 +211,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
         'riceMaxGdd': riceMaxGdd,
         'polygonArea': polygonArea,
         'totalDistance': totalDistance,
+        'selectedDate': selectedDate,
         'polygons': polygons
             .map((latLng) => {
                   'latitude': latLng.latitude,
@@ -254,19 +255,20 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     return LatLng(centerLat, centerLng);
   }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime.now().add(const Duration(days: 365)
-    ));
+        context: context,
+        initialDate: selectedDate ?? DateTime.now(),
+        firstDate: DateTime(2023),
+        lastDate: DateTime.now().add(const Duration(days: 365)));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final LatLng center = _calculatePolygonCenter(widget.polygons);
@@ -294,6 +296,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
                 labelText: 'ชื่อแปลง',
               ),
               validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
+              keyboardType: TextInputType.multiline,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -320,7 +323,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
                     controller: TextEditingController(
                       text: selectedDate != null
                           ? DateFormat('yyyy-MM-dd').format(selectedDate!)
-                          : '', // Display selected date in the input field.
+                          : '',
                     ),
                     decoration: const InputDecoration(
                       labelText: 'วันที่เลือก',
@@ -330,7 +333,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
                 IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () {
-                    _selectDate(context); // Show the date picker.
+                    _selectDate(context);
                   },
                 ),
               ],

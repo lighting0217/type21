@@ -1,8 +1,8 @@
 //Weather Data Fie
 
-import 'cwd.dart';
-import 'dwd.dart';
-import 'hwd.dart';
+import 'current_weather_data.dart';
+import 'daily_weather_data.dart';
+import 'hourly_weather_data.dart';
 import 'location_name.dart';
 
 class WeatherData {

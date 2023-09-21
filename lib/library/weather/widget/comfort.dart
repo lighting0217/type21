@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-import '../models/cwd.dart';
+import '../models/current_weather_data.dart';
 
 class ComfortLevel extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;

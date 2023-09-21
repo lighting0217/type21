@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../controller/global_controller.dart';
-import '../models/hwd.dart';
+import '../models/hourly_weather_data.dart';
 import '../util/custom_colors.dart';
 
 class HourlyDataWidget extends StatefulWidget {

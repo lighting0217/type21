@@ -18,21 +18,23 @@ class AuthService {
   void setPassword(String value) {
     password = value;
   }
-void setPasswordConfirmation(String value) {
+
+  void setPasswordConfirmation(String value) {
     passwordConfirmation = value;
   }
+
   // Sign up with email & password
-  Future<User?> signUp(String? email, String? password, String? passwordConfirmation) async {
+  Future<User?> signUp(
+      String? email, String? password, String? passwordConfirmation) async {
     try {
       if (password != passwordConfirmation) {
         throw FirebaseAuthException(
           code: 'password-mismatch',
-          message: 'Passwords do not match',
+          message: 'รหัสผ่านไม่ตรงกัน',
         );
       }
       var result = await _auth.createUserWithEmailAndPassword(
-          email: email!, password: password!
-      );
+          email: email!, password: password!);
       return result.user;
     } catch (e) {
       if (kDebugMode) {
@@ -43,7 +45,10 @@ void setPasswordConfirmation(String value) {
   }
 
   // Sign in with email & password
-  Future<User?> signIn(String? email, String? password, ) async {
+  Future<User?> signIn(
+    String? email,
+    String? password,
+  ) async {
     try {
       var result = await _auth.signInWithEmailAndPassword(
           email: email!, password: password!);
@@ -60,10 +65,10 @@ void setPasswordConfirmation(String value) {
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
-      await googleSignIn.signIn();
+          await googleSignIn.signIn();
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+            await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,

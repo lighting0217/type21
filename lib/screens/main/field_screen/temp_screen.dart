@@ -120,24 +120,6 @@ class TemperatureScreen extends StatelessWidget {
             heroTag: null,
             child: const Icon(Icons.navigate_next),
           ),
-          // const SizedBox(height: 10),
-          // FloatingActionButton(
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => CalendarScreen(
-          //           temperatureData: temperatureData,
-          //           monthlyTemperatureData: monthlyTemperatureData,
-          //           accumulatedGddData: accumulatedGddData,
-          //           field: field,
-          //         ),
-          //       ),
-          //     );
-          //   },
-          //   heroTag: null,
-          //   child: const Icon(Icons.calendar_month_rounded),
-          // ),
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () {

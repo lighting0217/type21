@@ -11,10 +11,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/myapi.dart';
-import '../../library/weather/models/wd.dart';
+import '../../library/weather/models/weather_data.dart';
 import '../reg_log_screen/home_screen.dart';
 import 'field_screen/field_list.dart';
-import 'map_screen_type2.dart';
+import 'map_screen.dart';
 
 final auth = FirebaseAuth.instance;
 
@@ -104,7 +104,7 @@ class _SelectScreenState extends State<SelectScreen> {
                   onPressed: () {
                     navigateToScreen(
                         context,
-                        MapScreenType2(
+                        MapScreen(
                           polygons: widget.locationList,
                           polygonArea: 0,
                           lengths: const [],
@@ -116,7 +116,7 @@ class _SelectScreenState extends State<SelectScreen> {
                 onTap: () {
                   navigateToScreen(
                     context,
-                    MapScreenType2(
+                    MapScreen(
                       polygons: widget.locationList,
                       polygonArea: 0,
                       lengths: const [],
@@ -190,7 +190,7 @@ class _SelectScreenState extends State<SelectScreen> {
                     children: <Widget>[
                       Text(
                         _weatherData.locationNameData().localNames['th'] ??
-                            'Unknown Location',
+                            'ไม่รู้จักตำแหน่ง',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,

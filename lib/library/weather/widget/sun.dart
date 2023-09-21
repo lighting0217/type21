@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../models/cwd.dart';
+import '../models/current_weather_data.dart';
 
 class SunInfo extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;

@@ -7,10 +7,10 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../models/temp_data_models.dart';
-import 'add_screen_type2.dart';
+import 'add_screen.dart';
 
-class MapScreenType2 extends StatefulWidget {
-  const MapScreenType2({
+class MapScreen extends StatefulWidget {
+  const MapScreen({
     Key? key,
     required this.polygons,
     required this.polygonArea,
@@ -26,10 +26,10 @@ class MapScreenType2 extends StatefulWidget {
   final DateTime selectedDate;
 
   @override
-  State<MapScreenType2> createState() => _MapScreenType2TestState();
+  State<MapScreen> createState() => _MapScreenType2TestState();
 }
 
-class _MapScreenType2TestState extends State<MapScreenType2> {
+class _MapScreenType2TestState extends State<MapScreen> {
   List<Field> fields = [];
   bool _addingPolygons = false;
   MapType _currentMapType = MapType.normal;
@@ -62,7 +62,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        _showSnackBar('Location services are disabled');
+        _showSnackBar('ตำแหน่ง GPS ไม่สามารถใช้งานได้');
         return;
       }
 
@@ -70,13 +70,13 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          _showSnackBar('Location permission denied');
+          _showSnackBar('บริการ GPS ไม่ได้รับอนุญาติ');
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        _showSnackBar('Location permissions are permanently denied');
+        _showSnackBar('บริการ GPS ไม่ได้รับอนุญาติ');
         return;
       }
 
@@ -124,7 +124,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     double area = 0;
 
     if (numPoints > 2) {
-      const double earthRadius = 6371000; // Earth radius in meters
+      const double earthRadius = 6371000;
       const double degreesToRadians = pi / 180;
 
       for (int i = 0; i < numPoints; i++) {
@@ -147,7 +147,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
         area += segmentArea;
       }
 
-      area = (area.abs() * 0.5); // Half of the absolute area
+      area = (area.abs() * 0.5);
     }
     area = area.abs() * 0.000001;
 
@@ -221,7 +221,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddScreenType2(
+        builder: (context) => AddScreen(
           polygons: _polygons,
           polygonArea: _polygonArea,
           lengths: widget.lengths,
@@ -368,7 +368,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Map Screen Type 2 Test'),
+        title: const Text('หน้าแผนที่'),
       ),
       body: Stack(
         children: [
@@ -388,6 +388,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
             left: 16.0,
             child: FloatingActionButton(
               onPressed: _changeMapType,
+              tooltip: 'เปลี่ยนรูปแบบแผนที่',
               child: const Icon(Icons.layers),
             ),
           ),
@@ -396,6 +397,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
             right: 16.0,
             child: FloatingActionButton(
               onPressed: _goToCurrentLocation,
+              tooltip: 'ไปที่ตําแหน่งปัจจุบัน',
               child: const Icon(Icons.my_location),
             ),
           ),
