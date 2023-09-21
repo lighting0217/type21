@@ -109,6 +109,7 @@ class _SelectScreenState extends State<SelectScreen> {
                           polygonArea: 0,
                           lengths: const [],
                           onPolygonAreaChanged: (double value) {},
+                          selectedDate: DateTime.now(),
                         ));
                   },
                 ),
@@ -120,6 +121,7 @@ class _SelectScreenState extends State<SelectScreen> {
                       polygonArea: 0,
                       lengths: const [],
                       onPolygonAreaChanged: (double value) {},
+                      selectedDate: DateTime.now(),
                     ),
                   );
                 },

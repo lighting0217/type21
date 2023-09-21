@@ -32,7 +32,7 @@ dependencies:
   turf: ^0.0.8
   flutter_map: ^5.0.0
   cloud_firestore: ^4.9.1
-  google_fonts: ^5.1.0
+  google_fonts: ^6.0.0
   fl_chart: ^0.63.0
   firebase_database: ^10.2.5
   logger: ^2.0.2
@@ -46,6 +46,12 @@ dependencies:
   shared_preferences: ^2.2.1
   google_sign_in: ^6.1.5
   flutter_signin_button: ^2.0.0
+  thai: ^1.0.0+2
+  flutter_holo_date_picker: ^1.1.2+1
+  syncfusion_localizations: ^23.1.36
+  detectable_text_field: ^2.1.0
+  more: ^4.0.0
+  translatable_text_field: ^1.0.2+3
 
 dev_dependencies:
   flutter_test:

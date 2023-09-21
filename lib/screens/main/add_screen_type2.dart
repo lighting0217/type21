@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/temp_data_models.dart';
 import 'field_screen/field_list.dart';
@@ -22,6 +23,7 @@ class AddScreenType2 extends StatefulWidget {
     required this.lengths,
     required double polygonAreaMeters,
     required this.monthlyTemperatureData,
+    required this.selectedDate,
   }) : super(key: key);
 
   final List<double> lengths;
@@ -29,6 +31,7 @@ class AddScreenType2 extends StatefulWidget {
   final List<LatLng> polygons;
   final double totalDistance;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final DateTime selectedDate;
 
   @override
   State<AddScreenType2> createState() => _AddScreenType2State();
@@ -37,6 +40,7 @@ class AddScreenType2 extends StatefulWidget {
 class _AddScreenType2State extends State<AddScreenType2> {
   String? selectedValue;
   DateTime? forecastedHarvestDate;
+  DateTime? selectedDate;
 
   final TextEditingController _fieldNameController = TextEditingController();
   final Map<String, String> _riceTypeKeys = {
@@ -141,6 +145,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
     final polygons = widget.polygons;
     final riceMaxGdd = getRiceMaxGdd(riceType);
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final selectedDate = widget.selectedDate;
     await _addNewFieldToFirestore(
       fieldName,
       riceType,
@@ -149,6 +154,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       polygons,
       currentUserUid,
       riceMaxGdd,
+      selectedDate,
     );
 
     final newField = Field(
@@ -157,7 +163,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
       polygonArea: polygonArea,
       totalDistance: totalDistance,
       polygons: polygons,
-      selectedDate: null,
+      selectedDate: selectedDate,
       createdBy: currentUserUid,
       temperatureData: [],
       id: '',
@@ -185,6 +191,7 @@ class _AddScreenType2State extends State<AddScreenType2> {
     List<LatLng> polygons,
     String createdBy,
     double riceMaxGdd,
+    DateTime selectedDate,
   ) async {
     try {
       if (kDebugMode) {
@@ -247,7 +254,19 @@ class _AddScreenType2State extends State<AddScreenType2> {
 
     return LatLng(centerLat, centerLng);
   }
-
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime.now().add(const Duration(days: 365)
+    ));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final LatLng center = _calculatePolygonCenter(widget.polygons);
@@ -291,6 +310,30 @@ class _AddScreenType2State extends State<AddScreenType2> {
               decoration: const InputDecoration(
                 labelText: 'ชนิดพันธุ์ข้าว',
               ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    readOnly: true,
+                    controller: TextEditingController(
+                      text: selectedDate != null
+                          ? DateFormat('yyyy-MM-dd').format(selectedDate!)
+                          : '', // Display selected date in the input field.
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'วันที่เลือก',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.calendar_today),
+                  onPressed: () {
+                    _selectDate(context); // Show the date picker.
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             const Text(

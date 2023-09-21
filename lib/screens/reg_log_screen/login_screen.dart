@@ -23,6 +23,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService _auth = AuthService();
+  bool _obscureText = true;
 
   Future<void> _login() async {
     final BuildContext ctx = context;
@@ -129,9 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-
   Widget _buildPasswordField() {
-    bool obscureText = true;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -140,26 +139,31 @@ class _LoginScreenState extends State<LoginScreen> {
           style: GoogleFonts.openSans(fontSize: 20),
         ),
         TextFormField(
-          obscureText: obscureText,
-          decoration:  InputDecoration(
-            labelText: 'Password',
-            border: const OutlineInputBorder(),
-            prefixIcon:  const Icon(Icons.lock),
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscureText ? Icons.visibility: Icons.visibility_off
-              ),
-              onPressed: () {
-                setState(() {
-                  obscureText = !obscureText;
-                });
-              },
-            ),
-          ),
+          obscureText: _obscureText, // Use the member variable here
+          decoration: _buildPasswordInputDecoration(), // Remove the argument
           validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
           onSaved: (String? password) => _auth.password = password!,
         ),
       ],
+    );
+  }
+
+  InputDecoration _buildPasswordInputDecoration() {
+    return InputDecoration(
+      labelText: 'Password',
+      hintText: 'ป้อนรหัสผ่านของคุณ',
+      border: const OutlineInputBorder(),
+      prefixIcon: const Icon(Icons.lock),
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility : Icons.visibility_off,
+        ),
+        onPressed: () {
+          setState(() {
+            _obscureText = !_obscureText;
+          });
+        },
+      ),
     );
   }
 

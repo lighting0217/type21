@@ -16,12 +16,14 @@ class MapScreenType2 extends StatefulWidget {
     required this.polygonArea,
     required this.lengths,
     required this.onPolygonAreaChanged,
+    required this.selectedDate,
   }) : super(key: key);
 
   final List<double> lengths;
   final ValueChanged<double> onPolygonAreaChanged;
   final double polygonArea;
   final List<LatLng> polygons;
+  final DateTime selectedDate;
 
   @override
   State<MapScreenType2> createState() => _MapScreenType2TestState();
@@ -226,6 +228,7 @@ class _MapScreenType2TestState extends State<MapScreenType2> {
           polygonAreaMeters: polygonAreaMeters,
           totalDistance: _totalDistance,
           monthlyTemperatureData: const [],
+          selectedDate: widget.selectedDate,
         ),
       ),
     );
