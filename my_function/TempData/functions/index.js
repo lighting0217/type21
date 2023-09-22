@@ -41,6 +41,13 @@ exports.TempData = functions
                     const maxTemp = dailyDatum.temp.max;
                     const gdd = (minTemp + maxTemp) / 2 - 9;
 
+                    /**
+                     * Get the reference to the temperature document for a specific date.
+                     *
+                     * @param {Object} fieldDoc - The field document object.
+                     * @param {string} dateThai - The date in Thai format.
+                     * @returns {Object} The reference to the temperature document.
+                     */
                     const temperatureDocRef = fieldDoc
                         .ref
                         .collection("temperatures")

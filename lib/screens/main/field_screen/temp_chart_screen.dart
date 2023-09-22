@@ -1,3 +1,12 @@
+/// This file contains the [TempChartScreen] widget which displays a temperature chart.
+/// It imports the necessary packages and models to display the chart.
+/// The widget takes in a list of [TemperatureData], [MonthlyTemperatureData], [AccumulatedGddData], and a [maxGdd] value.
+/// It displays multiple charts based on the selected month and year.
+/// The [_TempChartScreenState] class is the state of the widget and contains methods to filter the data by month and build the chart sections.
+/// The [getThaiMonth] method returns the Thai name of the month based on the month number.
+/// The [calculatePercent] method calculates the percentage of accumulated GDD out of the maximum GDD.
+/// The [computeCumulativeGddSum] method computes the cumulative sum of GDD for each month.
+/// The [MonthlyAgddPieChart] widget displays a pie chart of the accumulated GDD for each month.
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';

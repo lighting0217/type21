@@ -35,9 +35,9 @@ function calculateWeightedMovingAverage(data, weights) {
 /**
  * Calculates the moving average of an array of data.
  *
- * @param {Array} data
- * @param {number} windowSize
- * @return {number}
+ * @param {Array} data - The data array.
+ * @param {number} windowSize - The size of the moving window.
+ * @return {number} - The moving average.
  */
 function calculateMovingAverage(data, windowSize) {
     let sum = 0;
@@ -49,6 +49,12 @@ function calculateMovingAverage(data, windowSize) {
     return sum / windowSize;
 }
 
+/**
+ * Cloud Function that schedules temperature forecasts for fields.
+ *
+ * @param {Object} context - The Cloud Function context.
+ * @return {Promise} - A Promise that resolves when the function is done.
+ */
 exports.scheduleTemperatureForecast = functions
     .pubsub.schedule("00 09 * * 1")
     .timeZone("Asia/Bangkok")
@@ -103,4 +109,3 @@ exports.scheduleTemperatureForecast = functions
 
         return null;
     });
-

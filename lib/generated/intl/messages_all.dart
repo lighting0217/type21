@@ -1,3 +1,22 @@
+/// This file is generated via package:intl/generate_localized.dart and should not be edited.
+/// It contains a library that looks up messages for specific locales by delegating to the appropriate library.
+/// 
+/// The file imports the following packages:
+/// - dart:async
+/// - flutter/foundation.dart
+/// - intl.dart
+/// - message_lookup_by_library.dart
+/// - intl_helpers.dart
+/// 
+/// The file contains a function `initializeMessages` that user programs should call before using `localeName` for messages.
+/// 
+/// The file also contains a map `_deferredLibraries` that maps locale names to library loaders.
+/// 
+/// The file contains a function `_findExact` that returns the message lookup for a given locale name.
+/// 
+/// The file contains a function `_messagesExistFor` that returns true if messages exist for a given locale.
+/// 
+/// The file contains a function `_findGeneratedMessagesFor` that returns the message lookup for a given locale.
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that looks up messages for specific locales by
 // delegating to the appropriate library.

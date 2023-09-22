@@ -1,3 +1,8 @@
+/// This file contains the main function and the [MyApp] and [PermissionHandlerScreen] classes.
+/// The main function initializes Firebase and sets up Firebase Crashlytics.
+/// It also listens to changes in the user's authentication state and decides which screen to show.
+/// The [MyApp] class is a stateless widget that builds the app's UI based on the user's authentication state.
+/// The [PermissionHandlerScreen] class is a stateful widget that requests location permissions from the user.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';

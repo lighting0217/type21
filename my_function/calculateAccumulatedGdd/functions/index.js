@@ -26,6 +26,11 @@ exports.calculateAccumulatedGdd = functions
                 const maxGdd = fieldData.riceMaxGdd || 0;
                 console.log(`Processing field: ${fieldId}, Max GDD: ${maxGdd}`);
 
+                /**
+                 * Retrieves monthly temperatures snapshot from a Firestore collection.
+                 * @param {Object} fieldDoc - The Firestore document containing the field data.
+                 * @returns {Promise<Object>} - A promise that resolves with the monthly temperatures snapshot.
+                 */
                 const monthlyTemperaturesSnapshot =
                     await fieldDoc
                         .ref

@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:type21/library/th_format_date.dart';
+import 'package:type21/screens/main/field_screen/calendar_screen.dart';
+import 'package:type21/screens/main/field_screen/temp_chart_screen.dart';
 
-import '../../../library/th_format_date.dart';
 import '../../../models/temp_data_models.dart';
-import '../../../screens/main/field_screen/calendar_screen.dart';
-import '../../../screens/main/field_screen/temp_chart_screen.dart';
 
+/// A screen widget that displays temperature data in Thai language format.
+///
+/// This screen displays daily and monthly temperature data, as well as GDD (Growing Degree Days) data.
+/// The temperature data is passed as a list of [TemperatureData] objects, while the monthly temperature data is passed as a list of [MonthlyTemperatureData] objects.
+/// The accumulated GDD data is passed as a list of [AccumulatedGddData] objects, and the field data is passed as a list of [Field] objects.
+/// If there is no temperature data, a message will be displayed indicating that no data was found.
+/// The screen also contains two floating action buttons, one for navigating to a temperature chart screen and the other for navigating to a calendar screen.
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
@@ -20,6 +27,11 @@ class TemperatureScreen extends StatelessWidget {
     required this.field,
   }) : super(key: key);
 
+  /// Builds a [ListTile] widget for daily temperature data.
+  ///
+  /// The [TemperatureData] object is passed as a parameter, and the formatted date, maximum temperature, minimum temperature, and GDD are extracted from the object.
+  /// The formatted date is obtained using the [thFormatDate] function, while the maximum temperature, minimum temperature, and GDD are formatted to two decimal places using the [toStringAsFixed] method.
+  /// The formatted date is displayed as the title of the [ListTile], while the maximum temperature, minimum temperature, and GDD are displayed as the subtitle.
   Widget _buildDailyTemperatureTile(TemperatureData temperature) {
     final formattedDate = thFormatDate(temperature.documentID);
     final maxTemp = temperature.maxTemp.toStringAsFixed(2);
@@ -39,6 +51,11 @@ class TemperatureScreen extends StatelessWidget {
     );
   }
 
+  /// Builds a [ListTile] widget for monthly temperature data.
+  ///
+  /// The [MonthlyTemperatureData] object is passed as a parameter, and the formatted date and GDD are extracted from the object.
+  /// The formatted date is obtained using the [thFormatDateMonth] function, while the GDD is formatted to two decimal places using the [toStringAsFixed] method.
+  /// The formatted date is displayed as the title of the [ListTile], while the GDD is displayed as the subtitle.
   Widget _buildMonthlyTemperatureTile(
       MonthlyTemperatureData monthlyTemperature) {
     final formattedDate = thFormatDateMonth(monthlyTemperature.documentID);

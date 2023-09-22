@@ -1,3 +1,9 @@
+/// This file contains the data models for temporary data used in the application.
+/// It includes the following classes:
+/// - Field: represents a field with its properties such as name, area, rice type, temperature data, etc.
+/// - AccumulatedGddData: represents the accumulated GDD data for a specific date and field.
+/// - MonthlyTemperatureData: represents the monthly temperature data for a specific month and field.
+/// - TemperatureData: represents the temperature data for a specific date and field.
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

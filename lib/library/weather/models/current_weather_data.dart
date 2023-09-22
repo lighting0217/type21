@@ -1,3 +1,12 @@
+/// This file contains the [CurrentWeatherData], [Current], and [Weather] classes.
+/// 
+/// The [CurrentWeatherData] class represents the current weather data, which includes the [Current] weather and other weather information.
+/// 
+/// The [Current] class represents the current weather, which includes temperature, humidity, wind speed, and other weather information.
+/// 
+/// The [Weather] class represents the weather description, which includes the weather id, main, description, and icon.
+/// 
+/// This file also includes a private method [_translateDescriptionToThai] that translates the weather description to Thai language.
 // ignore_for_file: non_constant_identifier_names
 
 class CurrentWeatherData {

@@ -1,3 +1,15 @@
+/// This file contains functions for formatting dates in Thai language.
+/// It includes functions for converting English month names to Thai, 
+/// formatting dates in various formats, and more.
+///
+/// Functions:
+/// - `convertMonthToThai(String month)`: Converts an English month name to its Thai equivalent.
+/// - `convertMonthToThaiShort(String month)`: Converts an English month name to its abbreviated Thai equivalent.
+/// - `thFormatDate(String inputDate)`: Formats a date string in the format "M D, Y" to "EEEE, d MMMM y" in Thai language.
+/// - `thFormatDateYMD(String inputDate)`: Formats a date string in the format "Y-M-DT" to "EEEE, d MMMM y" in Thai language.
+/// - `thFormatDateDMY(String inputDate)`: Formats a date string in the format "D/M/Y" to "D:M:Y" in Thai language.
+/// - `thFormatDateShort(String inputDate)`: Formats a date string in the format "M D, Y" to "d/MM/y" in Thai language.
+/// - `thFormatDateMonth(String inputDate)`: Formats a date string in the format "M Y" to "MMMM y" in Thai language.
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 

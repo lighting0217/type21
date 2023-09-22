@@ -1,3 +1,7 @@
+/// This file contains the [MapScreen] widget which displays a Google Map with the ability to add polygons and markers.
+/// It also calculates the area and distance of the polygons and displays them.
+/// The widget takes in a list of [polygons], a [polygonArea], a list of [lengths], a [onPolygonAreaChanged] callback function, and a [selectedDate].
+/// It also contains a private [_MapScreenType2TestState] class which handles the state of the widget.
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -62,7 +66,7 @@ class _MapScreenType2TestState extends State<MapScreen> {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        _showSnackBar('ตำแหน่ง GPS ไม่สามารถใช้งานได้');
+        _showSnackBar('ตำแหน่ง GPS ไม่ได้เปิดใช้งาน');
         return;
       }
 
@@ -340,7 +344,6 @@ class _MapScreenType2TestState extends State<MapScreen> {
             fillColor: Colors.greenAccent.withOpacity(0.3),
           ),
         );
-
         _calculatePolygonArea();
         _measureDistance();
         _addMarkersToCorners();

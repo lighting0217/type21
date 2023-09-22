@@ -1,3 +1,10 @@
+/// This file contains the generated messages for the 'th' locale. 
+/// It should not be edited manually, as it is generated via the `package:intl/generate_localized.dart` script.
+/// The messages are stored in the `messages` object, which is an instance of `MessageLookup`.
+/// This file also defines a `MessageLookup` subclass named `MessageLookup`, which provides the `localeName` property and the `_notInlinedMessages` method.
+/// The `messages` object is a `MessageLookup` instance, which provides a method to look up messages by their keys.
+/// The `MessageIfAbsent` type is a function that takes a message string and a list of arguments, and returns a string.
+/// The `_notInlinedMessages` method returns an empty map, which is used as a fallback when a message is not found in the `messages` object.
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that provides messages for a en locale. All the
 // messages from the main program should be duplicated here with the same

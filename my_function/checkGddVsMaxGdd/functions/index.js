@@ -1,3 +1,10 @@
+/**
+ * Cloud Function that checks if the accumulated Growing Degree Days (GDD) for each field exceeds the maximum GDD for rice growth.
+ * Runs every Monday at 8:00 AM Bangkok time.
+ * @function
+ * @name checkGddVsMaxGdd
+ * @type {functions.CloudFunction}
+ */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();

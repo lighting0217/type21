@@ -1,3 +1,4 @@
+/// This file contains the implementation of the LoginScreen widget, which is responsible for rendering the login screen UI and handling user authentication. It imports several packages, including Firebase, Flutter Material, Flutter Sign-In Button, Form Field Validator, Google Fonts, and Shared Preferences. The LoginScreen widget is a stateful widget that contains a form with two input fields for email and password, a login button, and a link to the registration screen. It also uses the AuthService class to handle user authentication and the SharedPreferences package to store user login status. The LoginScreen widget is built asynchronously using the FutureBuilder widget to ensure that Firebase is initialized before rendering the UI.
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_core/firebase_core.dart';
@@ -94,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 20),
                         //_buildGoogleSigninButton(),
                         //const SizedBox(height: 20,),
-                        _buildDontHaveAccout(),
+                        _buildDontHaveAccount(),
                       ],
                     ),
                   ),
@@ -110,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildDontHaveAccout() {
+  Widget _buildDontHaveAccount() {
     return SizedBox(
       height: 60,
       width: double.infinity,

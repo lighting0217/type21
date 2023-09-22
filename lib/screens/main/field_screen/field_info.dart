@@ -1,3 +1,9 @@
+/// This file contains the [FieldInfo] widget which displays information about a field.
+/// It imports necessary packages and defines the [FieldInfo] widget as a [StatefulWidget].
+/// The [FieldInfo] widget has a required [Field] object, a required document ID, and other required parameters.
+/// It also defines the [_FieldInfoState] class which is the state of the [FieldInfo] widget.
+/// The [_FieldInfoState] class has methods to get the center of a polygon, format a date in Thai, and load temperature data.
+/// It also has methods to load monthly temperature data and accumulated GDD data.
 import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

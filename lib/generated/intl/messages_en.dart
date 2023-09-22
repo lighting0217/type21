@@ -1,15 +1,18 @@
-// DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
-// This is a library that provides messages for a en locale. All the
-// messages from the main program should be duplicated here with the same
-// function name.
-
-// Ignore issues from commonly used lints in this file.
-// ignore_for_file:unnecessary_brace_in_string_interps, unnecessary_new
-// ignore_for_file:prefer_single_quotes,comment_references, directives_ordering
-// ignore_for_file:annotate_overrides,prefer_generic_function_type_aliases
-// ignore_for_file:unused_import, file_names, avoid_escaping_inner_quotes
-// ignore_for_file:unnecessary_string_interpolations, unnecessary_string_escapes
-
+/// This file contains the generated messages for the 'en' locale.
+/// 
+/// It should not be edited manually, as it is generated via the `package:intl/generate_localized.dart` script.
+/// 
+/// The [messages] variable is an instance of [MessageLookupByLibrary] that provides the messages for the 'en' locale.
+/// 
+/// The [MessageIfAbsent] function is a typedef that takes a message string and a list of arguments, and returns a string.
+/// 
+/// The [MessageLookup] class extends [MessageLookupByLibrary] and provides the messages for the 'en' locale.
+/// 
+/// The [_notInlinedMessages] function is a static function that returns an empty map of messages.
+/// 
+/// The [localeName] getter returns the name of the current locale, which is 'en'.
+/// 
+/// This file also contains several ignore directives for commonly used lints, such as `unnecessary_brace_in_string_interps` and `prefer_single_quotes`.
 import 'package:intl/intl.dart';
 import 'package:intl/message_lookup_by_library.dart';
 

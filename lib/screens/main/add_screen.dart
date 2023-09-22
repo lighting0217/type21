@@ -1,3 +1,8 @@
+/// FILEPATH: c:\my_project\type21\lib\screens\main\add_screen.dart
+/// This file contains the implementation of the AddScreen widget, which is responsible for adding a new field to the Firestore database.
+/// The widget takes in various parameters such as the lengths, polygons, polygonArea, totalDistance, monthlyTemperatureData, and selectedDate.
+/// The widget also contains helper methods such as getRiceMaxGdd, convertAreaToRaiNganWah, _createPolygons, _createMarkers, fetchForecastedHarvestDate, and _submitForm.
+/// The widget uses various packages such as cloud_firestore, firebase_auth, fluttertoast, form_field_validator, google_maps_flutter, and intl.
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,3 +1,16 @@
+/// This file contains the implementation of the RegisterScreen widget, which is responsible for rendering the UI for user registration.
+/// The widget uses Firebase authentication to register a new user account and validate the user's input.
+/// The widget contains a form with input fields for email, password, and password confirmation.
+/// The widget also contains a button to submit the form and create a new user account.
+/// If the user registration is successful, the widget navigates to the LoginScreen widget.
+/// If the user registration fails, the widget displays an error message using Fluttertoast.
+/// FILEPATH: c:\my_project\type21\lib\screens\reg_log_screen\register_screen.dart
+/// This file contains the implementation of the RegisterScreen widget, which is responsible for rendering the UI for user registration.
+/// The widget uses Firebase authentication to register a new user account and validate the user's input.
+/// The widget contains a form with input fields for email, password, and password confirmation.
+/// The widget also contains a button to submit the form and create a new user account.
+/// If the user registration is successful, the widget navigates to the LoginScreen widget.
+/// If the user registration fails, the widget displays an error message using Fluttertoast.
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -167,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       //_buildGoogleSigninButton(),
                       //const SizedBox(height: 20,),
-                      _buildAlreadyHaveAccout(),
+                      _buildAlreadyHaveAccount(),
                     ],
                   ),
                 ),
@@ -184,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildAlreadyHaveAccout() {
+  Widget _buildAlreadyHaveAccount() {
     return SizedBox(
       height: 60,
       width: double.infinity,
