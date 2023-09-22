@@ -165,10 +165,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      _buildGoogleSigninButton(),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      //_buildGoogleSigninButton(),
+                      //const SizedBox(height: 20,),
                       _buildAlreadyHaveAccout(),
                     ],
                   ),
@@ -188,13 +186,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildAlreadyHaveAccout() {
     return SizedBox(
-      height: 20,
+      height: 60,
+      width: double.infinity,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text("มีบัญชีผู้ใช้แล้ว?",
-              style: TextStyle(fontSize: 16, color: Colors.blue)),
+              style: TextStyle(fontSize: 16, color: Colors.black)),
           TextButton(
             onPressed: () {
               Navigator.pushReplacement(
@@ -204,7 +202,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               );
             },
-            child: const Text("เข้าสู่ระบบ"),
+            child: const Text(
+              "เข้าสู่ระบบ",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

@@ -92,6 +92,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 20),
                         _buildLoginButton(),
                         const SizedBox(height: 20),
+                        //_buildGoogleSigninButton(),
+                        //const SizedBox(height: 20,),
                         _buildDontHaveAccout(),
                       ],
                     ),
@@ -110,19 +112,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildDontHaveAccout() {
     return SizedBox(
-      height: 20,
+      height: 60,
+      width: double.infinity,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
             "ยังไม่มีบัญชีผู้ใช้?",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.blue,
+              color: Colors.black,
             ),
           ),
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
+            ),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
@@ -131,7 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             },
-            child: const Text("เข้าสู่ระบบ"),
+            child: const Text(
+              "สร้างบัญชี",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -219,8 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Text('เข้าสู่ระบบ'),
           ),
         ),
-        const SizedBox(height: 20),
-        _buildGoogleSigninButton(),
       ],
     );
   }
