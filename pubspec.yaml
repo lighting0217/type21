@@ -52,6 +52,7 @@ dependencies:
   detectable_text_field: ^2.1.0
   more: ^4.0.0
   translatable_text_field: ^1.0.2+3
+  toast: ^0.3.0
 
 dev_dependencies:
   flutter_test:

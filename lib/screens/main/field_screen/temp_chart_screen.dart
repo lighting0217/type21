@@ -74,14 +74,22 @@ class _TempChartScreenState extends State<TempChartScreen> {
         child: ListView(
           children: [
             _buildMonthPicker(),
+            const SizedBox(height: 20),
             _buildChartSection(
                 TempRangedChart(temperatureData: filteredTemperatureData)),
+            const SizedBox(height: 20),
             _buildChartSection(
                 DayGddChart(temperatureData: filteredTemperatureData)),
+            const SizedBox(
+              height: 20,
+            ),
             _buildChartSection(MonthlyAgddPieChart(
               monthlyTemperatureData: widget.monthlyTemperatureData,
               accumulatedGddData: widget.accumulatedGddData,
             )),
+            const SizedBox(
+              height: 20,
+            ),
             _buildChartSection(MonthGddChart(
                 monthlyTemperatureData: widget.monthlyTemperatureData)),
           ],

@@ -236,6 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildGoogleSigninButton() {
     return SizedBox(
       width: double.infinity,
