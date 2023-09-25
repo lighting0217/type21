@@ -1,3 +1,12 @@
+/// This file contains the [CalendarScreen] widget which displays a calendar with GDD values for each day.
+/// It takes in [temperatureData], [monthlyTemperatureData], [accumulatedGddData], and [field] as required parameters.
+/// [temperatureData] is a list of [TemperatureData] objects which contains temperature data for each day.
+/// [monthlyTemperatureData] is a list of [MonthlyTemperatureData] objects which contains monthly temperature data.
+/// [accumulatedGddData] is a list of [AccumulatedGddData] objects which contains accumulated GDD data.
+/// [field] is a list of [Field] objects which contains field data.
+/// The widget displays a calendar using the [CalendarCarousel] widget and shows the GDD value for each day using the [customDayBuilder] property.
+/// When a day is tapped, it shows a bottom sheet with the temperature data for that day.
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';

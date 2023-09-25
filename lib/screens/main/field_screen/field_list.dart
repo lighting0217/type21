@@ -1,3 +1,7 @@
+/// This file contains the [FieldList] widget and [FieldUtils] class.
+/// The [FieldList] widget displays a list of fields fetched from Firestore.
+/// The [FieldUtils] class contains utility functions for converting area to Rai-Ngan-Wah and getting Thai rice type.
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';

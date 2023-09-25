@@ -3,12 +3,10 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 /**
- * Calculate the Simple Moving Average (SMA) of an array of data.
- *
- * @param {number[]} data - The array of numbers to calculate the SMA for.
- * @param {number} days - The number of days for the SMA calculation.
- * @return {number|null}
- *
+ * Calculates the Simple Moving Average (SMA) of an array of data for a given number of days.
+ * @param {number[]} data - The array of data to calculate the SMA for.
+ * @param {number} days - The number of days to calculate the SMA for.
+ * @returns {number|null} - The calculated SMA, or null if there is not enough data.
  */
 function calculateSMA(data, days) {
     if (data.length < days) {

@@ -1,3 +1,8 @@
+/// This file contains the [SelectScreen] widget which is the main screen of the app.
+/// It displays the weather data and provides navigation to other screens such as the field list and map screen.
+/// The [SelectScreen] widget is a [StatefulWidget] that fetches weather data on initialization and updates the UI accordingly.
+/// It also contains a drawer that provides navigation to other screens and a logout button.
+/// The [SelectScreen] widget takes a list of [LatLng] objects as input which are used to draw polygons on the map screen.
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -98,21 +103,23 @@ class _SelectScreenState extends State<SelectScreen> {
                 accountEmail: Text(auth.currentUser?.email ?? ''),
               ),
               ListTile(
+                title: const Text('หน้ารายชื่อแปลง'),
+                leading: const Icon(Icons.list),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  navigateToScreen(
+                    context,
+                    const FieldList(
+                      fields: [],
+                      monthlyTemperatureData: [],
+                    ),
+                  );
+                },
+              ),
+              ListTile(
                 title: const Text('หน้าแผนที่'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.map),
-                  onPressed: () {
-                    navigateToScreen(
-                        context,
-                        MapScreen(
-                          polygons: widget.locationList,
-                          polygonArea: 0,
-                          lengths: const [],
-                          onPolygonAreaChanged: (double value) {},
-                          selectedDate: DateTime.now(),
-                        ));
-                  },
-                ),
+                leading: const Icon(Icons.map),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   navigateToScreen(
                     context,
@@ -122,27 +129,6 @@ class _SelectScreenState extends State<SelectScreen> {
                       lengths: const [],
                       onPolygonAreaChanged: (double value) {},
                       selectedDate: DateTime.now(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: const Text('หน้ารายชื่อแปลง'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.list),
-                  onPressed: () {
-                    navigateToScreen(
-                        context,
-                        const FieldList(
-                            fields: [], monthlyTemperatureData: []));
-                  },
-                ),
-                onTap: () {
-                  navigateToScreen(
-                    context,
-                    const FieldList(
-                      fields: [],
-                      monthlyTemperatureData: [],
                     ),
                   );
                 },

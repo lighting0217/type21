@@ -1,3 +1,6 @@
+/// A class representing location name data.
+///
+/// This class contains information about a location's name, local names, latitude, longitude, country, and state.
 class LocationNameData {
   final String name;
   final Map<String, String> localNames;
@@ -6,7 +9,10 @@ class LocationNameData {
   final String country;
   final String state;
 
-  LocationNameData({
+  /// Creates a new instance of [LocationNameData].
+  ///
+  /// The [name], [localNames], [lat], [lon], [country], and [state] parameters are required.
+  const LocationNameData({
     required this.name,
     required this.localNames,
     required this.lat,
@@ -15,6 +21,9 @@ class LocationNameData {
     required this.state,
   });
 
+  /// Creates a new instance of [LocationNameData] from a JSON map.
+  ///
+  /// The [json] parameter must not be null.
   factory LocationNameData.fromJson(Map<String, dynamic> json) =>
       LocationNameData(
         name: json['name'] as String,
@@ -25,6 +34,9 @@ class LocationNameData {
         state: _translateStateToThai(json['state'] as String),
       );
 
+  /// Translates the state name to Thai.
+  ///
+  /// The [state] parameter is the name of the state to be translated.
   static String _translateStateToThai(String state) {
     final Map<String, String> stateNamesToThai = {
       "Bangkok": "กรุงเทพมหานคร",

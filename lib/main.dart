@@ -1,8 +1,14 @@
+/// This file contains the main function and the [MyApp] and [PermissionHandlerScreen] classes.
+/// The main function initializes Firebase and sets up Firebase Crashlytics.
+/// It also listens to changes in the user's authentication state and decides which screen to show.
+/// The [MyApp] class is a stateless widget that builds the app's UI based on the user's authentication state.
+/// The [PermissionHandlerScreen] class is a stateful widget that requests location permissions from the user.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:type21/screens/reg_log_screen/register_screen.dart';
@@ -16,7 +22,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  Fluttertoast.showToast;
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
@@ -31,6 +37,7 @@ void main() async {
       }
     }
   });
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final prefs = await SharedPreferences.getInstance();
 
@@ -47,7 +54,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +85,7 @@ class MyApp extends StatelessWidget {
 }
 
 class PermissionHandlerScreen extends StatefulWidget {
-  const PermissionHandlerScreen({super.key});
+  const PermissionHandlerScreen({Key? key}) : super(key: key);
 
   @override
   State<PermissionHandlerScreen> createState() =>
@@ -92,7 +99,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
     _requestPermissions();
   }
 
-  _requestPermissions() async {
+  Future<void> _requestPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.locationWhenInUse,
@@ -119,7 +126,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
     }
   }
 
-  _handleDeniedPermission() {
+  void _handleDeniedPermission() {
     if (kDebugMode) {
       print("Permission is denied.");
     }

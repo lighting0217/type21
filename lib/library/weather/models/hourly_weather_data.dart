@@ -1,3 +1,8 @@
+/// This file contains the HourlyWeatherData class and its related classes.
+/// The HourlyWeatherData class is responsible for parsing hourly weather data from JSON.
+/// The Hourly class represents hourly weather data.
+/// The Weather class represents weather data.
+/// The Rain class represents rain data.
 class HourlyWeatherData {
   List<Hourly> hourly;
 
