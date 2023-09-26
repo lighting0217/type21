@@ -1,4 +1,4 @@
-/* eslint-disable linebreak-style */
+/* eslint linebreak-style: ["error", "windows"]*/
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const moment = require("moment-timezone");
