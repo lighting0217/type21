@@ -22,6 +22,8 @@ class TempChartScreen extends StatefulWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
   final double maxGdd;
+  final double riceMaxGdd;
+  final List<Field> field;
 
   const TempChartScreen({
     Key? key,
@@ -29,7 +31,8 @@ class TempChartScreen extends StatefulWidget {
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.maxGdd,
-    required List<Field> field,
+    required this.field,
+    required this.riceMaxGdd,
   }) : super(key: key);
 
   @override
@@ -58,6 +61,11 @@ class _TempChartScreenState extends State<TempChartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print('monthlyTemperatureData: ${widget.monthlyTemperatureData}');
+      print('riceMaxGdd: ${widget.riceMaxGdd}');
+      print('field: ${widget.field}');
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -87,6 +95,13 @@ class _TempChartScreenState extends State<TempChartScreen> {
               monthlyTemperatureData: widget.monthlyTemperatureData,
               accumulatedGddData: widget.accumulatedGddData,
             )),
+            const SizedBox(
+              height: 20,
+            ),
+            _buildChartSection(VsGddPieChart(
+                monthlyTemperatureData: widget.monthlyTemperatureData,
+                accumulatedGddData: widget.accumulatedGddData,
+                riceMaxGdd: widget.riceMaxGdd)),
             const SizedBox(
               height: 20,
             ),
@@ -180,6 +195,90 @@ List<MonthlyTemperatureData> computeCumulativeGddSum(
   }
 
   return List.from(existingData)..addAll(updatedData);
+}
+
+class VsGddPieChart extends StatelessWidget {
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final List<AccumulatedGddData> accumulatedGddData;
+  final double riceMaxGdd;
+
+  const VsGddPieChart({
+    Key? key,
+    required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
+    required this.riceMaxGdd,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final totalAccumulatedGdd = accumulatedGddData.fold(
+      0,
+      (sum, item) => (sum + item.accumulatedGdd).toInt(),
+    );
+
+    return SizedBox(
+      height: 350,
+      child: SfCircularChart(
+        title: ChartTitle(
+          text: 'Pie chart ค่าGDD \n${totalAccumulatedGdd.toStringAsFixed(2)}',
+        ),
+        series: <CircularSeries>[
+          PieSeries<MonthlyTemperatureData, String>(
+            dataSource: monthlyTemperatureData,
+            xValueMapper: (data, _) => data.monthYear,
+            yValueMapper: (data, _) => data.gddSum,
+            radius: '65%',
+            dataLabelMapper: (data, _) =>
+                '${thFormatDateMonthShort(data.monthYear)}\n${data.gddSum.toStringAsFixed(2)}',
+            dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+              connectorLineSettings: ConnectorLineSettings(
+                type: ConnectorType.line,
+                color: Colors.black,
+                width: 1,
+              ),
+              labelIntersectAction: LabelIntersectAction.shift,
+              labelAlignment: ChartDataLabelAlignment.auto,
+              labelPosition: ChartDataLabelPosition.outside,
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Jasmine',
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+          PieSeries<MonthlyTemperatureData, String>(
+            dataSource: monthlyTemperatureData,
+            xValueMapper: (data, _) => data.monthYear,
+            yValueMapper: (data, _) => riceMaxGdd - data.gddSum,
+            radius: '80%',
+            dataLabelMapper: (data, _) =>
+                '${thFormatDateMonthShort(data.monthYear)}\n${(riceMaxGdd - data.gddSum).toStringAsFixed(2)}',
+            dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+              connectorLineSettings: ConnectorLineSettings(
+                type: ConnectorType.line,
+                color: Colors.black,
+                width: 1,
+              ),
+              labelIntersectAction: LabelIntersectAction.shift,
+              labelAlignment: ChartDataLabelAlignment.auto,
+              labelPosition: ChartDataLabelPosition.outside,
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Jasmine',
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // Pie chart ที่รวมGDD ทุกเดือน

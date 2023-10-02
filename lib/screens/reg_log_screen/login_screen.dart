@@ -1,6 +1,7 @@
 /// This file contains the implementation of the LoginScreen widget, which is responsible for rendering the login screen UI and handling user authentication. It imports several packages, including Firebase, Flutter Material, Flutter Sign-In Button, Form Field Validator, Google Fonts, and Shared Preferences. The LoginScreen widget is a stateful widget that contains a form with two input fields for email and password, a login button, and a link to the registration screen. It also uses the AuthService class to handle user authentication and the SharedPreferences package to store user login status. The LoginScreen widget is built asynchronously using the FutureBuilder widget to ensure that Firebase is initialized before rendering the UI.
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -31,20 +32,30 @@ class _LoginScreenState extends State<LoginScreen> {
     final BuildContext ctx = context;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      final user = await _auth.signIn(_auth.email, _auth.password);
-      if (user != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
-        Navigator.of(ctx).pushReplacement(MaterialPageRoute(
-          builder: (context) => const SelectScreen(locationList: []),
-        ));
+      try {
+        final user = await _auth.signIn(_auth.email, _auth.password);
+        if (user != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          Navigator.of(ctx).pushReplacement(MaterialPageRoute(
+            builder: (context) => const SelectScreen(locationList: []),
+          ));
+          Fluttertoast.showToast(
+            msg: "เข้าสู่ระบบสําเร็จ",
+            gravity: ToastGravity.TOP,
+          );
+        }
+      } catch (e) {
+        String errorMessage = "เข้าสู่ระบบไม่สําเร็จ";
+        if (e is FirebaseAuthException) {
+          if (e.code == 'user-not-found') {
+            errorMessage = 'ไม่พบบัญชีผู้ใช้นี้';
+          } else if (e.code == 'wrong-password') {
+            errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+          }
+        }
         Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบสําเร็จ",
-          gravity: ToastGravity.TOP,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบไม่สําเร็จ",
+          msg: errorMessage,
           gravity: ToastGravity.CENTER,
         );
       }

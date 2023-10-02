@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:type21/library/th_format_date.dart';
@@ -74,6 +75,14 @@ class TemperatureScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print('riceMaxGdd: ${field.isNotEmpty ? field[8].riceMaxGdd : 0}');
+      print('temperatureData: $temperatureData');
+      print('monthlyTemperatureData: $monthlyTemperatureData');
+      print('accumulatedGddData: $accumulatedGddData');
+      print('field: $field');
+      print('maxGdd: ${field.isNotEmpty ? field[13].maxGdd ?? 0 : 0}');
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -128,7 +137,8 @@ class TemperatureScreen extends StatelessWidget {
                     monthlyTemperatureData: monthlyTemperatureData,
                     accumulatedGddData: accumulatedGddData,
                     field: field,
-                    maxGdd: field.isNotEmpty ? field[0].maxGdd ?? 0 : 0,
+                    maxGdd: field.isNotEmpty ? field[13].maxGdd ?? 0 : 0,
+                    riceMaxGdd: field.isNotEmpty ? field[8].riceMaxGdd : 0,
                   ),
                 ),
               );

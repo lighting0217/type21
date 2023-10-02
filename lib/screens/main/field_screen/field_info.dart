@@ -29,6 +29,7 @@ class FieldInfo extends StatefulWidget {
     required double polygonArea,
     required List<LatLng> polygons,
     required DateTime? selectedDate,
+    required double riceMaxGdd,
   }) : super(key: key);
   final Field field;
   final String documentID;
@@ -105,7 +106,7 @@ class _FieldInfoState extends State<FieldInfo> {
       }
 
       final fieldData = monthlyTempData.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final maxGdd = fieldData?['maxGdd'];
       final forecastedHarvestDateTimestamp =
           fieldData?['forecastedHarvestDate'] as Timestamp?;
       if (forecastedHarvestDateTimestamp != null) {
@@ -155,7 +156,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .get();
 
       final fieldData = fieldDoc.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final maxGdd = fieldData?['maxGdd'];
 
       final accumulatedGddCollection = await fieldDoc.reference
           .collection('accumulated_gdd')
@@ -185,6 +186,10 @@ class _FieldInfoState extends State<FieldInfo> {
       if (accumulatedGddData.isNotEmpty) {
         widget.field.accumulatedGddData = accumulatedGddData;
         widget.field.maxGddSubcollection = maxGdd;
+        if (kDebugMode) {
+          print(
+              'max gdd is: $maxGdd, accumulated gdd data is: $accumulatedGddData');
+        }
       } else if (accumulatedGddData.isEmpty) {
         if (kDebugMode) {
           print('Acccumulate Gdd data is empty');
@@ -362,6 +367,14 @@ class _FieldInfoState extends State<FieldInfo> {
                               const SizedBox(height: 8),
                               ElevatedButton(
                                 onPressed: () {
+                                  if (kDebugMode) {
+                                    print(
+                                        'Temperature data: ${widget.field.temperatureData}');
+                                    print(
+                                        'Monthly temperature data: ${widget.field.monthlyTemperatureData}');
+                                    print(
+                                        'Accumulated GDD data: ${widget.field.accumulatedGddData}');
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

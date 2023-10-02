@@ -205,9 +205,9 @@ class _AddScreenState extends State<AddScreen> {
       }
       double riceMaxGdd = 0;
       if (riceType == 'KDML105') {
-        riceMaxGdd = 2422.09;
+        riceMaxGdd = 2720.8;
       } else if (riceType == 'RD6') {
-        riceMaxGdd = 2000;
+        riceMaxGdd = 2676.664;
       }
 
       return await _firestore.collection('fields').add({

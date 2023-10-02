@@ -146,7 +146,7 @@ class _FieldListState extends State<FieldList> {
       print('Fetched ${fieldList.length} fields.');
       for (var field in fieldList) {
         print(
-            'Field Name: ${field.fieldName}, Rice Type: ${field.riceType}, Area: ${field.polygonArea}');
+            'Field Name: ${field.fieldName}, Rice Type: ${field.riceType}, Area: ${field.polygonArea}, rice max gdd: ${field.riceMaxGdd}');
       }
     }
     if (_auth.currentUser != null) {
@@ -193,6 +193,7 @@ class _FieldListState extends State<FieldList> {
                     riceType: field.riceType,
                     polygons: field.polygons,
                     selectedDate: field.selectedDate,
+                    riceMaxGdd: field.riceMaxGdd,
                   ),
                 ),
               );
