@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
- ColorScheme myColorScheme = const ColorScheme(
-  primary: Colors.blue,
-  secondary: Colors.green,
+ColorScheme myColorScheme = ColorScheme(
+  primary: Colors.blue.withOpacity(0.7),
+  secondary: Colors.green.withOpacity(0.9),
   surface: Colors.white,
   background: Colors.grey,
   error: Colors.red,
@@ -13,9 +13,8 @@ import 'package:flutter/material.dart';
   onError: Colors.white,
   brightness: Brightness.light,
 );
- LinearGradient myGradient = LinearGradient(
+LinearGradient myGradient = LinearGradient(
   colors: [myColorScheme.primary, myColorScheme.secondary],
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
 );
-

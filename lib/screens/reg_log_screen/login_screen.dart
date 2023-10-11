@@ -1,3 +1,4 @@
+import 'reset_screen.dart';
 import 'register_screen.dart';
 import '../../auth_service.dart';
 import '../main/select_screen.dart';
@@ -9,8 +10,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-// ignore_for_file: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
 
 final Future<FirebaseApp> _firebaseInit = Firebase.initializeApp();
 
@@ -38,18 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => const SelectScreen(locationList: []),
         ));
         Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบสําเร็จ",
-          gravity: ToastGravity.TOP,
-          textColor: myColorScheme.secondary,
-            backgroundColor: myColorScheme.onError
-        );
+            msg: "เข้าสู่ระบบสําเร็จ",
+            gravity: ToastGravity.TOP,
+            textColor: myColorScheme.secondary,
+            backgroundColor: myColorScheme.onError);
       } else {
         Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบไม่สําเร็จ",
-          gravity: ToastGravity.CENTER,
-          textColor: myColorScheme.error,
-          backgroundColor: myColorScheme.onError
-        );
+            msg: "เข้าสู่ระบบไม่สําเร็จ",
+            gravity: ToastGravity.CENTER,
+            textColor: myColorScheme.error,
+            backgroundColor: myColorScheme.onError);
       }
     }
   }
@@ -63,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
           return Scaffold(
             appBar: AppBar(
               title: const Text("ข้อผิดพลาด"),
-              backgroundColor: Colors.red,
+              backgroundColor: myColorScheme.error,
             ),
             body: Center(
               child: Text("${snapshot.error}"),
@@ -90,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   gradient: myGradient,
                 ),
                 child: Padding(
-                  padding:  const EdgeInsets.all(35.0),
+                  padding: const EdgeInsets.all(35.0),
                   child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
@@ -106,6 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           //_buildGoogleSigninButton(),
                           //const SizedBox(height: 20,),
                           _buildDontHaveAccount(),
+                          const SizedBox(height: 20),
+                          _buildResetPasswordButton(),
                         ],
                       ),
                     ),
@@ -113,9 +114,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ));
         }
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: myGradient,
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         );
       },
@@ -129,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-           Text(
+          Text(
             "ยังไม่มีบัญชีผู้ใช้?",
             style: TextStyle(
               fontSize: 16,
@@ -149,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             },
-            child:  Text(
+            child: Text(
               "สร้างบัญชี",
               style: TextStyle(
                 color: myColorScheme.primary.withOpacity(0.8),
@@ -169,7 +175,10 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           "ป้อน E-mail",
-          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface,fontWeight: FontWeight.bold),
+          style: GoogleFonts.openSans(
+              fontSize: 20,
+              //backgroundColor: myColorScheme.surface,
+              fontWeight: FontWeight.bold),
         ),
         TextFormField(
           decoration: _buildEmailInputDecoration(),
@@ -183,7 +192,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-InputDecoration _buildEmailInputDecoration() {
+
+  InputDecoration _buildEmailInputDecoration() {
     return InputDecoration(
       fillColor: myColorScheme.onBackground,
       labelText: 'Email',
@@ -192,13 +202,17 @@ InputDecoration _buildEmailInputDecoration() {
       prefixIcon: const Icon(Icons.email),
     );
   }
+
   Widget _buildPasswordField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "ป้อนรหัสผ่าน",
-          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface),
+          style: GoogleFonts.openSans(
+            fontSize: 20,
+            //backgroundColor: myColorScheme.surface
+          ),
         ),
         TextFormField(
           obscureText: _obscureText,
@@ -272,6 +286,30 @@ InputDecoration _buildEmailInputDecoration() {
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildResetPasswordButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ResetPasswordScreen(),
+            ),
+          );
+        },
+        child: const Text(
+          "ลืมรหัสผ่าน?",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

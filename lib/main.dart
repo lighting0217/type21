@@ -11,12 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
-/// This file contains the main function and the [MyApp] and [PermissionHandlerScreen] classes.
-/// The main function initializes Firebase and sets up Firebase Crashlytics.
-/// It also listens to changes in the user's authentication state and decides which screen to show.
-/// The [MyApp] class is a stateless widget that builds the app's UI based on the user's authentication state.
-/// The [PermissionHandlerScreen] class is a stateful widget that requests location permissions from the user.
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

@@ -7,9 +7,6 @@ import '../../../models/temp_data_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-
-
-
 class TempChartScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
@@ -85,6 +82,14 @@ class _TempChartScreenState extends State<TempChartScreen> {
               _buildChartSection(MonthlyAgddPieChart(
                 monthlyTemperatureData: widget.monthlyTemperatureData,
                 accumulatedGddData: widget.accumulatedGddData,
+              )),
+              const SizedBox(
+                height: 20,
+              ),
+              _buildChartSection(RemainingGDD(
+                monthlyTemperatureData: widget.monthlyTemperatureData,
+                accumulatedGddData: widget.accumulatedGddData,
+                maxGdd: widget.maxGdd,
               )),
               const SizedBox(
                 height: 20,
@@ -240,6 +245,80 @@ class MonthlyAgddPieChart extends StatelessWidget {
       ),
     );
   }
+}
+
+//piechrt ที่แสดงค่าGDD ทั้งหมด เทียบกับ GDD ที่เหลือ
+
+class RemainingGDD extends StatelessWidget {
+  final List<MonthlyTemperatureData> monthlyTemperatureData;
+  final List<AccumulatedGddData> accumulatedGddData;
+  final double maxGdd;
+
+  const RemainingGDD({
+    Key? key,
+    required this.monthlyTemperatureData,
+    required this.accumulatedGddData,
+    required this.maxGdd,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print(
+          'Month Year date:${monthlyTemperatureData.map((data) => data.monthYear).toList()}');
+      print(
+          'Accumulated Gdd is:${accumulatedGddData.map((data) => data.accumulatedGdd).toList()}');
+    }
+    double totalAccumulatedGdd =
+        accumulatedGddData.fold(0, (sum, item) => sum + item.accumulatedGdd);
+    double remainingGdd = maxGdd - totalAccumulatedGdd;
+    return SizedBox(
+      height: 350,
+      child: SizedBox(
+        height: 350,
+        child: SfCircularChart(
+          title: ChartTitle(
+              text:
+                  'Pie-Chart ค่าGDD \n${totalAccumulatedGdd.toStringAsFixed(2)}'),
+          series: <CircularSeries>[
+            PieSeries<ChartData, String>(
+              dataSource: [
+                ChartData('Accumulated GDD', totalAccumulatedGdd),
+                ChartData('Remaining GDD', remainingGdd),
+              ],
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y,
+              radius: '65%',
+              dataLabelMapper: (ChartData data, _) =>
+                  '${data.x}\n${data.y.toStringAsFixed(2)}',
+              dataLabelSettings: const DataLabelSettings(
+                isVisible: true,
+                connectorLineSettings: ConnectorLineSettings(
+                    type: ConnectorType.line, color: Colors.black, width: 1),
+                labelIntersectAction: LabelIntersectAction.shift,
+                labelAlignment: ChartDataLabelAlignment.auto,
+                labelPosition: ChartDataLabelPosition.outside,
+                textStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Jasmine',
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final String x;
+  final double y;
+
+  const ChartData(this.x, this.y);
 }
 
 // Ranged chart ของอุณหภูมิรายวัน
