@@ -1,28 +1,16 @@
-/// This file contains the implementation of the RegisterScreen widget, which is responsible for rendering the UI for user registration.
-/// The widget uses Firebase authentication to register a new user account and validate the user's input.
-/// The widget contains a form with input fields for email, password, and password confirmation.
-/// The widget also contains a button to submit the form and create a new user account.
-/// If the user registration is successful, the widget navigates to the LoginScreen widget.
-/// If the user registration fails, the widget displays an error message using Fluttertoast.
-/// FILEPATH: c:\my_project\type21\lib\screens\reg_log_screen\register_screen.dart
-/// This file contains the implementation of the RegisterScreen widget, which is responsible for rendering the UI for user registration.
-/// The widget uses Firebase authentication to register a new user account and validate the user's input.
-/// The widget contains a form with input fields for email, password, and password confirmation.
-/// The widget also contains a button to submit the form and create a new user account.
-/// If the user registration is successful, the widget navigates to the LoginScreen widget.
-/// If the user registration fails, the widget displays an error message using Fluttertoast.
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart';
+import '../../auth_service.dart';
+import '../main/select_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
+import '../../../library/colors_schema.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:type21/auth_service.dart';
-import 'package:type21/screens/main/select_screen.dart';
-import 'package:type21/screens/reg_log_screen/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
+
+// ignore_for_file: use_build_context_synchronously
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -75,16 +63,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
           Fluttertoast.showToast(
             msg: errorMessage,
-            textColor: Colors.red,
+            textColor: myColorScheme.error,
             gravity: ToastGravity.CENTER,
-            backgroundColor: Colors.grey.withOpacity(0.3),
+            backgroundColor: myColorScheme.onError,
           );
-          /*ScaffoldMessenger.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
               duration: const Duration(seconds: 3),
             ),
-          );*/
+          );
         }
       }
     }
@@ -101,84 +89,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: myColorScheme.primary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(35.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("ป้อน E-mail", style: TextStyle(fontSize: 20)),
-                TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: "กรุณาป้อน E-mail"),
-                    EmailValidator(errorText: "รูปแบบ E-mail ไม่ถูกต้อง"),
-                  ]),
-                  keyboardType: TextInputType.emailAddress,
-                  onSaved: (String? email) {
-                    _auth.email = email!;
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                PasswordFormField(
-                  onChanged: (value) {
-                    _auth.setPassword(value);
-                  },
-                  labelText: 'รหัสผ่าน',
-                  hintText: 'ป้อนรหัสผ่านของคุณ',
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                PasswordFormField(
-                  onChanged: (value) {
-                    _auth.setPasswordConfirmation(value);
-                  },
-                  labelText: 'ยืนยันรหัสผ่าน',
-                  hintText: 'ป้อนรหัสผ่านอีกครั้ง',
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 50,
-                        vertical: 15,
-                      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: myGradient,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(35.0),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("ป้อน E-mail", style: TextStyle(fontSize: 20)),
+                  TextFormField(
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "กรุณาป้อน E-mail"),
+                      EmailValidator(errorText: "รูปแบบ E-mail ไม่ถูกต้อง"),
+                    ]),
+                    keyboardType: TextInputType.emailAddress,
+                    onSaved: (String? email) {
+                      _auth.email = email!;
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email),
                     ),
-                    onPressed: _registerAccount,
-                    child: const Text('สร้างบัญชี'),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  errorMessage ?? '',
-                  style: const TextStyle(
-                    color: Colors.red,
+                  const SizedBox(
+                    height: 15,
                   ),
-                ),
-                _buildAlreadyHaveAccount(),
-              ],
+                  PasswordFormField(
+                    onChanged: (value) {
+                      _auth.setPassword(value);
+                    },
+                    labelText: 'รหัสผ่าน',
+                    hintText: 'ป้อนรหัสผ่านของคุณ',
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  PasswordFormField(
+                    onChanged: (value) {
+                      _auth.setPasswordConfirmation(value);
+                    },
+                    labelText: 'ยืนยันรหัสผ่าน',
+                    hintText: 'ป้อนรหัสผ่านอีกครั้ง',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: myColorScheme.onPrimary,
+                        backgroundColor: myColorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 15,
+                        ),
+                      ),
+                      onPressed: _registerAccount,
+                      child: const Text('สร้างบัญชี'),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    errorMessage ?? '',
+                    style:  TextStyle(
+                      color: myColorScheme.error,
+                    ),
+                  ),
+                  _buildAlreadyHaveAccount(),
+                ],
+              ),
             ),
           ),
         ),
@@ -204,10 +199,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               );
             },
-            child: const Text(
+            child:  Text(
               "เข้าสู่ระบบ",
               style: TextStyle(
-                color: Colors.blue,
+                color: myColorScheme.primary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -235,6 +230,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Fluttertoast.showToast(
               msg: "Google Sign-In failed",
               gravity: ToastGravity.CENTER,
+              backgroundColor: myColorScheme.onError,
+              textColor: myColorScheme.error
             );
           }
         },

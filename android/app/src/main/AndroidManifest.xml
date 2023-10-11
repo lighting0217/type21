@@ -8,7 +8,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="type21">
+        android:label="My Architec">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBN5RgBSi2pq5KGV0E8kLsYlIx0h2KHMZk" />

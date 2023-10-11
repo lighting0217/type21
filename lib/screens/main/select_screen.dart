@@ -1,25 +1,21 @@
-/// This file contains the [SelectScreen] widget which is the main screen of the app.
-/// It displays the weather data and provides navigation to other screens such as the field list and map screen.
-/// The [SelectScreen] widget is a [StatefulWidget] that fetches weather data on initialization and updates the UI accordingly.
-/// It also contains a drawer that provides navigation to other screens and a logout button.
-/// The [SelectScreen] widget takes a list of [LatLng] objects as input which are used to draw polygons on the map screen.
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'map_screen.dart';
+import '../../controller/myapi.dart';
+import 'field_screen/field_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../../library/colors_schema.dart';
+import '../reg_log_screen/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../library/weather/models/weather_data.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+// ignore_for_file: use_build_context_synchronously
 
-import '../../controller/myapi.dart';
-import '../../library/weather/models/weather_data.dart';
-import '../reg_log_screen/login_screen.dart';
-import 'field_screen/field_list.dart';
-import 'map_screen.dart';
+
 
 final auth = FirebaseAuth.instance;
 
@@ -93,7 +89,7 @@ class _SelectScreenState extends State<SelectScreen> {
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.blue,
+          backgroundColor: myColorScheme.primary,
         ),
         drawer: Drawer(
           child: ListView(
@@ -166,110 +162,118 @@ class _SelectScreenState extends State<SelectScreen> {
             ],
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        _weatherData.locationNameData().localNames['th'] ??
-                            'ไม่รู้จักตำแหน่ง',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: myGradient,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          _weatherData.locationNameData().localNames['th'] ??
+                              'ไม่รู้จักตำแหน่ง',
+                          style:  TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: myColorScheme.error
+                          ),
                         ),
-                      ),
-                      Text(
-                        _weatherData.locationNameData().state,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          _weatherData.locationNameData().state,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _weatherData.locationNameData().country == 'TH'
-                            ? 'ประเทศไทย'
-                            : _weatherData.locationNameData().country,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          _weatherData.locationNameData().country == 'TH'
+                              ? 'ประเทศไทย'
+                              : _weatherData.locationNameData().country,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              '${_weatherData.currentWeatherData().current.temp ?? ''}°C',
-                              style: const TextStyle(fontSize: 40),
-                            ),
-                            Text(
-                              _weatherData
-                                      .currentWeatherData()
-                                      .current
-                                      .weather?[0]
-                                      .description ??
-                                  '',
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                            Image.network(
-                              'https://openweathermap.org/img/w/${_weatherData.currentWeatherData().current.weather?[0].icon ?? ''}.png',
-                              scale: 0.5,
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: _weatherData
-                                  .hourlyWeatherData()
-                                  .hourly
-                                  .length,
-                              itemBuilder: (context, index) {
-                                var hourlyData = _weatherData
+                        Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '${_weatherData.currentWeatherData().current.temp ?? ''}°C',
+                                style: const TextStyle(fontSize: 40),
+                              ),
+                              Text(
+                                _weatherData
+                                        .currentWeatherData()
+                                        .current
+                                        .weather?[0]
+                                        .description ??
+                                    '',
+                                style: const TextStyle(fontSize: 24),
+                              ),
+                              Image.network(
+                                'https://openweathermap.org/img/w/${_weatherData.currentWeatherData().current.weather?[0].icon ?? ''}.png',
+                                scale: 0.5,
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _weatherData
                                     .hourlyWeatherData()
-                                    .hourly[index];
-                                return ListTile(
-                                  leading: Image.network(
-                                    'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
-                                    scale: 0.5,
-                                  ),
-                                  title: Text(
-                                    '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00',
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        hourlyData.weather?[0].description ??
-                                            'ไม่ทราบสภาพอากาศ',
-                                      ),
-                                      Text(
-                                        'อุณหภูมิ: ${hourlyData.temp?.toStringAsFixed(2) ?? ''}°C',
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                      Text(
-                                        'โอกาสเกิดฝน: ${(hourlyData.pop ?? 0) * 100}%',
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                      Text(
-                                        'ปริมาณน้ำฝน: ${hourlyData.rain?.rain1h?.toStringAsFixed(2) ?? 0} mm',
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            )
-                          ],
+                                    .hourly
+                                    .length,
+                                itemBuilder: (context, index) {
+                                  var hourlyData = _weatherData
+                                      .hourlyWeatherData()
+                                      .hourly[index];
+                                  return ListTile(
+                                    leading: Image.network(
+                                      'https://openweathermap.org/img/w/${hourlyData.weather?[0].icon ?? ''}.png',
+                                      scale: 0.5,
+                                    ),
+                                    title: Text(
+                                      '${DateTime.fromMillisecondsSinceEpoch((hourlyData.dt ?? 0) * 1000).hour}:00',
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          hourlyData.weather?[0].description ??
+                                              'ไม่ทราบสภาพอากาศ',
+                                        ),
+                                        Text(
+                                          'อุณหภูมิ: ${hourlyData.temp?.toStringAsFixed(2) ?? ''}°C',
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                        Text(
+                                          'โอกาสเกิดฝน: ${(hourlyData.pop ?? 0) * 100}%',
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                        Text(
+                                          'ปริมาณน้ำฝน: ${hourlyData.rain?.rain1h?.toStringAsFixed(2) ?? 0} mm',
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+          ),
         ));
   }
 

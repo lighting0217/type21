@@ -1,17 +1,14 @@
-/// This file contains the [FieldList] widget and [FieldUtils] class.
-/// The [FieldList] widget displays a list of fields fetched from Firestore.
-/// The [FieldUtils] class contains utility functions for converting area to Rai-Ngan-Wah and getting Thai rice type.
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'field_info.dart';
+import '../select_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import '../../../library/colors_schema.dart';
+import '../../../models/temp_data_models.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../models/temp_data_models.dart';
-import '../select_screen.dart';
-import 'field_info.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -67,7 +64,7 @@ class _FieldListState extends State<FieldList> {
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: myColorScheme.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -85,9 +82,10 @@ class _FieldListState extends State<FieldList> {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: firestore.collection('fields').snapshots(),
-        builder: _buildFieldStream,
-      ),
+          stream: firestore.collection('fields').snapshots(),
+          builder: _buildFieldStream,
+        ),
+
     );
   }
 
@@ -168,65 +166,72 @@ class _FieldListState extends State<FieldList> {
         child: Text('ยังไม่ได้สร้างแปลงเพาะปลูก.'),
       );
     }
-    return ListView.builder(
-      itemCount: userFieldList.length,
-      itemBuilder: (context, index) {
-        final field = userFieldList[index];
-        final doc = fieldList[index];
-        return Card(
-          margin: const EdgeInsets.all(8.0),
-          elevation: 4.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8.0),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FieldInfo(
-                    field: field,
-                    documentID: doc.id,
-                    fieldName: field.fieldName,
-                    polygonArea: field.polygonArea,
-                    riceType: field.riceType,
-                    polygons: field.polygons,
-                    selectedDate: field.selectedDate,
-                  ),
-                ),
-              );
-            },
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16.0),
-              title: Text(
-                field.fieldName,
-                style: GoogleFonts.openSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(field.riceType)}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 16,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: myGradient
+      ),
+      child: ListView.builder(
+        itemCount: userFieldList.length,
+        itemBuilder: (context, index) {
+          final field = userFieldList[index];
+          final doc = fieldList[index];
+          return Card(
+            margin: const EdgeInsets.all(8.0),
+            elevation: 4.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8.0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FieldInfo(
+                      field: field,
+                      documentID: doc.id,
+                      fieldName: field.fieldName,
+                      polygonArea: field.polygonArea,
+                      riceType: field.riceType,
+                      polygons: field.polygons,
+                      selectedDate: field.selectedDate,
                     ),
                   ),
-                  Text(
-                    FieldUtils.convertAreaToRaiNganWah(field.polygonArea),
-                    style: GoogleFonts.openSans(
-                      fontSize: 16,
-                    ),
+                );
+              },
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16.0),
+                title: Text(
+                  field.fieldName,
+                  style: GoogleFonts.openSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(field.riceType)}',
+                      style: GoogleFonts.openSans(
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      FieldUtils.convertAreaToRaiNganWah(field.polygonArea),
+                      style: GoogleFonts.openSans(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

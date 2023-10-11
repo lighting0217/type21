@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:my_architec/controller/myapi.dart';
+import '../library/weather/models/weather_data.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:type21/controller/myapi.dart';
-import 'package:type21/library/weather/models/weather_data.dart';
-import 'package:flutter/foundation.dart';
+
 
 /// This class is responsible for controlling the global state of the application.
 /// It fetches the user's location and weather data using the Geolocator and WeatherDataFetcher classes respectively.

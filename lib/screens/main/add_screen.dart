@@ -1,21 +1,17 @@
-/// FILEPATH: c:\my_project\type21\lib\screens\main\add_screen.dart
-/// This file contains the implementation of the AddScreen widget, which is responsible for adding a new field to the Firestore database.
-/// The widget takes in various parameters such as the lengths, polygons, polygonArea, totalDistance, monthlyTemperatureData, and selectedDate.
-/// The widget also contains helper methods such as getRiceMaxGdd, convertAreaToRaiNganWah, _createPolygons, _createMarkers, fetchForecastedHarvestDate, and _submitForm.
-/// The widget uses various packages such as cloud_firestore, firebase_auth, fluttertoast, form_field_validator, google_maps_flutter, and intl.
+import 'package:intl/intl.dart';
+import 'field_screen/field_list.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import '../../library/colors_schema.dart';
+import '../../models/temp_data_models.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 
-import '../../models/temp_data_models.dart';
-import 'field_screen/field_list.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -284,119 +280,126 @@ class _AddScreenState extends State<AddScreen> {
           style:
               TextStyle(fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: myColorScheme.primary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(9.0),
-        child: ListView(
-          children: [
-            const Text(
-              'ข้อมูลแปลง',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _fieldNameController,
-              decoration: const InputDecoration(
-                labelText: 'ชื่อแปลง',
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: myGradient,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(9.0),
+          child: ListView(
+            children: [
+              const Text(
+                'ข้อมูลแปลง',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
-              keyboardType: TextInputType.multiline,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: selectedValue,
-              items: _riceTypeKeys.keys
-                  .map(
-                    (value) => DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) => setState(() => selectedValue = value),
-              decoration: const InputDecoration(
-                labelText: 'ชนิดพันธุ์ข้าว',
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _fieldNameController,
+                decoration: const InputDecoration(
+                  labelText: 'ชื่อแปลง',
+                ),
+                validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
+                keyboardType: TextInputType.multiline,
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    readOnly: true,
-                    controller: TextEditingController(
-                      text: selectedDate != null
-                          ? DateFormat('yyyy-MM-dd').format(selectedDate!)
-                          : '',
-                    ),
-                    decoration: const InputDecoration(
-                      labelText: 'วันที่เลือก',
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedValue,
+                items: _riceTypeKeys.keys
+                    .map(
+                      (value) => DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setState(() => selectedValue = value),
+                decoration: const InputDecoration(
+                  labelText: 'ชนิดพันธุ์ข้าว',
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: TextEditingController(
+                        text: selectedDate != null
+                            ? DateFormat('yyyy-MM-dd').format(selectedDate!)
+                            : '',
+                      ),
+                      decoration: const InputDecoration(
+                        labelText: 'วันที่เลือก',
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _selectDate(context);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'ข้อมูลตำแหน่งแปลง',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'ขนาดแปลง:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              convertAreaToRaiNganWah(widget.polygonArea),
-              style: const TextStyle(fontSize: 16),
-            ),
-            /*const SizedBox(height: 16),
-            const Text(
-              'Total Distance:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              '${widget.totalDistance.toStringAsFixed(2)} meters',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Polygon Center:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Latitude: ${center.latitude}, Longitude: ${center.longitude}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),*/
-            const SizedBox(height: 16),
-            Center(
-              child: SizedBox(
-                  height: 300,
-                  width: 300,
-                  child: GoogleMap(
-                    mapType: MapType.hybrid,
-                    initialCameraPosition: CameraPosition(
-                      target: center,
-                      zoom: 24,
-                    ),
-                    markers: Set<Marker>.from(_createMarkers()),
-                    polygons: _createPolygons(),
-                  )),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('บันทึก'),
-            ),
-          ],
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () {
+                      _selectDate(context);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'ข้อมูลตำแหน่งแปลง',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'ขนาดแปลง:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                convertAreaToRaiNganWah(widget.polygonArea),
+                style: const TextStyle(fontSize: 16),
+              ),
+              /*const SizedBox(height: 16),
+              const Text(
+                'Total Distance:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '${widget.totalDistance.toStringAsFixed(2)} meters',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Polygon Center:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Latitude: ${center.latitude}, Longitude: ${center.longitude}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),*/
+              const SizedBox(height: 16),
+              Center(
+                child: SizedBox(
+                    height: 300,
+                    width: 300,
+                    child: GoogleMap(
+                      mapType: MapType.hybrid,
+                      initialCameraPosition: CameraPosition(
+                        target: center,
+                        zoom: 24,
+                      ),
+                      markers: Set<Marker>.from(_createMarkers()),
+                      polygons: _createPolygons(),
+                    )),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text('บันทึก'),
+              ),
+            ],
+          ),
         ),
       ),
     );

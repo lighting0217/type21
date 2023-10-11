@@ -1,21 +1,21 @@
+import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'screens/main/select_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'screens/reg_log_screen/login_screen.dart';
+import 'screens/reg_log_screen/register_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
 /// This file contains the main function and the [MyApp] and [PermissionHandlerScreen] classes.
 /// The main function initializes Firebase and sets up Firebase Crashlytics.
 /// It also listens to changes in the user's authentication state and decides which screen to show.
 /// The [MyApp] class is a stateless widget that builds the app's UI based on the user's authentication state.
 /// The [PermissionHandlerScreen] class is a stateful widget that requests location permissions from the user.
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:type21/screens/reg_log_screen/register_screen.dart';
-
-import 'firebase_options.dart';
-import 'screens/main/select_screen.dart';
-import 'screens/reg_log_screen/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Type21',
+      title: 'My Archtitec',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

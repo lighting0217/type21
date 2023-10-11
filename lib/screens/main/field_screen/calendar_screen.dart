@@ -1,18 +1,9 @@
-/// This file contains the [CalendarScreen] widget which displays a calendar with GDD values for each day.
-/// It takes in [temperatureData], [monthlyTemperatureData], [accumulatedGddData], and [field] as required parameters.
-/// [temperatureData] is a list of [TemperatureData] objects which contains temperature data for each day.
-/// [monthlyTemperatureData] is a list of [MonthlyTemperatureData] objects which contains monthly temperature data.
-/// [accumulatedGddData] is a list of [AccumulatedGddData] objects which contains accumulated GDD data.
-/// [field] is a list of [Field] objects which contains field data.
-/// The widget displays a calendar using the [CalendarCarousel] widget and shows the GDD value for each day using the [customDayBuilder] property.
-/// When a day is tapped, it shows a bottom sheet with the temperature data for that day.
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-
+import 'package:flutter/foundation.dart';
+import '../../../library/colors_schema.dart';
 import '../../../library/th_format_date.dart';
 import '../../../models/temp_data_models.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 
 class CalendarScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
@@ -79,12 +70,20 @@ class _TestCalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('เดือน'),
+        backgroundColor: myColorScheme.primary,
       ),
-      body: Column(
-        children: [
-          buildCalendar(),
-          const SizedBox(height: 20),
-        ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: myGradient
+        ),
+        child: Column(
+          children: [
+            buildCalendar(),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
@@ -156,25 +155,27 @@ class _TestCalendarScreenState extends State<CalendarScreen> {
         documentID: "",
       ),
     );
-
     showModalBottomSheet(
       context: context,
       builder: (BuildContext bc) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              title: Text('วันที่: $formattedDate'),
-            ),
-            ListTile(
-              title: Text('อุณหภูมิต่ำสุดของวัน: ${data.minTemp}'),
-            ),
-            ListTile(
-              title: Text('อุณหภูมิสูงสุดของวัน: ${data.maxTemp}'),
-            ),
-            ListTile(
-              title: Text('ค่า GDD ของวัน: ${data.gdd}'),
-            ),
-          ],
+        return Theme(
+          data: Theme.of(context).copyWith(colorScheme: myColorScheme),
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text('วันที่: $formattedDate'),
+              ),
+              ListTile(
+                title: Text('อุณหภูมิต่ำสุดของวัน: ${data.minTemp}'),
+              ),
+              ListTile(
+                title: Text('อุณหภูมิสูงสุดของวัน: ${data.maxTemp}'),
+              ),
+              ListTile(
+                title: Text('ค่า GDD ของวัน: ${data.gdd}'),
+              ),
+            ],
+          ),
         );
       },
     );

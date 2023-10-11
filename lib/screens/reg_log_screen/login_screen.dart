@@ -1,17 +1,16 @@
-/// This file contains the implementation of the LoginScreen widget, which is responsible for rendering the login screen UI and handling user authentication. It imports several packages, including Firebase, Flutter Material, Flutter Sign-In Button, Form Field Validator, Google Fonts, and Shared Preferences. The LoginScreen widget is a stateful widget that contains a form with two input fields for email and password, a login button, and a link to the registration screen. It also uses the AuthService class to handle user authentication and the SharedPreferences package to store user login status. The LoginScreen widget is built asynchronously using the FutureBuilder widget to ensure that Firebase is initialized before rendering the UI.
+import 'register_screen.dart';
+import '../../auth_service.dart';
+import '../main/select_screen.dart';
+import 'package:flutter/material.dart';
+import '../../../library/colors_schema.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:type21/auth_service.dart';
-import 'package:type21/screens/reg_log_screen/register_screen.dart';
-
-import '../main/select_screen.dart';
 
 final Future<FirebaseApp> _firebaseInit = Firebase.initializeApp();
 
@@ -41,11 +40,15 @@ class _LoginScreenState extends State<LoginScreen> {
         Fluttertoast.showToast(
           msg: "เข้าสู่ระบบสําเร็จ",
           gravity: ToastGravity.TOP,
+          textColor: myColorScheme.secondary,
+            backgroundColor: myColorScheme.onError
         );
       } else {
         Fluttertoast.showToast(
           msg: "เข้าสู่ระบบไม่สําเร็จ",
           gravity: ToastGravity.CENTER,
+          textColor: myColorScheme.error,
+          backgroundColor: myColorScheme.onError
         );
       }
     }
@@ -65,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
             body: Center(
               child: Text("${snapshot.error}"),
             ),
+            backgroundColor: myColorScheme.primary,
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
@@ -77,26 +81,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: myColorScheme.primary,
               ),
-              body: Padding(
-                padding: const EdgeInsets.all(35.0),
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildEmailField(),
-                        const SizedBox(height: 20),
-                        _buildPasswordField(),
-                        const SizedBox(height: 20),
-                        _buildLoginButton(),
-                        const SizedBox(height: 20),
-                        //_buildGoogleSigninButton(),
-                        //const SizedBox(height: 20,),
-                        _buildDontHaveAccount(),
-                      ],
+              body: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: myGradient,
+                ),
+                child: Padding(
+                  padding:  const EdgeInsets.all(35.0),
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildEmailField(),
+                          const SizedBox(height: 20),
+                          _buildPasswordField(),
+                          const SizedBox(height: 20),
+                          _buildLoginButton(),
+                          const SizedBox(height: 20),
+                          //_buildGoogleSigninButton(),
+                          //const SizedBox(height: 20,),
+                          _buildDontHaveAccount(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -118,16 +129,17 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Text(
+           Text(
             "ยังไม่มีบัญชีผู้ใช้?",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.black,
+              color: myColorScheme.onBackground,
+              fontWeight: FontWeight.bold,
             ),
           ),
           TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
+              foregroundColor: myColorScheme.primary,
             ),
             onPressed: () {
               Navigator.pushReplacement(
@@ -137,10 +149,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             },
-            child: const Text(
+            child:  Text(
               "สร้างบัญชี",
               style: TextStyle(
-                color: Colors.blue,
+                color: myColorScheme.primary.withOpacity(0.8),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -157,15 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           "ป้อน E-mail",
-          style: GoogleFonts.openSans(fontSize: 20),
+          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface,fontWeight: FontWeight.bold),
         ),
         TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            hintText: 'ป้อน E-mail',
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.email),
-          ),
+          decoration: _buildEmailInputDecoration(),
           validator: MultiValidator([
             RequiredValidator(errorText: "กรุณาป้อน E-mail"),
             EmailValidator(errorText: "Email ไม่ถูกต้อง"),
@@ -176,14 +183,22 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-
+InputDecoration _buildEmailInputDecoration() {
+    return InputDecoration(
+      fillColor: myColorScheme.onBackground,
+      labelText: 'Email',
+      hintText: 'ป้อน E-mail',
+      border: const OutlineInputBorder(),
+      prefixIcon: const Icon(Icons.email),
+    );
+  }
   Widget _buildPasswordField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "ป้อนรหัสผ่าน",
-          style: GoogleFonts.openSans(fontSize: 20),
+          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface),
         ),
         TextFormField(
           obscureText: _obscureText,
@@ -197,6 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   InputDecoration _buildPasswordInputDecoration() {
     return InputDecoration(
+      fillColor: myColorScheme.onBackground,
       labelText: 'Password',
       hintText: 'ป้อนรหัสผ่านของคุณ',
       border: const OutlineInputBorder(),
@@ -221,8 +237,8 @@ class _LoginScreenState extends State<LoginScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.blue,
+              foregroundColor: myColorScheme.onPrimary,
+              backgroundColor: myColorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
