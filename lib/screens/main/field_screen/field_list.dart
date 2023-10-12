@@ -194,7 +194,7 @@ class _FieldListState extends State<FieldList> {
                       riceType: field.riceType,
                       polygons: field.polygons,
                       selectedDate: field.selectedDate,
-                      riceMaxGdd: field.riceMaxGdd ?? 0,
+                      riceMaxGdd: field.riceMaxGdd,
                     ),
                   ),
                 );

@@ -16,8 +16,7 @@ class Field {
   List<MonthlyTemperatureData> monthlyTemperatureData;
   List<AccumulatedGddData> accumulatedGddData;
   DateTime? forecastedHarvestDate;
-  double? riceMaxGdd;
-  double? maxGddSubcollection;
+  double riceMaxGdd;
 
   Field({
     required this.id,
@@ -32,7 +31,6 @@ class Field {
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.riceMaxGdd,
-    this.maxGddSubcollection,
     DateTime? forecastedHarvestDate,
     required String documentID,
   });

@@ -14,19 +14,26 @@ import 'package:my_architec/screens/main/field_screen/temp_screen.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FieldInfo extends StatefulWidget {
+  final Field field;
+  final String documentID;
+  final String fieldName;
+  final double polygonArea;
+  final String? riceType;
+  final List<LatLng> polygons;
+  final DateTime? selectedDate;
+  final double riceMaxGdd;
+
   const FieldInfo({
     Key? key,
     required this.field,
     required this.documentID,
-    required String fieldName,
-    required String riceType,
-    required double polygonArea,
-    required List<LatLng> polygons,
-    required DateTime? selectedDate,
-    required double riceMaxGdd,
+    required this.fieldName,
+    required this.polygonArea,
+    required this.riceType,
+    required this.polygons,
+    required this.selectedDate,
+    required this.riceMaxGdd,
   }) : super(key: key);
-  final Field field;
-  final String documentID;
 
   @override
   State<FieldInfo> createState() => _FieldInfoState();
@@ -164,7 +171,7 @@ class _FieldInfoState extends State<FieldInfo> {
         final data = doc.data();
         final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         final date = (data['date']);
-        final riceMaxGdd = (data['riceMaxGdd']);
+        final riceMaxGdd = (data['maxGdd']);
         return AccumulatedGddData(
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
@@ -179,7 +186,7 @@ class _FieldInfoState extends State<FieldInfo> {
 
       if (accumulatedGddData.isNotEmpty) {
         widget.field.accumulatedGddData = accumulatedGddData;
-        widget.field.maxGddSubcollection = riceMaxGdd;
+        widget.field.riceMaxGdd = accumulatedGddData.first.riceMaxGdd;
       } else if (accumulatedGddData.isEmpty) {
         if (kDebugMode) {
           print('Acccumulate Gdd data is empty');
@@ -374,6 +381,7 @@ class _FieldInfoState extends State<FieldInfo> {
                                         accumulatedGddData:
                                             widget.field.accumulatedGddData,
                                         field: const [],
+                                        riceMaxGdd: widget.riceMaxGdd,
                                       ),
                                     ),
                                   );

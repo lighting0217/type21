@@ -18,8 +18,8 @@ class TempChartScreen extends StatefulWidget {
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
-    required this.riceMaxGdd,
     required List<Field> field,
+    required this.riceMaxGdd,
   }) : super(key: key);
 
   @override
@@ -215,8 +215,7 @@ class MonthlyAgddPieChart extends StatelessWidget {
         height: 350,
         child: SfCircularChart(
           title: ChartTitle(
-              text:
-                  'Pie chart ค่าGDD \n${totalAccumulatedGdd.toStringAsFixed(2)}'),
+              text: 'ค่าGDDสะสม \n${totalAccumulatedGdd.toStringAsFixed(2)}'),
           series: <CircularSeries>[
             PieSeries<MonthlyTemperatureData, String>(
               dataSource: monthlyTemperatureData,
@@ -249,7 +248,6 @@ class MonthlyAgddPieChart extends StatelessWidget {
 }
 
 //piechrt ที่แสดงค่าGDD ทั้งหมด เทียบกับ GDD ที่เหลือ
-
 class RemainingGDD extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
@@ -273,6 +271,25 @@ class RemainingGDD extends StatelessWidget {
     double totalAccumulatedGdd =
         accumulatedGddData.fold(0, (sum, item) => sum + item.accumulatedGdd);
     double remainingGdd = riceMaxGdd - totalAccumulatedGdd;
+
+    if (remainingGdd <= 0) {
+      return const SizedBox(
+        height: 350,
+        child: SizedBox(
+          height: 350,
+          child: Center(
+            child: Text(
+              'It\'s time to harvest',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SizedBox(
       height: 350,
       child: SizedBox(
@@ -280,12 +297,12 @@ class RemainingGDD extends StatelessWidget {
         child: SfCircularChart(
           title: ChartTitle(
               text:
-                  'Pie-Chart ค่าGDD \n${totalAccumulatedGdd.toStringAsFixed(2)}'),
+                  'ค่าGDD สะสม \n${totalAccumulatedGdd.toStringAsFixed(2)}\nค่าGDD ที่เหลือ\n${remainingGdd.toStringAsFixed(2)}'),
           series: <CircularSeries>[
             PieSeries<ChartData, String>(
               dataSource: [
-                ChartData('Accumulated GDD', totalAccumulatedGdd),
-                ChartData('Remaining GDD', remainingGdd),
+                ChartData('GDD สะสม', totalAccumulatedGdd),
+                ChartData('GDD ที่เหลือ', remainingGdd),
               ],
               xValueMapper: (ChartData data, _) => data.x,
               yValueMapper: (ChartData data, _) => data.y,

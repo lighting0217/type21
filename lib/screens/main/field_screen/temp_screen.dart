@@ -11,6 +11,7 @@ class TemperatureScreen extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
   final List<Field> field;
+  final double riceMaxGdd;
 
   const TemperatureScreen({
     Key? key,
@@ -18,7 +19,9 @@ class TemperatureScreen extends StatelessWidget {
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.field,
+    required this.riceMaxGdd,
   }) : super(key: key);
+
   Widget _buildDailyTemperatureTile(TemperatureData temperature) {
     final formattedDate = thFormatDate(temperature.documentID);
     final maxTemp = temperature.maxTemp.toStringAsFixed(2);
@@ -118,7 +121,7 @@ class TemperatureScreen extends StatelessWidget {
                     monthlyTemperatureData: monthlyTemperatureData,
                     accumulatedGddData: accumulatedGddData,
                     field: field,
-                    riceMaxGdd: field.isNotEmpty ? field[0].riceMaxGdd ?? 0 : 0,
+                    riceMaxGdd: riceMaxGdd,
                   ),
                 ),
               );
