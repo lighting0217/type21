@@ -1,13 +1,7 @@
-/// This file contains the data models for temporary data used in the application.
-/// It includes the following classes:
-/// - Field: represents a field with its properties such as name, area, rice type, temperature data, etc.
-/// - AccumulatedGddData: represents the accumulated GDD data for a specific date and field.
-/// - MonthlyTemperatureData: represents the monthly temperature data for a specific month and field.
-/// - TemperatureData: represents the temperature data for a specific date and field.
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Field {
   final String id;
@@ -18,12 +12,11 @@ class Field {
   double totalDistance;
   DateTime? selectedDate;
   String createdBy;
-  double riceMaxGdd;
   List<TemperatureData> temperatureData;
   List<MonthlyTemperatureData> monthlyTemperatureData;
   List<AccumulatedGddData> accumulatedGddData;
   DateTime? forecastedHarvestDate;
-  double? maxGdd;
+  double? riceMaxGdd;
   double? maxGddSubcollection;
 
   Field({
@@ -40,6 +33,8 @@ class Field {
     required this.accumulatedGddData,
     required this.riceMaxGdd,
     this.maxGddSubcollection,
+    DateTime? forecastedHarvestDate,
+    required String documentID,
   });
 }
 
@@ -47,13 +42,13 @@ class AccumulatedGddData {
   final Timestamp date;
   final double accumulatedGdd;
   final String documentID;
-  final double maxGdd;
+  final double riceMaxGdd;
 
   AccumulatedGddData({
     required this.date,
     required this.accumulatedGdd,
     required this.documentID,
-    required this.maxGdd,
+    required this.riceMaxGdd,
   });
 }
 
@@ -61,28 +56,28 @@ class MonthlyTemperatureData {
   final String monthYear;
   final double gddSum;
   final String documentID;
-  final double maxGdd;
+  final double riceMaxGdd;
   AccumulatedGddData? accumulatedGddData;
 
   MonthlyTemperatureData({
     required this.monthYear,
     required this.gddSum,
     required this.documentID,
-    required this.maxGdd,
+    required this.riceMaxGdd,
     this.accumulatedGddData,
   });
 
   MonthlyTemperatureData copyWith({
     String? documentID,
     double? gddSum,
-    double? maxGdd,
+    double? riceMaxGdd,
     String? monthYear,
     DateTime? forecastedHarvestDate,
   }) {
     return MonthlyTemperatureData(
       documentID: documentID ?? this.documentID,
       gddSum: gddSum ?? this.gddSum,
-      maxGdd: maxGdd ?? this.maxGdd,
+      riceMaxGdd: riceMaxGdd ?? this.riceMaxGdd,
       monthYear: monthYear ?? this.monthYear,
     );
   }

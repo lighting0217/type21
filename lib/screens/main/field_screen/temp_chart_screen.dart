@@ -11,14 +11,14 @@ class TempChartScreen extends StatefulWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
-  final double maxGdd;
+  final double riceMaxGdd;
 
   const TempChartScreen({
     Key? key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
-    required this.maxGdd,
+    required this.riceMaxGdd,
     required List<Field> field,
   }) : super(key: key);
 
@@ -89,7 +89,7 @@ class _TempChartScreenState extends State<TempChartScreen> {
               _buildChartSection(RemainingGDD(
                 monthlyTemperatureData: widget.monthlyTemperatureData,
                 accumulatedGddData: widget.accumulatedGddData,
-                maxGdd: widget.maxGdd,
+                riceMaxGdd: widget.riceMaxGdd,
               )),
               const SizedBox(
                 height: 20,
@@ -164,8 +164,9 @@ class _TempChartScreenState extends State<TempChartScreen> {
   }
 }
 
-double calculatePercent(AccumulatedGddData accumulatedGddData, double maxGdd) {
-  return (accumulatedGddData.accumulatedGdd / maxGdd) * 100;
+double calculatePercent(
+    AccumulatedGddData accumulatedGddData, double riceMaxGdd) {
+  return (accumulatedGddData.accumulatedGdd / riceMaxGdd) * 100;
 }
 
 List<MonthlyTemperatureData> computeCumulativeGddSum(
@@ -252,13 +253,13 @@ class MonthlyAgddPieChart extends StatelessWidget {
 class RemainingGDD extends StatelessWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
-  final double maxGdd;
+  final double riceMaxGdd;
 
   const RemainingGDD({
     Key? key,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
-    required this.maxGdd,
+    required this.riceMaxGdd,
   }) : super(key: key);
 
   @override
@@ -271,7 +272,7 @@ class RemainingGDD extends StatelessWidget {
     }
     double totalAccumulatedGdd =
         accumulatedGddData.fold(0, (sum, item) => sum + item.accumulatedGdd);
-    double remainingGdd = maxGdd - totalAccumulatedGdd;
+    double remainingGdd = riceMaxGdd - totalAccumulatedGdd;
     return SizedBox(
       height: 350,
       child: SizedBox(

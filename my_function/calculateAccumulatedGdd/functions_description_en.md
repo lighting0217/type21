@@ -46,8 +46,8 @@ exports.calculateAccumulatedGdd = functions
       // Retrieve the field document data
       const fieldData = fieldDoc.data();
       // Retrieve the maximum GDD for the field
-      const maxGdd = fieldData.riceMaxGdd || 0;
-      console.log(`Processing field: ${fieldId}, Max GDD: ${maxGdd}`);
+      const riceMaxGdd = fieldData.riceMaxGdd || 0;
+      console.log(`Processing field: ${fieldId}, Max GDD: ${riceMaxGdd}`);
 
       // Retrieve all monthly temperature data for the field from Firestore
       const monthlyTemperaturesSnapshot =
@@ -68,7 +68,7 @@ exports.calculateAccumulatedGdd = functions
       }
 
       // Calculate the difference between the accumulated GDD and the maximum GDD for the field
-      const difference = Math.max(0, maxGdd - accumulatedGdd);
+      const difference = Math.max(0, riceMaxGdd - accumulatedGdd);
 
       // Save the accumulated GDD, maximum GDD, and difference in Firestore for the field
       await fieldDoc
@@ -79,7 +79,7 @@ exports.calculateAccumulatedGdd = functions
           documentID: fieldId,
           date: admin.firestore.FieldValue.serverTimestamp(),
           accumulatedGdd,
-          maxGdd,
+          riceMaxGdd,
           difference,
         });
 

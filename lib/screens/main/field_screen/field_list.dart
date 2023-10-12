@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -82,10 +81,9 @@ class _FieldListState extends State<FieldList> {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: firestore.collection('fields').snapshots(),
-          builder: _buildFieldStream,
-        ),
-
+        stream: firestore.collection('fields').snapshots(),
+        builder: _buildFieldStream,
+      ),
     );
   }
 
@@ -133,6 +131,7 @@ class _FieldListState extends State<FieldList> {
               monthlyTemperatureData: [],
               accumulatedGddData: [],
               riceMaxGdd: data['riceMaxGdd'] ?? 0.0,
+              documentID: '',
             );
           } else {
             return null;
@@ -169,9 +168,7 @@ class _FieldListState extends State<FieldList> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: myGradient
-      ),
+      decoration: BoxDecoration(gradient: myGradient),
       child: ListView.builder(
         itemCount: userFieldList.length,
         itemBuilder: (context, index) {
@@ -197,6 +194,7 @@ class _FieldListState extends State<FieldList> {
                       riceType: field.riceType,
                       polygons: field.polygons,
                       selectedDate: field.selectedDate,
+                      riceMaxGdd: field.riceMaxGdd ?? 0,
                     ),
                   ),
                 );

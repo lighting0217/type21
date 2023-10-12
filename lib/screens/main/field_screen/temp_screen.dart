@@ -6,7 +6,6 @@ import '../../../library/th_format_date.dart';
 import '../../../models/temp_data_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
@@ -38,6 +37,7 @@ class TemperatureScreen extends StatelessWidget {
           'GDD: $gdd °C\n'),
     );
   }
+
   Widget _buildMonthlyTemperatureTile(
       MonthlyTemperatureData monthlyTemperature) {
     final formattedDate = thFormatDateMonth(monthlyTemperature.documentID);
@@ -86,7 +86,8 @@ class TemperatureScreen extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: temperatureData.length,
                       itemBuilder: (context, index) {
-                        return _buildDailyTemperatureTile(temperatureData[index]);
+                        return _buildDailyTemperatureTile(
+                            temperatureData[index]);
                       },
                     ),
                   ),
@@ -117,7 +118,7 @@ class TemperatureScreen extends StatelessWidget {
                     monthlyTemperatureData: monthlyTemperatureData,
                     accumulatedGddData: accumulatedGddData,
                     field: field,
-                    maxGdd: field.isNotEmpty ? field[0].maxGdd ?? 0 : 0,
+                    riceMaxGdd: field.isNotEmpty ? field[0].riceMaxGdd ?? 0 : 0,
                   ),
                 ),
               );

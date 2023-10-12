@@ -59,7 +59,7 @@ exports.checkGddVsMaxGdd = functions
                 // เก็บข้อมูลของเอกสารแปลง
                 const fieldData = fieldDoc.data();
                 // เก็บ GDD สูงสุดของแปลง
-                const maxGdd = fieldData.riceMaxGdd;
+                const riceMaxGdd = fieldData.riceMaxGdd;
 
                 // 3. คำนวณ GDD ของแปลงนั้น
                 const monthlyTemperaturesSnapshot = await fieldDoc
@@ -75,11 +75,11 @@ exports.checkGddVsMaxGdd = functions
                 }
 
                 // 4. หาก GDD ของแปลงนั้นเกินกว่า Max GDD
-                if (accumulatedGdd >= maxGdd) {
+                if (accumulatedGdd >= riceMaxGdd) {
                     // พิมพ์ข้อความแจ้งเตือนออกไปยังคอนโซล
                     console.log(
                         `Field ${fieldId},
-                        Month ${monthlyTemperatureData.documentID}: GDD exceeded maxGdd`);
+                        Month ${monthlyTemperatureData.documentID}: GDD exceeded riceMaxGdd`);
                 }
             }
 

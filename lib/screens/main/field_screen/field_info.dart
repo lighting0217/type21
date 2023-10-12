@@ -23,6 +23,7 @@ class FieldInfo extends StatefulWidget {
     required double polygonArea,
     required List<LatLng> polygons,
     required DateTime? selectedDate,
+    required double riceMaxGdd,
   }) : super(key: key);
   final Field field;
   final String documentID;
@@ -99,7 +100,7 @@ class _FieldInfoState extends State<FieldInfo> {
       }
 
       final fieldData = monthlyTempData.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final riceMaxGdd = fieldData?['riceMaxGdd'];
       final forecastedHarvestDateTimestamp =
           fieldData?['forecastedHarvestDate'] as Timestamp?;
       if (forecastedHarvestDateTimestamp != null) {
@@ -127,7 +128,7 @@ class _FieldInfoState extends State<FieldInfo> {
           monthYear: monthYear,
           gddSum: gddSum,
           documentID: doc.id,
-          maxGdd: maxGdd,
+          riceMaxGdd: riceMaxGdd,
         );
       }).toList();
 
@@ -149,7 +150,7 @@ class _FieldInfoState extends State<FieldInfo> {
           .get();
 
       final fieldData = fieldDoc.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final riceMaxGdd = fieldData?['riceMaxGdd'];
 
       final accumulatedGddCollection = await fieldDoc.reference
           .collection('accumulated_gdd')
@@ -163,12 +164,12 @@ class _FieldInfoState extends State<FieldInfo> {
         final data = doc.data();
         final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         final date = (data['date']);
-        final maxGddSub = (data['maxGdd']);
+        final maxGddSub = (data['riceMaxGdd']);
         return AccumulatedGddData(
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
           date: date,
-          maxGdd: maxGddSub ?? maxGdd,
+          riceMaxGdd: maxGddSub ?? riceMaxGdd,
         );
       }).toList();
 
@@ -178,7 +179,7 @@ class _FieldInfoState extends State<FieldInfo> {
 
       if (accumulatedGddData.isNotEmpty) {
         widget.field.accumulatedGddData = accumulatedGddData;
-        widget.field.maxGddSubcollection = maxGdd;
+        widget.field.maxGddSubcollection = riceMaxGdd;
       } else if (accumulatedGddData.isEmpty) {
         if (kDebugMode) {
           print('Acccumulate Gdd data is empty');

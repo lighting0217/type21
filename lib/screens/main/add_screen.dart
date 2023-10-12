@@ -11,8 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 // ignore_for_file: use_build_context_synchronously
 
-
-
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class AddScreen extends StatefulWidget {
@@ -171,6 +169,7 @@ class _AddScreenState extends State<AddScreen> {
       monthlyTemperatureData: [],
       accumulatedGddData: [],
       riceMaxGdd: riceMaxGdd,
+      documentID: '',
     );
     Navigator.pop(context);
     Navigator.pushReplacement(

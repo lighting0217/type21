@@ -52,8 +52,8 @@ exports.calculateAccumulatedGdd = functions
       // เก็บข้อมูลของเอกสารแปลง
       const fieldData = fieldDoc.data();
       // เก็บ GDD สูงสุดของแปลง
-      const maxGdd = fieldData.riceMaxGdd || 0;
-      console.log(`Processing field: ${fieldId}, Max GDD: ${maxGdd}`);
+      const riceMaxGdd = fieldData.riceMaxGdd || 0;
+      console.log(`Processing field: ${fieldId}, Max GDD: ${riceMaxGdd}`);
 
       // ดึงข้อมูลอุณหภูมิประจำเดือนทั้งหมดของแปลงนั้นจาก Firestore
       const monthlyTemperaturesSnapshot =
@@ -74,7 +74,7 @@ exports.calculateAccumulatedGdd = functions
       }
 
       // หาผลต่างระหว่าง GDD ที่สะสมไว้กับ GDD สูงสุดของแปลง
-      const difference = Math.max(0, maxGdd - accumulatedGdd);
+      const difference = Math.max(0, riceMaxGdd - accumulatedGdd);
 
       // บันทึก GDD ที่สะสมไว้, GDD สูงสุด, และผลต่างใน Firestore สำหรับแปลงนั้น
       await fieldDoc
@@ -85,7 +85,7 @@ exports.calculateAccumulatedGdd = functions
           documentID: fieldId,
           date: admin.firestore.FieldValue.serverTimestamp(),
           accumulatedGdd,
-          maxGdd,
+          riceMaxGdd,
           difference,
         });
 

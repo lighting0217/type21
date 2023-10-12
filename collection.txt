@@ -65,7 +65,7 @@ collection:fields
             accumulatedGdd:number
             date:timestamp
             documentID:same as main document id from main collection
-            maxGdd:number
+            riceMaxGdd:number
             differrence:number
 
 ส่วนนี้คือตัวอย่าง firebase ของฉัน
@@ -181,7 +181,7 @@ collection:fields
             date:September 6, 2023 at 2:56:14PM UTC+7
             documentID:"HimhD5KoPrZliLpEWFqT"
             differrence:359.586
-            maxGdd:2422.09
+            riceMaxGdd:2422.09
 
 นี้คือ Rules
 service cloud.firestore {
