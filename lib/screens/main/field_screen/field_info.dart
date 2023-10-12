@@ -164,12 +164,12 @@ class _FieldInfoState extends State<FieldInfo> {
         final data = doc.data();
         final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         final date = (data['date']);
-        final maxGddSub = (data['riceMaxGdd']);
+        final riceMaxGdd = (data['riceMaxGdd']);
         return AccumulatedGddData(
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
           date: date,
-          riceMaxGdd: maxGddSub ?? riceMaxGdd,
+          riceMaxGdd: riceMaxGdd,
         );
       }).toList();
 
