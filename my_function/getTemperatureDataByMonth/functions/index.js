@@ -24,11 +24,6 @@ exports.getTemperatureDataByMonth = functions
             console.log(`Fetched ${fieldsSnapshot.size} field documents.`);
 
             for (const fieldDoc of fieldsSnapshot.docs) {
-                /**
-                 * Retrieves temperature data by month from a Firestore collection.
-                 * @param {Object} fieldDoc - The document containing the collection of temperature data.
-                 * @returns {Promise<Object>} - A promise that resolves with the temperature data snapshot.
-                 */
                 const temperatureSnapshot = await
                     fieldDoc
                         .ref

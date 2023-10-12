@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
-
 // ignore_for_file: use_build_context_synchronously
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,7 +24,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _registerAccount() async {
     final BuildContext ctx = context;
-
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
@@ -67,12 +65,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             gravity: ToastGravity.CENTER,
             backgroundColor: myColorScheme.onError,
           );
-          ScaffoldMessenger.of(context).showSnackBar(
+          /*ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
               duration: const Duration(seconds: 3),
             ),
-          );
+          );*/
         }
       }
     }
@@ -167,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   Text(
                     errorMessage ?? '',
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: myColorScheme.error,
                     ),
                   ),
@@ -199,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               );
             },
-            child:  Text(
+            child: Text(
               "เข้าสู่ระบบ",
               style: TextStyle(
                 color: myColorScheme.primary,
@@ -228,11 +226,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ));
           } else {
             Fluttertoast.showToast(
-              msg: "Google Sign-In failed",
-              gravity: ToastGravity.CENTER,
-              backgroundColor: myColorScheme.onError,
-              textColor: myColorScheme.error
-            );
+                msg: "Google Sign-In failed",
+                gravity: ToastGravity.CENTER,
+                backgroundColor: myColorScheme.onError,
+                textColor: myColorScheme.error);
           }
         },
       ),
