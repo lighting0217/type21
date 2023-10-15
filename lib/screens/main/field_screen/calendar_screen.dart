@@ -75,7 +75,9 @@ class _TestCalendarScreenState extends State<CalendarScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(gradient: myGradient),
+        decoration: BoxDecoration(
+          color: myColorScheme.surface,
+        ),
         child: Column(
           children: [
             buildCalendar(),
