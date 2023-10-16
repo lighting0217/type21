@@ -164,7 +164,8 @@ class _FieldInfoState extends State<FieldInfo> {
           .orderBy('date', descending: true)
           .get();
       if (kDebugMode) {
-        print('Accumulated GDD Collection: $accumulatedGddCollection');
+        print(
+            'Accumulated GDD Collection: $accumulatedGddCollection & Rice Max GDD: $riceMaxGdd');
       }
 
       final accumulatedGddData = accumulatedGddCollection.docs.map((doc) {
