@@ -60,7 +60,7 @@ exports.checkGddVsMaxGdd = functions
                 // Retrieve the field document data
                 const fieldData = fieldDoc.data();
                 // Retrieve the Max GDD for the field
-                const maxGdd = fieldData.riceMaxGdd;
+                const riceMaxGdd = fieldData.riceMaxGdd;
 
                 // 3. Calculate the GDD for that field
                 const monthlyTemperaturesSnapshot = await fieldDoc
@@ -76,11 +76,11 @@ exports.checkGddVsMaxGdd = functions
                 }
 
                 // 4. If the GDD for the field exceeds the Max GDD
-                if (accumulatedGdd >= maxGdd) {
+                if (accumulatedGdd >= riceMaxGdd) {
                     // Print a notification message to the console
                     console.log(
                         `Field ${fieldId},
-                        Month ${monthlyTemperatureData.documentID}: GDD exceeded maxGdd`);
+                        Month ${monthlyTemperatureData.documentID}: GDD exceeded riceMaxGdd`);
                 }
             }
 

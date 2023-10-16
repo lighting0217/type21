@@ -11,8 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 // ignore_for_file: use_build_context_synchronously
 
-
-
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class AddScreen extends StatefulWidget {
@@ -171,6 +169,7 @@ class _AddScreenState extends State<AddScreen> {
       monthlyTemperatureData: [],
       accumulatedGddData: [],
       riceMaxGdd: riceMaxGdd,
+      documentID: '',
     );
     Navigator.pop(context);
     Navigator.pushReplacement(
@@ -257,16 +256,23 @@ class _AddScreenState extends State<AddScreen> {
     return LatLng(centerLat, centerLng);
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<DateTime> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate ?? DateTime.now(),
-        firstDate: DateTime(2023),
-        lastDate: DateTime.now().add(const Duration(days: 365)));
-    if (picked != null && picked != selectedDate) {
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null) {
       setState(() {
         selectedDate = picked;
       });
+      return picked;
+    } else {
+      setState(() {
+        selectedDate = DateTime.now();
+      });
+      return DateTime.now();
     }
   }
 
@@ -300,8 +306,8 @@ class _AddScreenState extends State<AddScreen> {
               TextFormField(
                 controller: _fieldNameController,
                 decoration: const InputDecoration(
-                  labelText: 'ชื่อแปลง',
-                ),
+                    labelText: 'ชื่อแปลง',
+                    labelStyle: TextStyle(color: Colors.black)),
                 validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
                 keyboardType: TextInputType.multiline,
               ),
@@ -376,22 +382,28 @@ class _AddScreenState extends State<AddScreen> {
               Text(
                 'Latitude: ${center.latitude}, Longitude: ${center.longitude}',
                 style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 16),*/
+              ),*/
               const SizedBox(height: 16),
               Center(
-                child: SizedBox(
-                    height: 300,
-                    width: 300,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    height: 350,
+                    width: 350,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                    ),
                     child: GoogleMap(
                       mapType: MapType.hybrid,
                       initialCameraPosition: CameraPosition(
                         target: center,
-                        zoom: 24,
+                        zoom: 22,
                       ),
                       markers: Set<Marker>.from(_createMarkers()),
                       polygons: _createPolygons(),
-                    )),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(

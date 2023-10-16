@@ -6,12 +6,12 @@ import '../../../library/th_format_date.dart';
 import '../../../models/temp_data_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class TemperatureScreen extends StatelessWidget {
   final List<TemperatureData> temperatureData;
   final List<MonthlyTemperatureData> monthlyTemperatureData;
   final List<AccumulatedGddData> accumulatedGddData;
   final List<Field> field;
+  final double riceMaxGdd;
 
   const TemperatureScreen({
     Key? key,
@@ -19,7 +19,9 @@ class TemperatureScreen extends StatelessWidget {
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.field,
+    required this.riceMaxGdd,
   }) : super(key: key);
+
   Widget _buildDailyTemperatureTile(TemperatureData temperature) {
     final formattedDate = thFormatDate(temperature.documentID);
     final maxTemp = temperature.maxTemp.toStringAsFixed(2);
@@ -38,6 +40,7 @@ class TemperatureScreen extends StatelessWidget {
           'GDD: $gdd °C\n'),
     );
   }
+
   Widget _buildMonthlyTemperatureTile(
       MonthlyTemperatureData monthlyTemperature) {
     final formattedDate = thFormatDateMonth(monthlyTemperature.documentID);
@@ -86,7 +89,8 @@ class TemperatureScreen extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: temperatureData.length,
                       itemBuilder: (context, index) {
-                        return _buildDailyTemperatureTile(temperatureData[index]);
+                        return _buildDailyTemperatureTile(
+                            temperatureData[index]);
                       },
                     ),
                   ),
@@ -117,7 +121,7 @@ class TemperatureScreen extends StatelessWidget {
                     monthlyTemperatureData: monthlyTemperatureData,
                     accumulatedGddData: accumulatedGddData,
                     field: field,
-                    maxGdd: field.isNotEmpty ? field[0].maxGdd ?? 0 : 0,
+                    riceMaxGdd: riceMaxGdd,
                   ),
                 ),
               );

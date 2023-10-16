@@ -13,12 +13,10 @@ function calculateSMA(data, days) {
         console.warn("Not enough data for SMA calculation.");
         return null;
     }
-
     let sum = 0;
     for (let i = 0; i < days; i++) {
         sum += data[data.length - i - 1];
     }
-
     return sum / days;
 }
 
@@ -62,6 +60,7 @@ exports.harvestForecastDate = functions
                 return;
             }
 
+
             console.log(`Field ID: ${fieldId}`);
             console.log(`Rice Max GDD: ${riceMaxGdd}`);
             console.log(`Accumulated GDD: ${accumulatedGdd}`);
@@ -85,7 +84,12 @@ exports.harvestForecastDate = functions
                 gddData.push(tempDoc.data().gdd);
             });
 
-            const sma = calculateSMA(gddData, 7); // Calculate 7-day SMA
+            /**
+             * Calculates the simple moving average (SMA) of the given GDD data over a period of 7 days.
+             * @param {number[]} gddData - An array of GDD (Growing Degree Days) data.
+             * @returns {number[]} An array of SMA values.
+             */
+            const sma = calculateSMA(gddData, 7);
 
             if (!sma) {
                 console.warn(

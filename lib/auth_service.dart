@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /// This class provides authentication services using Firebase Authentication and Google Sign-In.
@@ -54,15 +54,12 @@ class AuthService {
 
   /// Signs in the user with the given email and password.
   /// Returns the user if successful, otherwise returns null.
-  Future<User?> signIn(
-    String email,
-    String password,
-  ) async {
+  Future<User?> signIn(String email, String password) async {
     try {
       final result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       return result.user;
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }

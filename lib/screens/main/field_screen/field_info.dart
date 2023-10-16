@@ -11,22 +11,29 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_architec/screens/main/field_screen/field_list.dart';
 import 'package:my_architec/screens/main/field_screen/temp_screen.dart';
 
-
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FieldInfo extends StatefulWidget {
+  final Field field;
+  final String documentID;
+  final String fieldName;
+  final double polygonArea;
+  final String? riceType;
+  final List<LatLng> polygons;
+  final DateTime? selectedDate;
+  final double riceMaxGdd;
+
   const FieldInfo({
     Key? key,
     required this.field,
     required this.documentID,
-    required String fieldName,
-    required String riceType,
-    required double polygonArea,
-    required List<LatLng> polygons,
-    required DateTime? selectedDate,
+    required this.fieldName,
+    required this.polygonArea,
+    required this.riceType,
+    required this.polygons,
+    required this.selectedDate,
+    required this.riceMaxGdd,
   }) : super(key: key);
-  final Field field;
-  final String documentID;
 
   @override
   State<FieldInfo> createState() => _FieldInfoState();
@@ -100,7 +107,7 @@ class _FieldInfoState extends State<FieldInfo> {
       }
 
       final fieldData = monthlyTempData.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final riceMaxGdd = fieldData?['riceMaxGdd'];
       final forecastedHarvestDateTimestamp =
           fieldData?['forecastedHarvestDate'] as Timestamp?;
       if (forecastedHarvestDateTimestamp != null) {
@@ -128,7 +135,7 @@ class _FieldInfoState extends State<FieldInfo> {
           monthYear: monthYear,
           gddSum: gddSum,
           documentID: doc.id,
-          maxGdd: maxGdd,
+          riceMaxGdd: riceMaxGdd,
         );
       }).toList();
 
@@ -150,26 +157,27 @@ class _FieldInfoState extends State<FieldInfo> {
           .get();
 
       final fieldData = fieldDoc.data();
-      final maxGdd = fieldData?['riceMaxGdd'];
+      final riceMaxGdd = fieldData?['riceMaxGdd'];
 
       final accumulatedGddCollection = await fieldDoc.reference
           .collection('accumulated_gdd')
           .orderBy('date', descending: true)
           .get();
       if (kDebugMode) {
-        print('Accumulated GDD Collection: $accumulatedGddCollection');
+        print(
+            'Accumulated GDD Collection: $accumulatedGddCollection & Rice Max GDD: $riceMaxGdd');
       }
 
       final accumulatedGddData = accumulatedGddCollection.docs.map((doc) {
         final data = doc.data();
         final accumulatedGdd = (data['accumulatedGdd']).toDouble();
         final date = (data['date']);
-        final maxGddSub = (data['maxGdd']);
+        final riceMaxGdd = (data['maxGdd']);
         return AccumulatedGddData(
           accumulatedGdd: accumulatedGdd,
           documentID: doc.id,
           date: date,
-          maxGdd: maxGddSub ?? maxGdd,
+          riceMaxGdd: riceMaxGdd,
         );
       }).toList();
 
@@ -179,7 +187,7 @@ class _FieldInfoState extends State<FieldInfo> {
 
       if (accumulatedGddData.isNotEmpty) {
         widget.field.accumulatedGddData = accumulatedGddData;
-        widget.field.maxGddSubcollection = maxGdd;
+        widget.field.riceMaxGdd = accumulatedGddData.first.riceMaxGdd;
       } else if (accumulatedGddData.isEmpty) {
         if (kDebugMode) {
           print('Acccumulate Gdd data is empty');
@@ -227,7 +235,7 @@ class _FieldInfoState extends State<FieldInfo> {
   @override
   Widget build(BuildContext context) {
     if (widget.field.polygons.isEmpty) {
-      return  Scaffold(
+      return Scaffold(
         body: Container(
           decoration: BoxDecoration(gradient: myGradient),
           child: const Center(
@@ -247,146 +255,147 @@ class _FieldInfoState extends State<FieldInfo> {
             ),
             backgroundColor: myColorScheme.primary,
           ),
-          body: SingleChildScrollView(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(gradient: myGradient),
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'ชื่อแปลง: ${widget.field.fieldName}',
-                            style: GoogleFonts.openSans(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+          body: Container(
+            height: double.infinity,
+            decoration: BoxDecoration(gradient: myGradient),
+            child: SingleChildScrollView(
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ชื่อแปลง: ${widget.field.fieldName}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(widget.field.riceType)}',
-                            style: GoogleFonts.openSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'พันธุ์ข้าว: ${FieldUtils.getThaiRiceType(widget.field.riceType)}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            FieldUtils.convertAreaToRaiNganWah(
-                                widget.field.polygonArea),
-                            style: GoogleFonts.openSans(fontSize: 18),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'วันที่เริ่มปลูก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
-                            style: GoogleFonts.openSans(fontSize: 18),
-                          ),
-                          const SizedBox(height: 16),
-                          Center(
-                            child: SizedBox(
-                                height: 350,
-                                width: 350,
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: GoogleMap(
-                                        onMapCreated: (controller) {
-                                          setState(() {
-                                            mapController = controller;
-                                          });
-                                        },
-                                        mapType: MapType.hybrid,
-                                        initialCameraPosition: CameraPosition(
-                                          target: getPolygonCenter(
-                                              widget.field.polygons),
-                                          zoom: 20,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          FieldUtils.convertAreaToRaiNganWah(
+                              widget.field.polygonArea),
+                          style: GoogleFonts.openSans(fontSize: 18),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'วันที่เริ่มปลูก: ${formatDateThai(widget.field.selectedDate ?? DateTime.now())}',
+                          style: GoogleFonts.openSans(fontSize: 18),
+                        ),
+                        const SizedBox(height: 16),
+                        Center(
+                          child: SizedBox(
+                              height: 350,
+                              width: 350,
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: GoogleMap(
+                                      onMapCreated: (controller) {
+                                        setState(() {
+                                          mapController = controller;
+                                        });
+                                      },
+                                      mapType: MapType.hybrid,
+                                      initialCameraPosition: CameraPosition(
+                                        target: getPolygonCenter(
+                                            widget.field.polygons),
+                                        zoom: 20,
+                                      ),
+                                      polygons: {
+                                        Polygon(
+                                          polygonId:
+                                              const PolygonId('field_polygon'),
+                                          points: widget.field.polygons,
+                                          strokeWidth: 2,
+                                          strokeColor: Colors.black,
+                                          fillColor:
+                                              Colors.green.withOpacity(0.3),
                                         ),
-                                        polygons: {
-                                          Polygon(
-                                            polygonId:
-                                                const PolygonId('field_polygon'),
-                                            points: widget.field.polygons,
-                                            strokeWidth: 2,
-                                            strokeColor: Colors.black,
-                                            fillColor:
-                                                Colors.green.withOpacity(0.3),
-                                          ),
-                                        },
-                                      ),
+                                      },
                                     ),
-                                    Positioned(
-                                      bottom: 20,
-                                      left: 20,
-                                      child: FloatingActionButton(
-                                        onPressed: () {
-                                          if (mapController != null) {
-                                            final center = getPolygonCenter(
-                                                widget.field.polygons);
-                                            final cameraUpdate =
-                                                CameraUpdate.newLatLng(center);
-                                            mapController!
-                                                .animateCamera(cameraUpdate);
-                                          }
-                                        },
-                                        tooltip: 'กลับไปยังศูนย์กลางแปลง',
-                                        child:
-                                            const Icon(Icons.center_focus_strong),
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          const SizedBox(height: 8),
-                          if (widget.field.temperatureData.isEmpty)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ไม่พบข้อมูลอุณหภูมิ',
-                                  style: GoogleFonts.openSans(fontSize: 18),
-                                ),
-                              ],
-                            )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ข้อมูลอุณภูมิ',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
                                   ),
+                                  Positioned(
+                                    bottom: 20,
+                                    left: 20,
+                                    child: FloatingActionButton(
+                                      onPressed: () {
+                                        if (mapController != null) {
+                                          final center = getPolygonCenter(
+                                              widget.field.polygons);
+                                          final cameraUpdate =
+                                              CameraUpdate.newLatLng(center);
+                                          mapController!
+                                              .animateCamera(cameraUpdate);
+                                        }
+                                      },
+                                      tooltip: 'กลับไปยังศูนย์กลางแปลง',
+                                      child:
+                                          const Icon(Icons.center_focus_strong),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                        const SizedBox(height: 8),
+                        if (widget.field.temperatureData.isEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ไม่พบข้อมูลอุณหภูมิ',
+                                style: GoogleFonts.openSans(fontSize: 18),
+                              ),
+                            ],
+                          )
+                        else
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ข้อมูลอุณภูมิ',
+                                style: GoogleFonts.openSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TemperatureScreen(
-                                          temperatureData:
-                                              widget.field.temperatureData,
-                                          monthlyTemperatureData:
-                                              widget.field.monthlyTemperatureData,
-                                          accumulatedGddData:
-                                              widget.field.accumulatedGddData,
-                                          field: const [],
-                                        ),
+                              ),
+                              const SizedBox(height: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TemperatureScreen(
+                                        temperatureData:
+                                            widget.field.temperatureData,
+                                        monthlyTemperatureData:
+                                            widget.field.monthlyTemperatureData,
+                                        accumulatedGddData:
+                                            widget.field.accumulatedGddData,
+                                        field: const [],
+                                        riceMaxGdd: widget.riceMaxGdd,
                                       ),
-                                    );
-                                  },
-                                  child: const Text("ดูข้อมูลอุณหภูมิ"),
-                                ),
-                              ],
-                            ),
-                          const SizedBox(height: 10),
-                          _buildForecastedHarvestDate(),
-                        ])),
-              )));
+                                    ),
+                                  );
+                                },
+                                child: const Text("ดูข้อมูลอุณหภูมิ"),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 10),
+                        _buildForecastedHarvestDate(),
+                      ])),
+            ),
+          ));
     }
   }
 }

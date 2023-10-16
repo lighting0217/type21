@@ -1,3 +1,4 @@
+import 'reset_screen.dart';
 import 'register_screen.dart';
 import '../../auth_service.dart';
 import '../main/select_screen.dart';
@@ -5,12 +6,13 @@ import 'package:flutter/material.dart';
 import '../../../library/colors_schema.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-// ignore_for_file: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
 
 final Future<FirebaseApp> _firebaseInit = Firebase.initializeApp();
 
@@ -25,101 +27,57 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService _auth = AuthService();
   bool _obscureText = true;
-
+  String? errorMessage;
   Future<void> _login() async {
     final BuildContext ctx = context;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      final user = await _auth.signIn(_auth.email, _auth.password);
-      if (user != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
-        Navigator.of(ctx).pushReplacement(MaterialPageRoute(
-          builder: (context) => const SelectScreen(locationList: []),
-        ));
-        Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบสําเร็จ",
-          gravity: ToastGravity.TOP,
-          textColor: myColorScheme.secondary,
-            backgroundColor: myColorScheme.onError
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "เข้าสู่ระบบไม่สําเร็จ",
-          gravity: ToastGravity.CENTER,
-          textColor: myColorScheme.error,
-          backgroundColor: myColorScheme.onError
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _firebaseInit,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text("ข้อผิดพลาด"),
-              backgroundColor: Colors.red,
-            ),
-            body: Center(
-              child: Text("${snapshot.error}"),
-            ),
-            backgroundColor: myColorScheme.primary,
+      try {
+        final user = await _auth.signIn(_auth.email, _auth.password);
+        if (user != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          Navigator.of(ctx).pushReplacement(MaterialPageRoute(
+            builder: (context) => const SelectScreen(locationList: []),
+          ));
+          Fluttertoast.showToast(
+            msg: "เข้าสู่ระบบสําเร็จ",
+            gravity: ToastGravity.TOP,
+            textColor: myColorScheme.secondary,
+            backgroundColor: myColorScheme.onError,
           );
         }
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  "เข้าสู่ระบบ",
-                  style: GoogleFonts.openSans(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                backgroundColor: myColorScheme.primary,
-              ),
-              body: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: myGradient,
-                ),
-                child: Padding(
-                  padding:  const EdgeInsets.all(35.0),
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildEmailField(),
-                          const SizedBox(height: 20),
-                          _buildPasswordField(),
-                          const SizedBox(height: 20),
-                          _buildLoginButton(),
-                          const SizedBox(height: 20),
-                          //_buildGoogleSigninButton(),
-                          //const SizedBox(height: 20,),
-                          _buildDontHaveAccount(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ));
+      } catch (e) {
+        if (e is FirebaseAuthException) {
+          String errorMessage = "";
+          switch (e.code) {
+            case 'user-not-found':
+              errorMessage = "ไม่พบบัญชีผู้ใช้.";
+              break;
+            case 'invalid-password':
+              errorMessage = "รหัสผ่านผิดพลาด.";
+              break;
+            case 'wrong-password':
+              errorMessage = "รหัสผ่านไม่ถูกต้อง";
+            default:
+              errorMessage =
+                  "Login failed due to an unknown error \n error code $e.";
+          }
+          Fluttertoast.showToast(
+            msg: errorMessage,
+            textColor: myColorScheme.error,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: myColorScheme.onError,
+          );
+          /*ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              duration: const Duration(seconds: 3),
+            ),
+          );*/
         }
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
-    );
+      }
+    }
   }
 
   Widget _buildDontHaveAccount() {
@@ -129,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-           Text(
+          Text(
             "ยังไม่มีบัญชีผู้ใช้?",
             style: TextStyle(
               fontSize: 16,
@@ -149,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             },
-            child:  Text(
+            child: Text(
               "สร้างบัญชี",
               style: TextStyle(
                 color: myColorScheme.primary.withOpacity(0.8),
@@ -169,7 +127,10 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           "ป้อน E-mail",
-          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface,fontWeight: FontWeight.bold),
+          style: GoogleFonts.openSans(
+              fontSize: 20,
+              //backgroundColor: myColorScheme.surface,
+              fontWeight: FontWeight.bold),
         ),
         TextFormField(
           decoration: _buildEmailInputDecoration(),
@@ -183,7 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-InputDecoration _buildEmailInputDecoration() {
+
+  InputDecoration _buildEmailInputDecoration() {
     return InputDecoration(
       fillColor: myColorScheme.onBackground,
       labelText: 'Email',
@@ -192,13 +154,17 @@ InputDecoration _buildEmailInputDecoration() {
       prefixIcon: const Icon(Icons.email),
     );
   }
+
   Widget _buildPasswordField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "ป้อนรหัสผ่าน",
-          style: GoogleFonts.openSans(fontSize: 20,backgroundColor: myColorScheme.surface),
+          style: GoogleFonts.openSans(
+            fontSize: 20,
+            //backgroundColor: myColorScheme.surface
+          ),
         ),
         TextFormField(
           obscureText: _obscureText,
@@ -273,6 +239,106 @@ InputDecoration _buildEmailInputDecoration() {
           }
         },
       ),
+    );
+  }
+
+  // ignore: unused_element
+  Widget _buildResetPasswordButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ResetPasswordScreen(),
+            ),
+          );
+        },
+        child: const Text(
+          "ลืมรหัสผ่าน?",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _firebaseInit,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("ข้อผิดพลาด"),
+              backgroundColor: myColorScheme.error,
+            ),
+            body: Center(
+              child: Text("${snapshot.error}"),
+            ),
+            backgroundColor: myColorScheme.primary,
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  "เข้าสู่ระบบ",
+                  style: GoogleFonts.openSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                backgroundColor: myColorScheme.primary,
+              ),
+              body: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: myGradient,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(35.0),
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildEmailField(),
+                          const SizedBox(height: 20),
+                          _buildPasswordField(),
+                          const SizedBox(height: 20),
+                          _buildLoginButton(),
+                          const SizedBox(height: 20),
+                          //_buildGoogleSigninButton(),
+                          //const SizedBox(height: 20,),
+                          _buildDontHaveAccount(),
+                          //const SizedBox(height: 20),
+                          //_buildResetPasswordButton(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ));
+        }
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: myGradient,
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
+      },
     );
   }
 }

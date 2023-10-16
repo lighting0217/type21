@@ -1,6 +1,5 @@
-// This file contains utility functions for temperature chart data manipulation.
-
 import '../models/temp_data_models.dart';
+// This file contains utility functions for temperature chart data manipulation.
 
 /// Returns the Thai month name based on the given month index.
 ///
@@ -26,10 +25,11 @@ String getThaiMonth(int month) {
 
 /// Calculates the percentage of accumulated GDD.
 ///
-/// The function takes an [accumulatedGddData] object and a double [maxGdd] as
+/// The function takes an [accumulatedGddData] object and a double [riceMaxGdd] as
 /// input and returns the percentage of accumulated GDD as a double.
-double calculatePercent(AccumulatedGddData accumulatedGddData, double maxGdd) {
-  return (accumulatedGddData.accumulatedGdd / maxGdd) * 100;
+double calculatePercent(
+    AccumulatedGddData accumulatedGddData, double riceMaxGdd) {
+  return (accumulatedGddData.accumulatedGdd / riceMaxGdd) * 100;
 }
 
 /// Computes the cumulative GDD sum.

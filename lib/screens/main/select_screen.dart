@@ -179,10 +179,10 @@ class _SelectScreenState extends State<SelectScreen> {
                         Text(
                           _weatherData.locationNameData().localNames['th'] ??
                               'ไม่รู้จักตำแหน่ง',
-                          style:  TextStyle(
+                          style:  const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: myColorScheme.error
+                            color: Colors.black,
                           ),
                         ),
                         Text(
