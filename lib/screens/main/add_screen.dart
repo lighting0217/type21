@@ -50,9 +50,9 @@ class _AddScreenState extends State<AddScreen> {
   double getRiceMaxGdd(String riceType) {
     switch (riceType) {
       case 'KDML105':
-        return 2422.09;
+        return 2720.60;
       case 'RD6':
-        return 2290.1;
+        return 2600.6;
       default:
         return 0;
     }

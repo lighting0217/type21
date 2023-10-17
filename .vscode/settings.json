@@ -14,5 +14,6 @@
     "สร้างบัญชีผู",
     "อแปลง"
   ],
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
