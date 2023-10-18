@@ -3,22 +3,11 @@ import 'package:intl/intl.dart';
 
 /// A class representing temperature data.
 class TemperatureData {
-  /// The date of the temperature data.
   DateTime date;
-
-  /// The maximum temperature of the day.
   double maxTemp;
-
-  /// The minimum temperature of the day.
   double minTemp;
-
-  /// The ID of the document.
   String documentID;
-
-  /// The formatted date of the temperature data.
   String formattedDate;
-
-  /// The growing degree days of the temperature data.
   double gdd;
 
   /// Creates a new instance of [TemperatureData].
