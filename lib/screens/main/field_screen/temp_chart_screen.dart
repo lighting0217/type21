@@ -273,62 +273,105 @@ class RemainingGDD extends StatelessWidget {
     double remainingGdd = riceMaxGdd - totalAccumulatedGdd;
 
     if (remainingGdd <= 0) {
-      return const SizedBox(
-        height: 350,
-        child: SizedBox(
-          height: 350,
-          child: Center(
-            child: Text(
-              'It\'s time to harvest',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      remainingGdd = 0;
+      return SizedBox(
+        height: 380,
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 22,
+              child: Center(
+                child: Text(
+                  'ถึงเวลาเก็บเกี่ยวแล้ว',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      );
-    }
-
-    return SizedBox(
-      height: 350,
-      child: SizedBox(
-        height: 350,
-        child: SfCircularChart(
-          title: ChartTitle(
-              text:
-                  'ค่าGDD สะสม \n${totalAccumulatedGdd.toStringAsFixed(2)}\nค่าGDD ที่เหลือ\n${remainingGdd.toStringAsFixed(2)}'),
-          series: <CircularSeries>[
-            PieSeries<ChartData, String>(
-              dataSource: [
-                ChartData('GDD สะสม', totalAccumulatedGdd),
-                ChartData('GDD ที่เหลือ', remainingGdd),
-              ],
-              xValueMapper: (ChartData data, _) => data.x,
-              yValueMapper: (ChartData data, _) => data.y,
-              radius: '65%',
-              dataLabelMapper: (ChartData data, _) =>
-                  '${data.x}\n${data.y.toStringAsFixed(2)}',
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
-                connectorLineSettings: ConnectorLineSettings(
-                    type: ConnectorType.line, color: Colors.black, width: 1),
-                labelIntersectAction: LabelIntersectAction.shift,
-                labelAlignment: ChartDataLabelAlignment.auto,
-                labelPosition: ChartDataLabelPosition.outside,
-                textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Jasmine',
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
+            SizedBox(
+              height: 350,
+              child: SfCircularChart(
+                title: ChartTitle(
+                    text:
+                        'ค่าGDD สะสม \n${totalAccumulatedGdd.toStringAsFixed(2)}\nค่าGDD ที่เหลือ\n${remainingGdd.toStringAsFixed(2)}'),
+                series: <CircularSeries>[
+                  PieSeries<ChartData, String>(
+                    dataSource: [
+                      ChartData('GDD สะสม', totalAccumulatedGdd),
+                      ChartData('GDD ที่เหลือ', remainingGdd),
+                    ],
+                    xValueMapper: (ChartData data, _) => data.x,
+                    yValueMapper: (ChartData data, _) => data.y,
+                    radius: '95%',
+                    dataLabelMapper: (ChartData data, _) =>
+                        '${data.x}\n${data.y.toStringAsFixed(2)}',
+                    dataLabelSettings: const DataLabelSettings(
+                      isVisible: true,
+                      connectorLineSettings: ConnectorLineSettings(
+                          type: ConnectorType.line,
+                          color: Colors.black,
+                          width: 1),
+                      labelIntersectAction: LabelIntersectAction.shift,
+                      labelAlignment: ChartDataLabelAlignment.auto,
+                      labelPosition: ChartDataLabelPosition.outside,
+                      textStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Jasmine',
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      return SizedBox(
+        height: 355,
+        child: SizedBox(
+          height: 350,
+          child: SfCircularChart(
+            title: ChartTitle(
+                text:
+                    'ค่าGDD สะสม \n${totalAccumulatedGdd.toStringAsFixed(2)}\nค่าGDD ที่เหลือ\n${remainingGdd.toStringAsFixed(2)}'),
+            series: <CircularSeries>[
+              PieSeries<ChartData, String>(
+                dataSource: [
+                  ChartData('GDD สะสม', totalAccumulatedGdd),
+                  ChartData('GDD ที่เหลือ', remainingGdd),
+                ],
+                xValueMapper: (ChartData data, _) => data.x,
+                yValueMapper: (ChartData data, _) => data.y,
+                radius: '100%',
+                dataLabelMapper: (ChartData data, _) =>
+                    '${data.x}\n${data.y.toStringAsFixed(2)}',
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  connectorLineSettings: ConnectorLineSettings(
+                      type: ConnectorType.line, color: Colors.black, width: 1),
+                  labelIntersectAction: LabelIntersectAction.shift,
+                  labelAlignment: ChartDataLabelAlignment.auto,
+                  labelPosition: ChartDataLabelPosition.outside,
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Jasmine',
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }
 

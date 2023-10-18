@@ -14,5 +14,7 @@
     "สร้างบัญชีผู",
     "อแปลง"
   ],
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "cmake.sourceDirectory": "C:/TLE/MyProject/Type21/type21/windows/flutter"
 }

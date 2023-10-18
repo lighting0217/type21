@@ -50,9 +50,9 @@ class _AddScreenState extends State<AddScreen> {
   double getRiceMaxGdd(String riceType) {
     switch (riceType) {
       case 'KDML105':
-        return 2422.09;
+        return 2720.60;
       case 'RD6':
-        return 2290.1;
+        return 2600.6;
       default:
         return 0;
     }
@@ -200,9 +200,9 @@ class _AddScreenState extends State<AddScreen> {
       }
       double riceMaxGdd = 0;
       if (riceType == 'KDML105') {
-        riceMaxGdd = 2422.09;
+        riceMaxGdd = 2720.6;
       } else if (riceType == 'RD6') {
-        riceMaxGdd = 2000;
+        riceMaxGdd = 2640.8;
       }
 
       return await _firestore.collection('fields').add({
