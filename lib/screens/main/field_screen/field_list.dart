@@ -143,7 +143,7 @@ class _FieldListState extends State<FieldList> {
       print('Fetched ${fieldList.length} fields.');
       for (var field in fieldList) {
         print(
-            'Field Name: ${field.fieldName}, Rice Type: ${field.riceType}, Area: ${field.polygonArea}');
+            'Field Name: ${field.fieldName},\nRice Type: ${field.riceType},\nArea: ${field.polygonArea},\nSelectedDate:${field.selectedDate}');
       }
     }
     if (_auth.currentUser != null) {

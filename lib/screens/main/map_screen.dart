@@ -280,12 +280,12 @@ class _MapScreenType2TestState extends State<MapScreen> {
       _polygons.clear();
       _polygonSet.clear();
       _markerSet.clear();
-      _showAddFieldButton = true;
-      _addingPolygons = false;
-      _showCancelButton = false;
-      _showClearButton = false;
-      _showRedoButton = false;
-      _showGotoAddScreen = false;
+      _showAddFieldButton = false;
+      _addingPolygons = true;
+      _showCancelButton = true;
+      _showClearButton = true;
+      _showRedoButton = true;
+      _showGotoAddScreen = true;
     });
   }
 

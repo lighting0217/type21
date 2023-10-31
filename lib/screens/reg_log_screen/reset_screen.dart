@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../library/colors_schema.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
 
@@ -30,7 +30,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             content: Text(e.toString()),
           ),
         );
-        print('Error:$e');
+        if (kDebugMode) {
+          print('Error:$e');
+        }
       }
     }
   }
