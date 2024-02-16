@@ -17,7 +17,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 final Future<FirebaseApp> _firebaseInit = Firebase.initializeApp();
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
           validator: MultiValidator([
             RequiredValidator(errorText: "กรุณาป้อน E-mail"),
             EmailValidator(errorText: "Email ไม่ถูกต้อง"),
-          ]),
+          ]).call,
           keyboardType: TextInputType.emailAddress,
           onSaved: (String? email) => _auth.email = email!,
         ),
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
         TextFormField(
           obscureText: _obscureText,
           decoration: _buildPasswordInputDecoration(),
-          validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน"),
+          validator: RequiredValidator(errorText: "กรุณาป้อนรหัสผ่าน").call,
           onSaved: (String? password) => _auth.password = password!,
         ),
       ],

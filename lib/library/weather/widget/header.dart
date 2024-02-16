@@ -9,7 +9,7 @@ import '../../../controller/global_controller.dart';
 import '../../th_format_date.dart';
 
 class HeaderSc extends StatefulWidget {
-  const HeaderSc({Key? key}) : super(key: key);
+  const HeaderSc({super.key});
 
   @override
   State<HeaderSc> createState() => _HeaderScState();

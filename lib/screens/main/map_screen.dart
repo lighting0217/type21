@@ -12,13 +12,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({
-    Key? key,
+    super.key,
     required this.polygons,
     required this.polygonArea,
     required this.lengths,
     required this.onPolygonAreaChanged,
     required this.selectedDate,
-  }) : super(key: key);
+  });
 
   final List<double> lengths;
   final ValueChanged<double> onPolygonAreaChanged;

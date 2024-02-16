@@ -8,8 +8,7 @@ import '../util/custom_colors.dart';
 class CurrentWeatherWidget extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;
 
-  const CurrentWeatherWidget(this.currentWeatherData, {Key? key})
-      : super(key: key);
+  const CurrentWeatherWidget(this.currentWeatherData, {super.key});
 
   Widget CurrentWeatherDataWidget() {
     return Row(

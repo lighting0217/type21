@@ -1,6 +1,7 @@
 /// This file contains the implementation of the `WeatherDataFetcher` and `GoogleServices` classes.
 /// The `WeatherDataFetcher` class is responsible for fetching weather data from the OpenWeatherMap API and location name from Google Maps API.
 /// The `GoogleServices` class is responsible for fetching the current location of the device using the Geolocator package.
+library;
 // ignore_for_file: file_names
 
 import 'dart:convert';

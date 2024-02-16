@@ -14,13 +14,13 @@ class TempChartScreen extends StatefulWidget {
   final double riceMaxGdd;
 
   const TempChartScreen({
-    Key? key,
+    super.key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required List<Field> field,
     required this.riceMaxGdd,
-  }) : super(key: key);
+  });
 
   @override
   State<TempChartScreen> createState() => _TempChartScreenState();
@@ -194,10 +194,10 @@ class MonthlyAgddPieChart extends StatelessWidget {
   final List<AccumulatedGddData> accumulatedGddData;
 
   const MonthlyAgddPieChart({
-    Key? key,
+    super.key,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -254,11 +254,11 @@ class RemainingGDD extends StatelessWidget {
   final double riceMaxGdd;
 
   const RemainingGDD({
-    Key? key,
+    super.key,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.riceMaxGdd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -386,8 +386,7 @@ class ChartData {
 class TempRangedChart extends StatefulWidget {
   final List<TemperatureData> temperatureData;
 
-  const TempRangedChart({Key? key, required this.temperatureData})
-      : super(key: key);
+  const TempRangedChart({super.key, required this.temperatureData});
 
   @override
   State<TempRangedChart> createState() => _TempRangedChartState();
@@ -399,11 +398,11 @@ class _TempRangedChartState extends State<TempRangedChart> {
     return SizedBox(
       height: 400,
       child: SfCartesianChart(
-        title: ChartTitle(text: 'ช่วงอุณหภูมิของวัน'),
-        primaryXAxis: CategoryAxis(
+        title: const ChartTitle(text: 'ช่วงอุณหภูมิของวัน'),
+        primaryXAxis: const CategoryAxis(
           labelRotation: 25,
         ),
-        primaryYAxis: NumericAxis(),
+        primaryYAxis: const NumericAxis(),
         zoomPanBehavior: ZoomPanBehavior(
           enableDoubleTapZooming: true,
           enablePanning: true,
@@ -438,7 +437,8 @@ class _TempRangedChartState extends State<TempRangedChart> {
             );
           },
         ),
-        series: <ChartSeries>[
+        // Change the list type to `List<CartesianSeries>`
+        series: <CartesianSeries>[
           RangeColumnSeries<TemperatureData, String>(
             dataSource: widget.temperatureData,
             xValueMapper: (TemperatureData data, _) =>
@@ -466,12 +466,12 @@ class _TempRangedChartState extends State<TempRangedChart> {
   }
 }
 
+
 // Gdd ต่อ วัน แบบ Column Chart
 class DayGddChart extends StatefulWidget {
   final List<TemperatureData> temperatureData;
 
-  const DayGddChart({Key? key, required this.temperatureData})
-      : super(key: key);
+  const DayGddChart({super.key, required this.temperatureData});
 
   @override
   State<DayGddChart> createState() => _DayGddChartState();
@@ -483,24 +483,53 @@ class _DayGddChartState extends State<DayGddChart> {
     return SizedBox(
         height: 300,
         child: SfCartesianChart(
-          title: ChartTitle(text: 'Growing Degree Days (GDD)/วัน'),
-          primaryXAxis: CategoryAxis(
+          title: const ChartTitle(text: 'Growing Degree Days (GDD)/วัน'),
+          primaryXAxis: const CategoryAxis(
             labelRotation: 25,
           ),
-          primaryYAxis: NumericAxis(),
+          primaryYAxis: const NumericAxis(
+            labelFormat: '{value}°C', // Adjust label format as needed
+          ),
           zoomPanBehavior: ZoomPanBehavior(
             enableDoubleTapZooming: true,
             enablePanning: true,
             enablePinching: true,
           ),
-          series: <ChartSeries>[
+          tooltipBehavior: TooltipBehavior(
+            enable: true,
+            builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+                int seriesIndex) {
+              TemperatureData tempData = data;
+              return Card(
+                color: Colors.blue,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        thFormatDateShort(tempData.documentID),
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'GDD: ${tempData.gdd.toStringAsFixed(2)}°C',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          series: <ColumnSeries<TemperatureData, String>>[
             ColumnSeries<TemperatureData, String>(
               dataSource: widget.temperatureData,
               xValueMapper: (TemperatureData data, _) =>
                   thFormatDateShort(data.documentID),
               yValueMapper: (TemperatureData data, _) => data.gdd,
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
+              dataLabelSettings: const DataLabelSettings( // Adjust visibility as needed
+                isVisible: false,
                 labelAlignment: ChartDataLabelAlignment.outer,
                 textStyle: TextStyle(
                   fontSize: 16,
@@ -514,12 +543,12 @@ class _DayGddChartState extends State<DayGddChart> {
   }
 }
 
+
 // Gdd ต่อ เดือนแบบ Column Chart
 class MonthGddChart extends StatefulWidget {
   final List<MonthlyTemperatureData> monthlyTemperatureData;
 
-  const MonthGddChart({Key? key, required this.monthlyTemperatureData})
-      : super(key: key);
+  const MonthGddChart({super.key, required this.monthlyTemperatureData});
 
   @override
   State<MonthGddChart> createState() => _MonthGddChartState();
@@ -531,17 +560,17 @@ class _MonthGddChartState extends State<MonthGddChart> {
     return SizedBox(
         height: 300,
         child: SfCartesianChart(
-          title: ChartTitle(text: 'Growing Degree Days (GDD)/เดือน'),
-          primaryXAxis: CategoryAxis(
+          title: const ChartTitle(text: 'Growing Degree Days (GDD)/เดือน'),
+          primaryXAxis: const CategoryAxis(
             labelRotation: 30,
           ),
-          primaryYAxis: NumericAxis(),
+          primaryYAxis: const NumericAxis(),
           zoomPanBehavior: ZoomPanBehavior(
             enableDoubleTapZooming: true,
             enablePanning: true,
             enablePinching: true,
           ),
-          series: <ChartSeries>[
+          series: <CartesianSeries<MonthlyTemperatureData, String>>[
             ColumnSeries<MonthlyTemperatureData, String>(
               dataSource: widget.monthlyTemperatureData,
               xValueMapper: (MonthlyTemperatureData data, _) =>

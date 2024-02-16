@@ -18,7 +18,7 @@ dependencies:
   intl: ^0.18.1
   geocoding: ^2.1.0
   google_maps_flutter: any
-  google_maps_utils: ^1.5.1+0
+  google_maps_utils: ^2.0.0+1
   geolocator: any
   provider: any
   firebase_crashlytics: ^3.3.5
@@ -30,14 +30,14 @@ dependencies:
   firebase_storage: ^11.2.6
   collection: ^1.17.2
   turf: ^0.0.8
-  flutter_map: ^5.0.0
+  flutter_map: ^6.1.0
   cloud_firestore: ^4.9.1
   google_fonts: ^6.0.0
-  fl_chart: ^0.63.0
+  fl_chart: ^0.66.2
   firebase_database: ^10.2.5
   logger: ^2.0.2
   table_calendar: ^3.0.9
-  syncfusion_flutter_charts: ^23.1.36
+  syncfusion_flutter_charts: ^24.2.6
   simple_gesture_detector: any
   dartx: any
   flutter_calendar_carousel: ^2.4.2
@@ -48,8 +48,8 @@ dependencies:
   flutter_signin_button: ^2.0.0
   thai: ^1.0.0+2
   flutter_holo_date_picker: ^1.1.2+1
-  syncfusion_localizations: ^23.1.36
-  detectable_text_field: ^2.1.0
+  syncfusion_localizations: ^24.2.6
+  detectable_text_field: ^3.0.2
   more: ^4.0.0
   translatable_text_field: ^1.0.2+3
   toast: ^0.3.0
@@ -58,7 +58,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.3
+  flutter_lints: ^3.0.1
 
 flutter:
 

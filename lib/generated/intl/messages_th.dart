@@ -5,6 +5,7 @@
 /// The `messages` object is a `MessageLookup` instance, which provides a method to look up messages by their keys.
 /// The `MessageIfAbsent` type is a function that takes a message string and a list of arguments, and returns a string.
 /// The `_notInlinedMessages` method returns an empty map, which is used as a fallback when a message is not found in the `messages` object.
+library;
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // ignore_for_file: prefer_single_quotes, unnecessary_new, unnecessary_brace_in_string_interps, comment_references, directives_ordering, annotate_overrides, prefer_generic_function_type_aliases, unused_import, file_names, avoid_escaping_inner_quotes, unnecessary_string_interpolations, unnecessary_string_escapes
 

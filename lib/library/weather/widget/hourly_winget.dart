@@ -9,7 +9,7 @@ import '../util/custom_colors.dart';
 class HourlyDataWidget extends StatefulWidget {
   final HourlyWeatherData? hourlyWeatherData;
 
-  const HourlyDataWidget({Key? key, this.hourlyWeatherData}) : super(key: key);
+  const HourlyDataWidget({super.key, this.hourlyWeatherData});
 
   @override
   State<HourlyDataWidget> createState() => _HourlyDataWidgetState();
@@ -103,13 +103,13 @@ class HourlyDetails extends StatelessWidget {
   final int cardindex;
 
   const HourlyDetails({
-    Key? key,
+    super.key,
     required this.tmp,
     required this.icon,
     required this.timeStamp,
     required this.index,
     required this.cardindex,
-  }) : super(key: key);
+  });
 
   String getTime(int dt) {
     final dd = DateTime.fromMillisecondsSinceEpoch(dt * 1000);

@@ -12,12 +12,12 @@ class CalendarScreen extends StatefulWidget {
   final List<Field> field;
 
   const CalendarScreen({
-    Key? key,
+    super.key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.field,
-  }) : super(key: key);
+  });
 
   @override
   State<CalendarScreen> createState() => _TestCalendarScreenState();

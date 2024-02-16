@@ -7,8 +7,7 @@ import '../util/custom_colors.dart';
 class DailyForecast extends StatelessWidget {
   final DailyWeatherData dailyWeatherData;
 
-  const DailyForecast({Key? key, required this.dailyWeatherData})
-      : super(key: key);
+  const DailyForecast({super.key, required this.dailyWeatherData});
 
   String getDay(int dt) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(dt * 1000);

@@ -4,6 +4,7 @@
 /// The [Daily] class contains information about the date, sunrise and sunset times, temperature, and weather conditions for a single day.
 /// The [Temp] class contains information about the temperature for a single day, including the minimum, maximum, and average temperatures.
 /// The [Weather] class contains information about the weather conditions for a single day, including the weather description and icon.
+library;
 // Daily Weather Data File
 
 class DailyWeatherData {

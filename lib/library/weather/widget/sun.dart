@@ -6,7 +6,7 @@ import '../models/current_weather_data.dart';
 class SunInfo extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;
 
-  const SunInfo({Key? key, required this.currentWeatherData}) : super(key: key);
+  const SunInfo({super.key, required this.currentWeatherData});
 
   String getTime(int x) {
     final date = DateTime.fromMillisecondsSinceEpoch(x * 1000);

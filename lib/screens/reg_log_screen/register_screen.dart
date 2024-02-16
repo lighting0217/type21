@@ -108,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     validator: MultiValidator([
                       RequiredValidator(errorText: "กรุณาป้อน E-mail"),
                       EmailValidator(errorText: "รูปแบบ E-mail ไม่ถูกต้อง"),
-                    ]),
+                    ]).call,
                     keyboardType: TextInputType.emailAddress,
                     onSaved: (String? email) {
                       _auth.email = email!;

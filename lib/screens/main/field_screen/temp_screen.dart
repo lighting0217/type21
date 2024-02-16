@@ -14,13 +14,13 @@ class TemperatureScreen extends StatelessWidget {
   final double riceMaxGdd;
 
   const TemperatureScreen({
-    Key? key,
+    super.key,
     required this.temperatureData,
     required this.monthlyTemperatureData,
     required this.accumulatedGddData,
     required this.field,
     required this.riceMaxGdd,
-  }) : super(key: key);
+  });
 
   Widget _buildDailyTemperatureTile(TemperatureData temperature) {
     final formattedDate = thFormatDate(temperature.documentID);

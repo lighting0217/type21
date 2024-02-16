@@ -2,6 +2,7 @@
 /// It imports the necessary packages and defines the [S] class and [AppLocalizationDelegate] class.
 /// The [S] class is responsible for loading the localized strings and providing them to the app.
 /// The [AppLocalizationDelegate] class is responsible for loading the supported locales and initializing the [S] class.
+library;
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 

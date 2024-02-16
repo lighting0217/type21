@@ -10,6 +10,7 @@
 /// - `thFormatDateDMY(String inputDate)`: Formats a date string in the format "D/M/Y" to "D:M:Y" in Thai language.
 /// - `thFormatDateShort(String inputDate)`: Formats a date string in the format "M D, Y" to "d/MM/y" in Thai language.
 /// - `thFormatDateMonth(String inputDate)`: Formats a date string in the format "M Y" to "MMMM y" in Thai language.
+library;
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 

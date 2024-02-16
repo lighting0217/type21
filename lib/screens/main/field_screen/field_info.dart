@@ -24,7 +24,7 @@ class FieldInfo extends StatefulWidget {
   final double riceMaxGdd;
 
   const FieldInfo({
-    Key? key,
+    super.key,
     required this.field,
     required this.documentID,
     required this.fieldName,
@@ -33,7 +33,7 @@ class FieldInfo extends StatefulWidget {
     required this.polygons,
     required this.selectedDate,
     required this.riceMaxGdd,
-  }) : super(key: key);
+  });
 
   @override
   State<FieldInfo> createState() => _FieldInfoState();

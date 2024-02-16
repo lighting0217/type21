@@ -8,8 +8,7 @@ import '../models/current_weather_data.dart';
 class ComfortLevel extends StatelessWidget {
   final CurrentWeatherData currentWeatherData;
 
-  const ComfortLevel({Key? key, required this.currentWeatherData})
-      : super(key: key);
+  const ComfortLevel({super.key, required this.currentWeatherData});
 
   @override
   Widget build(BuildContext context) {

@@ -20,7 +20,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 final auth = FirebaseAuth.instance;
 
 class SelectScreen extends StatefulWidget {
-  const SelectScreen({Key? key, required this.locationList}) : super(key: key);
+  const SelectScreen({super.key, required this.locationList});
   final List<LatLng> locationList;
 
   @override

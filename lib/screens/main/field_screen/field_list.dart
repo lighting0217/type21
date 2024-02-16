@@ -39,10 +39,10 @@ class FieldUtils {
 
 class FieldList extends StatefulWidget {
   const FieldList({
-    Key? key,
+    super.key,
     required this.fields,
     required this.monthlyTemperatureData,
-  }) : super(key: key);
+  });
 
   final List<Field> fields;
   final List<MonthlyTemperatureData> monthlyTemperatureData;

@@ -3,6 +3,7 @@
 /// This class contains static methods for converting area to Rai-Ngan-Wah,
 /// getting the Thai name of a rice type, and formatting a date in Thai format.
 ///
+library;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 

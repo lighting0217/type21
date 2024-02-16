@@ -15,7 +15,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class AddScreen extends StatefulWidget {
   const AddScreen({
-    Key? key,
+    super.key,
     required this.totalDistance,
     required this.polygons,
     required this.polygonArea,
@@ -23,7 +23,7 @@ class AddScreen extends StatefulWidget {
     required double polygonAreaMeters,
     required this.monthlyTemperatureData,
     required this.selectedDate,
-  }) : super(key: key);
+  });
 
   final List<double> lengths;
   final double polygonArea;
@@ -308,7 +308,7 @@ class _AddScreenState extends State<AddScreen> {
                 decoration: const InputDecoration(
                     labelText: 'ชื่อแปลง',
                     labelStyle: TextStyle(color: Colors.black)),
-                validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง'),
+                validator: RequiredValidator(errorText: 'กรุณาใส่ชื่อแปลง').call,
                 keyboardType: TextInputType.multiline,
               ),
               const SizedBox(height: 16),
